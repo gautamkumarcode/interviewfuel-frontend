@@ -1,7 +1,9 @@
+import LoginHOC from "@/components/screens/login/LoginHOC";
+
 type Props = {};
 
 const page = (props: Props) => {
-	return <div className="flex text-2xl text-red-500">page</div>;
+	return <LoginHOC {...props} />;
 };
 
 export default page;
