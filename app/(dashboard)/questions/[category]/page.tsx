@@ -64,7 +64,7 @@ export default function CategoryPage() {
 	};
 
 	const handleQuestionClick = (questionId: number) => {
-		router.push(`/questions/${questionId}`);
+		router.push(`/questions/${category}/${questionId}`);
 	};
 
 	return (
