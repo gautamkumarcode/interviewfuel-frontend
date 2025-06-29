@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Filter, LogOut, Search, Settings, User } from "lucide-react";
+import { Bell, LogOut, Moon, Search, Settings, Sun, User } from "lucide-react";
 import * as React from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-// import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
 import { MobileBreadcrumb } from "../mobileNav/MobileBreadcrumb";
 import { MobileSearch } from "../mobileNav/MobileSearch";
@@ -23,15 +22,17 @@ import { BreadcrumbNav } from "./BreadcrumbNav";
 export function AppNavbar() {
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [mobileSearchOpen, setMobileSearchOpen] = React.useState(false);
+	const [isDarkMode, setIsDarkMode] = React.useState(false);
 	const router = useRouter();
+
+	// Initialize dark mode from localStorage or system preference
+
 
 	return (
 		<>
-			<header className="sticky top-0 z-10 border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+			<header className="sticky  border-gray-300 top-0 z-10 border-b  bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
 				<div className="flex h-16 items-center gap-4 px-4 md:px-6">
-					{/* <SidebarTrigger /> */}
 
-					{/* Mobile Layout */}
 					<div className="md:hidden flex-1 flex items-center justify-between">
 						<MobileBreadcrumb />
 						<div className="flex items-center gap-2">
@@ -39,6 +40,18 @@ export function AppNavbar() {
 								isOpen={mobileSearchOpen}
 								onToggle={() => setMobileSearchOpen(!mobileSearchOpen)}
 							/>
+							<Button 
+								variant="ghost" 
+								size="sm" 
+								onClick={()=>setIsDarkMode(!isDarkMode)}
+								className="h-10 w-10 p-0"
+							>
+								{isDarkMode ? (
+									<Sun className="h-5 w-5 text-green-600" />
+								) : (
+									<Moon className="h-5 w-5 text-blue-600" />
+								)}
+							</Button>
 							<Button variant="ghost" size="sm" className="h-10 w-10 p-0">
 								<Bell className="h-5 w-5" />
 							</Button>
@@ -51,7 +64,7 @@ export function AppNavbar() {
 
 						<Separator orientation="vertical" className="h-4 mx-2" />
 
-						{/* Search and Filter */}
+						{/* Search and Dark Mode Toggle */}
 						<div className="flex items-center gap-4 ml-auto">
 							<div className="relative max-w-md">
 								<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -66,9 +79,14 @@ export function AppNavbar() {
 							<Button
 								variant="outline"
 								size="sm"
-								className="gap-2 bg-transparent">
-								<Filter className="h-4 w-4" />
-								Filter
+								onClick={()=>setIsDarkMode(!isDarkMode)}
+								className="gap-2 bg-transparent border-green-200 hover:border-green-300 hover:bg-green-50 dark:border-green-700 dark:hover:border-green-600 dark:hover:bg-green-900/20">
+								{isDarkMode ? (
+									<Sun className="h-4 w-4 text-green-600" />
+								) : (
+									<Moon className="h-4 w-4 text-blue-600" />
+								)}
+								{isDarkMode ? "Light" : "Dark"}
 							</Button>
 						</div>
 					</div>

@@ -14,8 +14,8 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
-			<body>{children}</body>
+		<html lang="en" className="transition-colors duration-300">
+			<body className="transition-colors duration-300">{children}</body>
 		</html>
 	);
 }
