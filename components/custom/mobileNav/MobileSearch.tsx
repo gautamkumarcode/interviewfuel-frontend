@@ -80,7 +80,7 @@ export function MobileSearch({ isOpen, onToggle }: MobileSearchProps) {
 						{searchQuery ? (
 							<div className="space-y-2">
 								<p className="text-sm text-gray-600">
-									Search results for "{searchQuery}"
+									Search results for {searchQuery}
 								</p>
 								{/* Add search results here */}
 								<div className="text-center py-8 text-gray-500">

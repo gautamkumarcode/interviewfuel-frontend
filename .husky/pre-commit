@@ -1,0 +1,3 @@
+echo "🔨 Step 1: Running build..."
+npm run build
+

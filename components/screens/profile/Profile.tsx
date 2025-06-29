@@ -629,7 +629,7 @@ export function ProfilePage() {
 						</CardHeader>
 						<CardContent>
 							<div className="text-gray-600">
-								You've answered the most questions in this category. Keep up the
+								You&lsquo;ve answered the most questions in this category. Keep up the
 								great work!
 							</div>
 						</CardContent>

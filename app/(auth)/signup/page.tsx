@@ -1,8 +1,7 @@
 import SignupHOC from "@/components/screens/signup/SignupHOC";
 
-type Props = {};
 
-const page = (props: Props) => {
+const page = () => {
 	return <SignupHOC />;
 };
 

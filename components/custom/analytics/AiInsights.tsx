@@ -41,7 +41,7 @@ export function AIInsights() {
 										Time Management Mastery
 									</div>
 									<div className="text-sm text-green-800">
-										You've reduced your average time per question by 48% while
+										You&lsquo;ve reduced your average time per question by 48% while
 										maintaining accuracy. Excellent progress!
 									</div>
 								</div>
@@ -101,7 +101,7 @@ export function AIInsights() {
 									🎯 Next Milestone
 								</div>
 								<div className="text-sm text-gray-600">
-									You're 1% away from 90% completion rate. Focus on accuracy in
+									You&lsquo;re 1% away from 90% completion rate. Focus on accuracy in
 									your next 5 sessions.
 								</div>
 							</div>
@@ -111,7 +111,7 @@ export function AIInsights() {
 									🔄 Review Strategy
 								</div>
 								<div className="text-sm text-gray-600">
-									Revisit JavaScript closure questions - you haven't practiced
+									Revisit JavaScript closure questions - you haven&lsquo;t practiced
 									them in 2 weeks.
 								</div>
 							</div>

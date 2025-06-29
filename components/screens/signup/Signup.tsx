@@ -2,9 +2,8 @@
 
 import { SignupForm } from "./component/Form";
 
-type Props = {};
 
-const Signup = (props: Props) => {
+const Signup = () => {
 	return (
 		<div>
 			<SignupForm />

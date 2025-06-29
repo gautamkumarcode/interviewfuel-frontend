@@ -1,11 +1,10 @@
 import dynamic from "next/dynamic";
 
-type Props = {};
 
 const Signup = dynamic(() => import("./Signup"), {
 	ssr: true,
 });
-const SignupHOC = (props: Props) => {
+const SignupHOC = () => {
 	return <Signup />;
 };
 

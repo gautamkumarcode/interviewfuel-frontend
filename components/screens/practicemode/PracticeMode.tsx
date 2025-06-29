@@ -41,9 +41,6 @@ import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
-interface PracticeModeProps {
-	onExit: () => void;
-}
 
 interface PracticeQuestion {
 	id: number;
@@ -120,7 +117,7 @@ const practiceQuestions: PracticeQuestion[] = [
 	},
 ];
 
-export function PracticeMode({ onExit }: PracticeModeProps) {
+export function PracticeMode() {
 	const [sessionState, setSessionState] = React.useState<
 		"setup" | "active" | "completed"
 	>("setup");
@@ -305,7 +302,7 @@ export function PracticeMode({ onExit }: PracticeModeProps) {
 		return (
 			<div className="max-w-2xl mx-auto">
 				<div className="flex items-center gap-4 mb-6">
-					<Button variant="ghost" onClick={onExit} className="gap-2">
+					<Button variant="ghost"  className="gap-2">
 						<ArrowLeft className="h-4 w-4" />
 						Back to Questions
 					</Button>
@@ -616,7 +613,7 @@ export function PracticeMode({ onExit }: PracticeModeProps) {
 								<Pause className="h-12 w-12 mx-auto mb-4 text-gray-400" />
 								<h3 className="text-lg font-semibold mb-2">Session Paused</h3>
 								<p className="text-gray-600 mb-4">
-									Take your time. Click resume when you're ready to continue.
+									Take your time. Click resume when you&lsquo;re ready to continue.
 								</p>
 								<Button onClick={pauseSession} className="gap-2">
 									<Play className="h-4 w-4" />
@@ -643,7 +640,7 @@ export function PracticeMode({ onExit }: PracticeModeProps) {
 						Practice Session Complete!
 					</h1>
 					<p className="text-gray-600">
-						Here's how you performed in this session
+						Here&lsquo;s how you performed in this session
 					</p>
 				</div>
 
@@ -769,7 +766,7 @@ export function PracticeMode({ onExit }: PracticeModeProps) {
 
 					<TabsContent value="answers">
 						<div className="space-y-4">
-							{session.questions.map((question, index) => (
+							{session.questions.map((question) => (
 								<Card key={question.id}>
 									<CardHeader>
 										<div className="flex items-start justify-between">
@@ -823,7 +820,7 @@ export function PracticeMode({ onExit }: PracticeModeProps) {
 						<RotateCcw className="h-4 w-4" />
 						Start New Session
 					</Button>
-					<Button onClick={onExit} className="gap-2">
+					<Button  className="gap-2">
 						<ArrowLeft className="h-4 w-4" />
 						Back to Questions
 					</Button>
