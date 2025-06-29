@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { CustomButton } from "@/components/custom/CustomButton/CustomButton";
 import {
 	Form,
 	FormControl,
@@ -110,7 +110,8 @@ const LoginForm = (props: Props) => {
 				{/* <div className="w-full mb-4">
 						<RecaptchaWrapper onVerificationChange={setIsVerified} />
 					</div> */}
-				<Button type="submit">Login</Button>
+				<CustomButton content="Login" isLoading={true} />
+				{/* <HashLoader color="blue" /> */}
 			</form>
 		</Form>
 	);

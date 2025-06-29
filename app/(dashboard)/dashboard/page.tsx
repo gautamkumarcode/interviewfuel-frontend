@@ -86,7 +86,7 @@ export default function HomePage() {
 	};
 
 	return (
-		<div className="max-w-7xl mx-auto mt-[64px] p-4">
+		<>
 			<div className="mb-6">
 				<h1 className="text-2xl font-bold text-gray-900 mb-2">
 					All Interview Questions
@@ -235,6 +235,6 @@ export default function HomePage() {
 					<ChevronRight className="h-4 w-4" />
 				</Button>
 			</div>
-		</div>
+		</>
 	);
 }
