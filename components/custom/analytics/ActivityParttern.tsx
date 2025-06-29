@@ -1,10 +1,6 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
-} from "@/components/ui/chart";
+
 import { Activity, BarChart3, Clock } from "lucide-react";
 import {
 	Bar,
@@ -119,34 +115,6 @@ export function ActivityPatterns() {
 					</CardTitle>
 				</CardHeader>
 				<CardContent>
-					<ChartContainer
-						config={{
-							sessions: {
-								label: "Number of Sessions",
-								color: "hsl(var(--chart-1))",
-							},
-						}}
-						className="h-[200px]">
-						<ResponsiveContainer width="100%" height="100%">
-							<BarChart
-								data={[
-									{ duration: "15-30 min", sessions: 45 },
-									{ duration: "30-45 min", sessions: 32 },
-									{ duration: "45-60 min", sessions: 28 },
-									{ duration: "60+ min", sessions: 15 },
-								]}>
-								<CartesianGrid strokeDasharray="3 3" />
-								<XAxis dataKey="duration" fontSize={12} />
-								<YAxis fontSize={12} />
-								<ChartTooltip content={<ChartTooltipContent />} />
-								<Bar
-									dataKey="sessions"
-									fill="var(--color-sessions)"
-									radius={[4, 4, 0, 0]}
-								/>
-							</BarChart>
-						</ResponsiveContainer>
-					</ChartContainer>
 				</CardContent>
 			</Card>
 		</div>
