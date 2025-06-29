@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+// import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
 import { MobileBreadcrumb } from "../mobileNav/MobileBreadcrumb";
 import { MobileSearch } from "../mobileNav/MobileSearch";
@@ -29,7 +29,7 @@ export function AppNavbar() {
 		<>
 			<header className="sticky top-0 z-10 border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
 				<div className="flex h-16 items-center gap-4 px-4 md:px-6">
-					<SidebarTrigger />
+					{/* <SidebarTrigger /> */}
 
 					{/* Mobile Layout */}
 					<div className="md:hidden flex-1 flex items-center justify-between">
