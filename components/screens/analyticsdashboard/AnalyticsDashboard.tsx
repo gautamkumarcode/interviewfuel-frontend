@@ -167,7 +167,7 @@ export const AnalyticsDashboard = ({ onExit }: AnalyticsDashboardProps) => {
 				</TabsList>
 
 				<TabsContent value="trends">
-					<PerformanceTrends timeRange={timeRange} />
+					<PerformanceTrends />
 				</TabsContent>
 
 				<TabsContent value="categories">

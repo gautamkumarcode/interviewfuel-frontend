@@ -12,10 +12,9 @@ import { Link } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-type Props = {};
 
-const LoginForm = (props: Props) => {
-	const [lookUpPass, setLookUpPass] = useState<Boolean>(false);
+const LoginForm = () => {
+	const [lookUpPass, setLookUpPass] = useState<boolean>(false);
 	const form = useForm({
 		defaultValues: {
 			email: "",
@@ -26,10 +25,6 @@ const LoginForm = (props: Props) => {
 
 	const onSubmit = async (data: any) => {
 		console.log("Form submitted with data:", data);
-		// Handle form submission logic here
-	};
-	const handleTogglePasswordCheck = () => {
-		setLookUpPass((prev) => !prev);
 	};
 	return (
 		<Form {...form}>

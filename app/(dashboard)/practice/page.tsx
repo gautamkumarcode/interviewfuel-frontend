@@ -2,6 +2,14 @@
 
 import PracticeModeHOC from "@/components/screens/practicemode/PracticeModeHOC";
 
-export default function PracticePage() {
-	return <PracticeModeHOC onExit={() => window.history.back()} />;
-}
+
+
+const PracticePage: React.FC = () => {
+	return <PracticeModeHOC />;
+};
+
+export default PracticePage;
+
+
+
+

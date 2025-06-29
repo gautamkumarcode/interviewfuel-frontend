@@ -1,8 +1,7 @@
 import ProfileHOC from "@/components/screens/profile/ProfileHOC";
 
-type Props = {};
 
-const page = (props: Props) => {
+const page = () => {
 	return <ProfileHOC />;
 };
 

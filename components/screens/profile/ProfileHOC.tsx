@@ -1,6 +1,5 @@
 import dynamic from "next/dynamic";
 
-type Props = {};
 
 const Profile = dynamic(
 	() => import("./Profile").then((mod) => mod.ProfilePage),
@@ -9,7 +8,7 @@ const Profile = dynamic(
 	}
 );
 
-const ProfileHOC = (props: Props) => {
+const ProfileHOC = () => {
 	return <Profile />;
 };
 

@@ -1,5 +1,5 @@
 "use client";
-import { AppLayout } from "@/components/custom/Layout/Layout";
+import { AppLayout } from "@/components/custom/layout/Layout";
 import React from "react";
 
 type LayoutProps = {

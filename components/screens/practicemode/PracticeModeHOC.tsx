@@ -1,8 +1,6 @@
 import dynamic from "next/dynamic";
 
-type PracticeModeProps = {
-	onExit: () => void;
-};
+
 
 const PracticeMode = dynamic(
 	() => import("./PracticeMode").then((mod) => mod.PracticeMode),
@@ -10,8 +8,8 @@ const PracticeMode = dynamic(
 		ssr: false,
 	}
 );
-const PracticeModeHOC = (props: PracticeModeProps) => {
-	return <PracticeMode onExit={() => window.history.back()} />;
+const PracticeModeHOC = () => {
+	return <PracticeMode />;
 };
 
 export default PracticeModeHOC;
