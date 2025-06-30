@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +16,10 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" className="transition-colors duration-300">
-			<body className="transition-colors duration-300">{children}</body>
+			<body className="transition-colors duration-300">
+				<NextTopLoader />
+				{children}
+			</body>
 		</html>
 	);
 }
