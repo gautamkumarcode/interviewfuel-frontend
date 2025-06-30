@@ -10,7 +10,7 @@ import {
 	TrendingUp,
 	Users,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 
 const sampleQuestions = [
 	{
@@ -81,8 +81,8 @@ export default function HomePage() {
 		}
 	};
 
-	const handleQuestionClick = (questionId: number) => {
-		router.push(`/questions/${questionId}`);
+	const handleQuestionClick = (questionId: number, category: string) => {
+		router.push(`/questions/${category}/${questionId}`);
 	};
 
 	return (
@@ -177,7 +177,7 @@ export default function HomePage() {
 					<Card
 						key={question.id}
 						className="border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300 cursor-pointer group"
-						onClick={() => handleQuestionClick(question.id)}>
+						onClick={() => handleQuestionClick(question.id, question.category)}>
 						<CardContent className="p-6">
 							<div className="flex items-start justify-between gap-4">
 								<div className="flex-1">
