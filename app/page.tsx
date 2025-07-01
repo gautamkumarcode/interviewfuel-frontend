@@ -1,4 +1,5 @@
 // app/page.tsx or pages/index.tsx
+import Link from "next/link";
 import React from "react";
 
 const LandingPage: React.FC = () => {
@@ -8,9 +9,9 @@ const LandingPage: React.FC = () => {
       <header className="bg-green-700 text-white p-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold">Interview Fuel</h1>
         <nav className="space-x-6">
-          <a href="#features" className="hover:underline">Features</a>
-          <a href="#about" className="hover:underline">About</a>
-          <a href="#contact" className="hover:underline">Contact</a>
+          <Link href="#features" className="hover:underline">Features</Link>
+          <Link href="#about" className="hover:underline">About</Link>
+          <Link href="#contact" className="hover:underline">Contact</Link>
         </nav>
       </header>
 
@@ -22,12 +23,12 @@ const LandingPage: React.FC = () => {
         <p className="max-w-xl mx-auto text-lg mb-8">
           Personalized resources and practice to help you crack your next interview with confidence.
         </p>
-        <a
-          href="/dashboard"
+        <Link
+          href="/questions"
           className="inline-block bg-yellow-400 text-black font-semibold py-3 px-6 rounded hover:bg-yellow-300 transition"
         >
           Get Started
-        </a>
+        </Link>
       </section>
 
       {/* Features Section */}
@@ -61,12 +62,12 @@ const LandingPage: React.FC = () => {
       {/* Call to Action */}
       <section id="start" className="bg-green-700 text-white text-center py-16">
         <h3 className="text-3xl font-bold mb-4">Ready to land your dream job?</h3>
-        <a
+        <Link
           href="#contact"
           className="inline-block bg-yellow-400 text-black font-semibold py-3 px-6 rounded hover:bg-yellow-300 transition"
         >
           Contact Us
-        </a>
+        </Link>
       </section>
 
       {/* Footer */}

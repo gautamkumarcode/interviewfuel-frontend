@@ -10,8 +10,9 @@ import { signupUser } from "@/services/authservices"
 import { CustomButton } from "@/components/custom/CustomButton/CustomButton"
 import { Mail, User, Lock, EyeOff, Eye } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+// import { toast } from "sonner"
 import Link from "next/link"
+import { useTheme } from "@/context/theme.context"
 
 export const SignupForm = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -19,6 +20,7 @@ export const SignupForm = () => {
 
 
 	const router = useRouter();
+	const { toast } = useTheme();
 
 	const form = useForm<SignupFormData>({
 		resolver: zodResolver(signupSchema),
@@ -27,6 +29,7 @@ export const SignupForm = () => {
 			username: "",
 			email: "",
 			password: "",
+			// role: "user"
 		},
 		mode: "onChange",
 	})
@@ -34,11 +37,11 @@ export const SignupForm = () => {
 	const onSubmit = async (data: SignupFormData) => {
 		try {
 			setIsLoading(true)
-			const response = await signupUser(data)
+			 await signupUser(data)
 			toast.success("login successfull")
 			router.push("/login")
 		} catch (error: any) {
-			toast.error(" Signup failed:", error.response?.data?.message || error.message)
+			toast.error(error.message)
 		} finally {
 			setIsLoading(false)
 		}
@@ -47,6 +50,12 @@ export const SignupForm = () => {
 	const handleTogglePasswordCheck = () => {
 		setLookUpPass((prev) => !prev)
 	}
+
+	// const roles = [
+	// 	{ label: "User", value: "user" },
+	// 	{ label: "Admin", value: "admin" },
+	// ]
+
 	return (
 		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-8">
 			<div className="w-full max-w-md">
@@ -130,7 +139,7 @@ export const SignupForm = () => {
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel className="text-sm font-semibold text-gray-700">
-											Password <span className="text-red-500">*</span>
+											Password
 										</FormLabel>
 										<FormControl>
 											<div className="relative">
@@ -158,6 +167,40 @@ export const SignupForm = () => {
 									</FormItem>
 								)}
 							/>
+							{/* <FormField
+								control={form.control}
+								name="role"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="text-sm font-semibold text-gray-700">Role</FormLabel>
+										<FormControl>
+											<RadioGroup
+												value={field.value}
+												onValueChange={field.onChange}
+												className="flex gap-4"
+											>
+												{roles.map((role) => (
+													<FormItem
+														key={role.value}
+														className="w-full"
+													>
+														<FormLabel
+															className="flex items-center gap-4 w-full h-14 px-4 bg-gradient-to-r from-blue-600 to-indigo-600  hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-md hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02] cursor-pointer"
+														>
+															<FormControl>
+																<RadioGroupItem value={role.value} className="h-5 w-5 border-white checked:bg-white checked:text-indigo-600" />
+															</FormControl>
+															<span className="text-base">{role.label}</span>
+														</FormLabel>
+													</FormItem>
+												))}
+
+											</RadioGroup>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/> */}
 
 							<div className="pt-2">
 								<CustomButton
