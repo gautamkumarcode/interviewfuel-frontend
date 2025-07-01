@@ -44,20 +44,20 @@ export const CustomSidebar: React.FC<props> = ({ children }) => {
 				className={cn(
 					"mx-auto flex w-full flex-1 flex-col overflow-hidden rounded-md border border-neutral-200 bg-gray-100 md:flex-row dark:border-neutral-700 dark:bg-neutral-800"
 				)}>
-				<Sidebar open={open} setOpen={setOpen}>
-					<SidebarBody className="justify-between gap-4">
+				<Sidebar open={open} setOpen={setOpen} >
+					<SidebarBody className="justify-between gap-4 ">
 						<div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
 							{/* Logo */}
 							{<LogoIcon open={open} setOpen={setOpen} />}
 
-							<div className="mt-6 space-y-2">
+							<div className="mt-6 space-y-2 ">
 								{/* Frontend Category */}
 								<div>
 									<Button
 										variant="ghost"
 										onClick={() => toggleCategory("Frontend")}
-										className="w-full justify-start h-10 px-2 hover:bg-gray-100 dark:hover:bg-gray-800">
-										<div className="flex items-center justify-between w-full">
+										className="w-full justify-start h-10 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+										<div className="flex items-center justify-between w-full ">
 											<div className="flex items-center gap-2">
 												<Globe className="h-4 w-4 text-blue-600 dark:text-blue-400" />
 												{open && (
@@ -75,15 +75,15 @@ export const CustomSidebar: React.FC<props> = ({ children }) => {
 
 									{/* Frontend Items */}
 									{isCategoryExpanded("Frontend") && open && (
-										<div className="ml-6 mt-2 space-y-1">
+										<div className="ml-6 mt-2 space-y-1 ">
 											{techStacks[0].items.map((item) => (
 												<SidebarLink
 													key={item.name}
 													link={{
 														href: item.href,
 														icon: (
-															<div className="flex items-center justify-between w-full">
-																<div className="flex items-center gap-2">
+															<div className="flex items-center justify-between w-full cursor-pointer">
+																<div className="flex items-center gap-2 ">
 																	<item.icon
 																		className={cn("h-3.5 w-3.5", item.color)}
 																	/>
@@ -109,7 +109,7 @@ export const CustomSidebar: React.FC<props> = ({ children }) => {
 										variant="ghost"
 										onClick={() => toggleCategory("Backend")}
 										className="w-full justify-start h-10 px-2 hover:bg-gray-100 dark:hover:bg-gray-800">
-										<div className="flex items-center justify-between w-full">
+										<div className="flex items-center justify-between w-full cursor-pointer">
 											<div className="flex items-center gap-2">
 												<Database className="h-4 w-4 text-purple-600 dark:text-purple-400" />
 												{open && (
@@ -134,7 +134,7 @@ export const CustomSidebar: React.FC<props> = ({ children }) => {
 													link={{
 														href: item.href,
 														icon: (
-															<div className="flex items-center justify-between w-full">
+															<div className="flex items-center justify-between w-full cursor-pointer">
 																<div className="flex items-center gap-2">
 																	<item.icon
 																		className={cn("h-3.5 w-3.5", item.color)}
@@ -161,7 +161,7 @@ export const CustomSidebar: React.FC<props> = ({ children }) => {
 										variant="ghost"
 										onClick={() => toggleCategory("Mobile")}
 										className="w-full justify-start h-10 px-2 hover:bg-gray-100 dark:hover:bg-gray-800">
-										<div className="flex items-center justify-between w-full">
+										<div className="flex items-center justify-between w-full cursor-pointer">
 											<div className="flex items-center gap-2">
 												<Smartphone className="h-4 w-4 text-green-600 dark:text-green-400" />
 												{open && (
@@ -186,7 +186,7 @@ export const CustomSidebar: React.FC<props> = ({ children }) => {
 													link={{
 														href: item.href,
 														icon: (
-															<div className="flex items-center justify-between w-full">
+															<div className="flex items-center justify-between w-full cursor-pointer">
 																<div className="flex items-center gap-2">
 																	<item.icon
 																		className={cn("h-3.5 w-3.5", item.color)}
@@ -213,7 +213,7 @@ export const CustomSidebar: React.FC<props> = ({ children }) => {
 										variant="ghost"
 										onClick={() => toggleCategory("Data Science")}
 										className="w-full justify-start h-10 px-2 hover:bg-gray-100 dark:hover:bg-gray-800">
-										<div className="flex items-center justify-between w-full">
+										<div className="flex items-center justify-between w-full cursor-pointer">
 											<div className="flex items-center gap-2">
 												<TrendingUp className="h-4 w-4 text-pink-600 dark:text-pink-400" />
 												{open && (
@@ -240,7 +240,7 @@ export const CustomSidebar: React.FC<props> = ({ children }) => {
 													link={{
 														href: item.href,
 														icon: (
-															<div className="flex items-center justify-between w-full">
+															<div className="flex items-center justify-between w-full cursor-pointer">
 																<div className="flex items-center gap-2">
 																	<item.icon
 																		className={cn("h-3.5 w-3.5", item.color)}
@@ -267,7 +267,7 @@ export const CustomSidebar: React.FC<props> = ({ children }) => {
 										variant="ghost"
 										onClick={() => toggleCategory("System Design")}
 										className="w-full justify-start h-10 px-2 hover:bg-gray-100 dark:hover:bg-gray-800">
-										<div className="flex items-center justify-between w-full">
+										<div className="flex items-center justify-between w-full cursor-pointer">
 											<div className="flex items-center gap-2">
 												<Brain className="h-4 w-4 text-orange-600 dark:text-orange-400" />
 												{open && (
@@ -294,7 +294,7 @@ export const CustomSidebar: React.FC<props> = ({ children }) => {
 													link={{
 														href: item.href,
 														icon: (
-															<div className="flex items-center justify-between w-full">
+															<div className="flex items-center justify-between w-full cursor-pointer">
 																<div className="flex items-center gap-2">
 																	<item.icon
 																		className={cn("h-3.5 w-3.5", item.color)}
@@ -323,7 +323,7 @@ export const CustomSidebar: React.FC<props> = ({ children }) => {
 								link={{
 									href: "/profile",
 									icon: (
-										<div className="flex items-center gap-2 w-full">
+										<div className="flex items-center gap-2 w-full cursor-pointer">
 											<Avatar className="h-8 w-8 ring-2 ring-green-500/20">
 												<AvatarImage
 													src="https://github.com/shadcn.png"
