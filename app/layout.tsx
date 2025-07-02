@@ -1,7 +1,6 @@
+import { Provider } from "@/common/provider";
 import type { Metadata } from "next";
-import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
-import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
 	title: "InterviewFuel",
@@ -18,9 +17,7 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="transition-colors duration-300">
 			<body className="transition-colors duration-300">
-				<Toaster richColors position="top-right" />
-				<NextTopLoader />
-				{children}
+				<Provider>{children}</Provider>
 			</body>
 		</html>
 	);
