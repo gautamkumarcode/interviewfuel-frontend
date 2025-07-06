@@ -2,14 +2,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Activity, BarChart3, Clock } from "lucide-react";
-import {
-	Bar,
-	BarChart,
-	CartesianGrid,
-	ResponsiveContainer,
-	XAxis,
-	YAxis,
-} from "recharts";
+// import {
+// 	Bar,
+// 	BarChart,
+// 	CartesianGrid,
+// 	ResponsiveContainer,
+// 	XAxis,
+// 	YAxis,
+// } from "recharts";
 
 export function ActivityPatterns() {
 	return (

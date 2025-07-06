@@ -1,3 +1,5 @@
+"use client"
+
 import { CustomButton } from "@/components/custom/CustomButton/CustomButton";
 import {
 	Form,
@@ -8,14 +10,27 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Link } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-
+import { type LoginFormData, loginSchema } from "./validation/loginSchema";
+// import { toast } from "sonner"
+import { BackgroundBeams } from "@/components/ui/background-beams";
+import { useTheme } from "@/context/theme.context";
+import { signIn } from "next-auth/react";
 
 const LoginForm = () => {
 	const [lookUpPass, setLookUpPass] = useState<boolean>(false);
-	const form = useForm({
+	const [isLoading, setIsLoading] = useState(false);
+
+	const router = useRouter();
+	const { toast } = useTheme();
+
+	const form = useForm<LoginFormData>({
+		resolver: zodResolver(loginSchema),
 		defaultValues: {
 			email: "",
 			password: "",
@@ -23,93 +38,152 @@ const LoginForm = () => {
 		mode: "onChange",
 	});
 
-	const onSubmit = async (data: any) => {
-		console.log("Form submitted with data:", data);
+	const onSubmit = async (data: LoginFormData) => {
+		try {
+			setIsLoading(true);
+
+			const res = await signIn("credentials", {
+				redirect: false,
+				email: data.email,
+				password: data.password,
+			});
+
+			if (res?.ok) {
+				toast.success("Login successful");
+				router.push("/questions");
+			} else {
+				toast.error("Invalid email or password");
+			}
+		} catch (error) {
+			toast.error("Something went wrong");
+		} finally {
+			setIsLoading(false);
+		}
 	};
+
+	const handleTogglePasswordCheck = () => {
+		setLookUpPass((prev) => !prev);
+	};
+
 	return (
-		<Form {...form}>
-			<form
-				onSubmit={form.handleSubmit(onSubmit)}
-				className="flex flex-col gap-4 w-1/2 mx-auto sm:gap-6 font-manrope ">
-				<FormField
-					name="email"
-					control={form.control}
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel className="text-sm font-thin">
-								Email <span className="text-red-600">*</span>
-							</FormLabel>
-							<FormControl>
-								<Input
-									type="text"
-									placeholder="Enter Email"
-									className={`flex ${
-										form.formState.errors.email
-											? "border-red-500"
-											: "focus:border-green-500"
-									} rounded-[6px] font-thin text-sm bg-transparent sm:h-14 h-12 `}
-									{...field}
-								/>
-							</FormControl>
-
-							<FormMessage className="text-xs text-red-600" />
-						</FormItem>
-					)}
-				/>
-
-				<FormField
-					name="password"
-					control={form.control}
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel className="text-sm font-thin">
-								Password <span className="text-red-600">*</span>
-							</FormLabel>
-							<FormControl>
-								<div className="relative">
-									<Input
-										type={lookUpPass ? "text" : "password"}
-										className={`flex rounded-[6px] font-thin text-sm bg-transparent sm:h-14 h-12 ${
-											form.formState.errors.password
-												? "border-red-500"
-												: "focus:border-green-500"
-										}`}
-										placeholder="Enter Password"
-										{...field}
-									/>
-									{/* <span className="absolute top-4 text-md right-6 w-3 h-3 sm:top-5">
-											{lookUpPass ? (
-												<OpenEye
-													onClick={handleTogglePasswordCheck}
-													className="text-[#FFFFFF] cursor-pointer"
-												/>
-											) : (
-												<CloseEye
-													onClick={handleTogglePasswordCheck}
-													className="text-[#FFFFFF] cursor-pointer"
-												/>
-											)}
-										</span> */}
-								</div>
-							</FormControl>
-							<FormMessage className="text-xs text-red-600" />
-						</FormItem>
-					)}
-				/>
-
-				<div className="flex justify-end my-1">
-					<Link href={"/forgot-password"} className="flex text-xs">
-						Forgot Password?
-					</Link>
+		<div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 px-4 py-8">
+			<BackgroundBeams className="absolute -z-10 inset-0 bg-slate-950" />
+			<div className="w-full max-w-sm">
+				{/* Header */}
+				<div className="text-center mb-8">
+					<h1 className="text-3xl font-bold text-gray-900 mb-2">
+						Welcome Back
+					</h1>
+					<p className="text-gray-600">Sign in to continue to your account</p>
 				</div>
-				{/* <div className="w-full mb-4">
-						<RecaptchaWrapper onVerificationChange={setIsVerified} />
-					</div> */}
-				<CustomButton content="Login" isLoading={true} />
-				{/* <HashLoader color="blue" /> */}
-			</form>
-		</Form>
+
+				{/* Form Container */}
+				<div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-white/20">
+					<Form {...form}>
+						<form
+							onSubmit={form.handleSubmit(onSubmit)}
+							className="space-y-6 w-full">
+							{/* Email */}
+							<FormField
+								name="email"
+								control={form.control}
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="text-sm font-semibold text-gray-700">
+											Email Address <span className="text-red-500">*</span>
+										</FormLabel>
+										<FormControl>
+											<div className="relative">
+												<Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+												<Input
+													type="text"
+													placeholder="Enter your email"
+													className={`pl-10 h-12 rounded-lg transition-all duration-200 ${
+														form.formState.errors.email
+															? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+															: "border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+													}`}
+													{...field}
+												/>
+											</div>
+										</FormControl>
+										<FormMessage className="text-red-500 text-xs" />
+									</FormItem>
+								)}
+							/>
+
+							{/* Password */}
+							<FormField
+								name="password"
+								control={form.control}
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="text-sm font-semibold text-gray-700">
+											Password <span className="text-red-500">*</span>
+										</FormLabel>
+										<FormControl>
+											<div className="relative">
+												<Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+												<Input
+													type={lookUpPass ? "text" : "password"}
+													placeholder="Enter your password"
+													className={`pl-10 pr-12 h-12 rounded-lg transition-all duration-200 ${
+														form.formState.errors.password
+															? "border-red-500 focus:border-red-500 focus:ring-2 focus:ring-red-200"
+															: "border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+													}`}
+													{...field}
+												/>
+												{/* Eye toggle icon */}
+												<button
+													type="button"
+													onClick={handleTogglePasswordCheck}
+													className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1 cursor-pointer">
+													{lookUpPass ? (
+														<EyeOff size={18} />
+													) : (
+														<Eye size={18} />
+													)}
+												</button>
+											</div>
+										</FormControl>
+										<FormMessage className="text-red-500 text-xs" />
+									</FormItem>
+								)}
+							/>
+
+							<div className="flex justify-end">
+								<Link
+									href="/forgot-password"
+									className="text-blue-600 hover:text-blue-700 font-medium hover:underline transition-colors">
+									Forgot Password?
+								</Link>
+							</div>
+
+							<div className="pt-2">
+								<CustomButton
+									content="Sign In"
+									isLoading={isLoading}
+									className="w-full h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+								/>
+							</div>
+						</form>
+					</Form>
+
+					<div className="mt-6 text-center">
+						<p className="text-sm text-gray-600">
+							Don&apos;t have an account?
+							<Link
+								href="/signup"
+								className="text-blue-600 hover:text-blue-700 font-semibold hover:underline transition-colors">
+								Create one here
+							</Link>
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 };
 
-export default LoginForm;
+export default LoginForm
