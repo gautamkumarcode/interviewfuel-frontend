@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useTheme } from "@/context/theme.context";
 import { useRouter } from "next/navigation";
 import { MobileBreadcrumb } from "../mobileNav/MobileBreadcrumb";
 import { MobileSearch } from "../mobileNav/MobileSearch";
@@ -22,17 +23,15 @@ import { BreadcrumbNav } from "./BreadcrumbNav";
 export function AppNavbar() {
 	const [searchQuery, setSearchQuery] = React.useState("");
 	const [mobileSearchOpen, setMobileSearchOpen] = React.useState(false);
-	const [isDarkMode, setIsDarkMode] = React.useState(false);
 	const router = useRouter();
+	const { isDarkMode, toggleMode } = useTheme();
 
 	// Initialize dark mode from localStorage or system preference
-
 
 	return (
 		<>
 			<header className="sticky  border-gray-300 top-0 z-10 border-b  bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
 				<div className="flex h-16 items-center gap-4 px-4 md:px-6">
-
 					<div className="md:hidden flex-1 flex items-center justify-between">
 						<MobileBreadcrumb />
 						<div className="flex items-center gap-2">
@@ -40,12 +39,11 @@ export function AppNavbar() {
 								isOpen={mobileSearchOpen}
 								onToggle={() => setMobileSearchOpen(!mobileSearchOpen)}
 							/>
-							<Button 
-								variant="ghost" 
-								size="sm" 
-								onClick={()=>setIsDarkMode(!isDarkMode)}
-								className="h-10 w-10 p-0"
-							>
+							<Button
+								variant="ghost"
+								size="sm"
+								onClick={() => toggleMode()}
+								className="h-10 w-10 p-0">
 								{isDarkMode ? (
 									<Sun className="h-5 w-5 text-green-600" />
 								) : (
@@ -79,7 +77,7 @@ export function AppNavbar() {
 							<Button
 								variant="outline"
 								size="sm"
-								onClick={()=>setIsDarkMode(!isDarkMode)}
+								onClick={() => toggleMode()}
 								className="gap-2 bg-transparent border-green-200 hover:border-green-300 hover:bg-green-50 dark:border-green-700 dark:hover:border-green-600 dark:hover:bg-green-900/20">
 								{isDarkMode ? (
 									<Sun className="h-4 w-4 text-green-600" />

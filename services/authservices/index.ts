@@ -1,22 +1,22 @@
-import { LoginPayloadData, LoginResponse } from '@/types/auth/login';
+import { LoginFormData } from '@/components/screens/login/components/validation/loginSchema';
+import { API_URL } from '@/constants/api';
 import { SignupPayloadData, SignupResponse } from '@/types/auth/signup';
+import { unauthenticatedInstance } from '@/utils/axios';
 import axios from 'axios';
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 
-export const loginUser = async (loginData:LoginPayloadData) => {
-    console.log(BASE_URL)
-  const response = await axios.post<LoginResponse>(`${BASE_URL}/login`, loginData);
+
+export const loginUser = async (data: LoginFormData) => {
+  const response = await unauthenticatedInstance.post("/auth/login", data);
   return response.data;
 };
-
 export const signupUser = async (signupData:SignupPayloadData) => {
-  const response = await axios.post<SignupResponse>(`${BASE_URL}/register`, signupData);
+  const response = await axios.post<SignupResponse>(`${API_URL}/register`, signupData);
   return response.data;
 };
 
 export const sendForgotPassword = async (emailData: { email: string }) => {
-	const response = await axios.post(`${BASE_URL}/forgot-password`, emailData);
+	const response = await axios.post(`${API_URL}/forgot-password`, emailData);
 	return response.data;
 };
 
