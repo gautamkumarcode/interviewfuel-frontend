@@ -1,7 +1,7 @@
 "use client";
 
 import { ModalProvider } from "@/context/modal-context";
-import { ThemeProvider } from "@/context/theme.context";
+import { ThemeProvider as CustomThemeProvider } from "@/context/theme.context";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import NextTopLoader from "nextjs-toploader";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -18,15 +18,20 @@ export const Provider: React.FC<{
 			},
 		},
 	});
+
 	return (
-		<NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
+		<NextThemesProvider
+			attribute="class"
+			defaultTheme="light"
+			enableSystem
+			disableTransitionOnChange>
 			<QueryClientProvider client={queryClient}>
-				<ThemeProvider>
+				<CustomThemeProvider>
 					<ModalProvider>
 						<NextTopLoader showSpinner={false} color="#0CAF60" />
 						{children}
 					</ModalProvider>
-				</ThemeProvider>
+				</CustomThemeProvider>
 			</QueryClientProvider>
 		</NextThemesProvider>
 	);
