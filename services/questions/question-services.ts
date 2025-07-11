@@ -1,14 +1,16 @@
 import { apiEndPoint } from "@/constants/api";
 import { AxiosResponseTypeWithPagination } from "@/types/axios-response";
+import { GetAllQuestionsResponseType } from "@/types/interfaces/questions/getQuestion-type";
 import { unauthenticatedInstance } from "@/utils/axios";
 
 class QuestionService {
-	public getQuestions = async (): Promise<
-		AxiosResponseTypeWithPagination<string>
+	public getAllQuestions = async (): Promise<
+		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
 	> => {
 		const { data } = await unauthenticatedInstance.get<
-			AxiosResponseTypeWithPagination<string>
-		>(apiEndPoint.login);
+			AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
+		>(apiEndPoint.getAllQuestions);
+
 		return data;
 	};
 

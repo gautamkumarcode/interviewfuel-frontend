@@ -1,9 +1,8 @@
 
-import LandingPage from "@/components/screens/landingPage/LandingPage";
-import React from "react";
+import LandingPageHOC from "@/components/screens/landingPage/LandingPageHOC";
 
 const page = () => {
-  return <LandingPage />;
-}
+	return <LandingPageHOC />;
+};
 
 export default page;
