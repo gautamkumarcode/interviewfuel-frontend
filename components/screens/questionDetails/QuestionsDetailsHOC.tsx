@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 
 interface QuestionsDetailsHOCProps {
-	questionId: number;
+	questionId: string;
 	onBack: () => void;
 }
 

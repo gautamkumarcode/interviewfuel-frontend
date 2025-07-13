@@ -10,7 +10,6 @@ import {
 	Code2,
 	Copy,
 	Eye,
-	MessageCircle,
 	Share2,
 	Star,
 	Tag,
@@ -19,184 +18,25 @@ import {
 } from "lucide-react";
 import * as React from "react";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { questionService } from "@/services/questions/question-services";
+import {
+	AxiosErrorResponseType,
+	AxiosResponseTypeWithoutPagination,
+} from "@/types/axios-response";
+import { GetSingleQuestionResponseType } from "@/types/interfaces/questions/getQuestion-type";
+import { AxiosError } from "axios";
+import { useQuery } from "react-query";
 
 interface QuestionDetailViewProps {
-	questionId: number;
+	questionId: string;
 	onBack: () => void;
+	
 }
-
-const questionData = {
-	1: {
-		id: 1,
-		title: "What is the difference between let, const, and var in JavaScript?",
-		category: "JavaScript",
-		difficulty: "Easy",
-		tags: ["Variables", "ES6", "Fundamentals", "Scope"],
-		views: 1234,
-		likes: 89,
-		bookmarks: 45,
-		timeAgo: "2 hours ago",
-		companies: ["Google", "Microsoft", "Amazon", "Meta"],
-		frequency: "Very High",
-		description: `This is one of the most fundamental JavaScript questions asked in interviews. Understanding the differences between var, let, and const is crucial for writing modern JavaScript code and avoiding common pitfalls.`,
-
-		content: `
-## The Question
-
-Explain the key differences between \`var\`, \`let\`, and \`const\` in JavaScript. When would you use each one?
-
-## Key Differences
-
-### 1. Scope
-- **var**: Function-scoped or globally-scoped
-- **let**: Block-scoped
-- **const**: Block-scoped
-
-### 2. Hoisting Behavior
-- **var**: Hoisted and initialized with \`undefined\`
-- **let**: Hoisted but not initialized (Temporal Dead Zone)
-- **const**: Hoisted but not initialized (Temporal Dead Zone)
-
-### 3. Re-declaration
-- **var**: Can be re-declared in the same scope
-- **let**: Cannot be re-declared in the same scope
-- **const**: Cannot be re-declared in the same scope
-
-### 4. Re-assignment
-- **var**: Can be re-assigned
-- **let**: Can be re-assigned
-- **const**: Cannot be re-assigned (but objects/arrays can be mutated)
-    `,
-
-		solutions: [
-			{
-				title: "Scope Differences Example",
-				language: "javascript",
-				code: `// var - Function scoped
-function varExample() {
-  if (true) {
-    var x = 1;
-  }
-  console.log(x); // 1 - accessible outside the block
-}
-
-// let - Block scoped
-function letExample() {
-  if (true) {
-    let y = 1;
-  }
-  console.log(y); // ReferenceError: y is not defined
-}
-
-// const - Block scoped
-function constExample() {
-  if (true) {
-    const z = 1;
-  }
-  console.log(z); // ReferenceError: z is not defined
-}`,
-				explanation:
-					"This example demonstrates how var is function-scoped while let and const are block-scoped.",
-			},
-			{
-				title: "Hoisting Behavior",
-				language: "javascript",
-				code: `// var hoisting
-console.log(a); // undefined (not an error)
-var a = 5;
-
-// let hoisting (Temporal Dead Zone)
-console.log(b); // ReferenceError: Cannot access 'b' before initialization
-let b = 10;
-
-// const hoisting (Temporal Dead Zone)
-console.log(c); // ReferenceError: Cannot access 'c' before initialization
-const c = 15;`,
-				explanation:
-					"var is hoisted and initialized with undefined, while let and const are hoisted but remain uninitialized until their declaration is reached.",
-			},
-			{
-				title: "Re-assignment and Mutation",
-				language: "javascript",
-				code: `// var - can be re-declared and re-assigned
-var name = "John";
-var name = "Jane"; // No error
-name = "Bob"; // No error
-
-// let - can be re-assigned but not re-declared
-let age = 25;
-// let age = 30; // SyntaxError: Identifier 'age' has already been declared
-age = 30; // OK
-
-// const - cannot be re-assigned or re-declared
-const PI = 3.14159;
-// const PI = 3.14; // SyntaxError: Identifier 'PI' has already been declared
-// PI = 3.14; // TypeError: Assignment to constant variable
-
-// const with objects (mutation allowed)
-const person = { name: "Alice", age: 30 };
-person.age = 31; // OK - mutating the object
-person.city = "New York"; // OK - adding property
-// person = {}; // TypeError: Assignment to constant variable`,
-				explanation:
-					"const prevents re-assignment but allows mutation of objects and arrays.",
-			},
-		],
-
-		bestPractices: [
-			"Use `const` by default for values that won't be re-assigned",
-			"Use `let` when you need to re-assign the variable",
-			"Avoid `var` in modern JavaScript due to its confusing scoping rules",
-			"Always declare variables before using them to avoid hoisting issues",
-			"Use meaningful variable names regardless of the declaration type",
-		],
-
-		relatedQuestions: [
-			{
-				id: 2,
-				title: "Explain React Hooks and their use cases",
-				difficulty: "Medium",
-			},
-			{
-				id: 5,
-				title: "Explain the concept of closures in JavaScript",
-				difficulty: "Medium",
-			},
-			{
-				id: 6,
-				title: "What is the JavaScript Event Loop?",
-				difficulty: "Hard",
-			},
-		],
-
-		comments: [
-			{
-				id: 1,
-				author: "Sarah Chen",
-				avatar: "SC",
-				timeAgo: "3 hours ago",
-				content:
-					"Great explanation! The hoisting examples really helped me understand the temporal dead zone concept.",
-				likes: 12,
-			},
-			{
-				id: 2,
-				author: "Mike Johnson",
-				avatar: "MJ",
-				timeAgo: "5 hours ago",
-				content:
-					"I wish I had this explanation when I was learning JavaScript. The scope examples are perfect.",
-				likes: 8,
-			},
-		],
-	},
-};
 
 export const QuestionDetailView = ({
 	questionId,
@@ -207,15 +47,25 @@ export const QuestionDetailView = ({
 	const [copiedCode, setCopiedCode] = React.useState<string | null>(null);
 	const [newComment, setNewComment] = React.useState("");
 
-	const question = questionData[questionId as keyof typeof questionData];
+	console.log(questionId);
 
-	if (!question) {
-		return (
-			<div className="flex items-center justify-center h-64">
-				<p className="text-gray-500">Question not found</p>
-			</div>
-		);
-	}
+	const { data, isLoading } = useQuery<
+		AxiosResponseTypeWithoutPagination<GetSingleQuestionResponseType>,
+		AxiosError<AxiosErrorResponseType>
+	>(
+		["question", questionId],
+		() => questionService.getSingleQuestion(questionId),
+		{
+			staleTime: 1000 * 60 * 5,
+			cacheTime: 1000 * 60 * 10,
+			keepPreviousData: true,
+		}
+	);
+
+	const question = data?.data;
+
+
+	console.log(question);
 
 	const getDifficultyColor = (difficulty: string) => {
 		switch (difficulty) {
@@ -248,8 +98,20 @@ export const QuestionDetailView = ({
 		}
 	};
 
+	if (isLoading) {
+		return <div className="flex justify-center p-8">Loading question...</div>;
+	}
+
+	if (!question) {
+		return (
+			<div className="flex justify-center p-8">
+				<p className="text-gray-500">Question not found</p>
+			</div>
+		);
+	}
+
 	return (
-		<div className=" mx-auto">
+		<div className="mx-auto">
 			{/* Header */}
 			<div className="flex items-center gap-4 mb-6">
 				<Button variant="ghost" onClick={onBack} className="gap-2">
@@ -272,18 +134,17 @@ export const QuestionDetailView = ({
 							</Badge>
 							<Badge variant="outline" className="gap-1">
 								<Building className="h-3 w-3" />
-								{question.companies.length} companies
+								{question.companies?.length} companies
 							</Badge>
 							<Badge variant="outline" className="gap-1">
-								<Zap className="h-3 w-3" />
-								{question.frequency}
+								<Tag className="h-3 w-3" />
+								{question.subcategory}
 							</Badge>
 						</div>
 
 						<div className="flex flex-wrap gap-2 mb-4">
-							{question.tags.map((tag) => (
+							{question.tags?.map((tag) => (
 								<Badge key={tag} variant="secondary" className="text-xs">
-									<Tag className="h-3 w-3 mr-1" />
 									{tag}
 								</Badge>
 							))}
@@ -292,19 +153,19 @@ export const QuestionDetailView = ({
 						<div className="flex items-center gap-6 text-sm text-gray-500">
 							<div className="flex items-center gap-1">
 								<Eye className="h-4 w-4" />
-								<span>{question.views} views</span>
+								<span>{question.stats?.views} views</span>
 							</div>
 							<div className="flex items-center gap-1">
 								<Star className="h-4 w-4" />
-								<span>{question.likes} likes</span>
+								<span>{question.stats?.likes} likes</span>
 							</div>
 							<div className="flex items-center gap-1">
 								<Bookmark className="h-4 w-4" />
-								<span>{question.bookmarks} bookmarks</span>
+								<span>{question.stats?.bookmarks} bookmarks</span>
 							</div>
 							<div className="flex items-center gap-1">
 								<Calendar className="h-4 w-4" />
-								<span>{question.timeAgo}</span>
+								<span>{new Date(question.createdAt).toLocaleDateString()}</span>
 							</div>
 						</div>
 					</div>
@@ -333,115 +194,150 @@ export const QuestionDetailView = ({
 					</div>
 				</div>
 
-				<p className="text-gray-600 leading-relaxed">{question.description}</p>
+				<p className="text-gray-600 leading-relaxed">{question.content}</p>
 			</div>
 
 			{/* Companies */}
-			<Card className="mb-8">
-				<CardHeader>
-					<CardTitle className="text-lg flex items-center gap-2">
-						<Building className="h-5 w-5" />
-						Asked by Companies
-					</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<div className="flex flex-wrap gap-2">
-						{question.companies.map((company) => (
-							<Badge key={company} variant="outline" className="px-3 py-1">
-								{company}
-							</Badge>
-						))}
-					</div>
-				</CardContent>
-			</Card>
+			{question.companies?.length > 0 && (
+				<Card className="mb-8">
+					<CardHeader>
+						<CardTitle className="text-lg flex items-center gap-2">
+							<Building className="h-5 w-5" />
+							Asked by Companies
+						</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<div className="flex flex-wrap gap-2">
+							{question.companies.map((company) => (
+								<Badge
+									key={company._id}
+									variant="outline"
+									className="px-3 py-1">
+									{company.name}
+								</Badge>
+							))}
+						</div>
+					</CardContent>
+				</Card>
+			)}
 
 			{/* Main Content */}
 			<Tabs defaultValue="solution" className="mb-8">
 				<TabsList className="grid w-full grid-cols-3">
 					<TabsTrigger value="solution">Solution & Explanation</TabsTrigger>
-					<TabsTrigger value="discussion">
-						Discussion ({question.comments.length})
-					</TabsTrigger>
+					<TabsTrigger value="discussion">Discussion</TabsTrigger>
 					<TabsTrigger value="related">Related Questions</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="solution" className="space-y-6">
-					{/* Question Content */}
-					<Card>
-						<CardContent className="p-6">
-							<div className="prose prose-gray max-w-none">
+					{/* Rich Answer Content */}
+					{question.richAnswer && (
+						<Card>
+							<CardContent className="p-6">
 								<div
-									dangerouslySetInnerHTML={{
-										__html: question.content
-											.replace(/\n/g, "<br/>")
-											.replace(/##/g, "<h2>")
-											.replace(/###/g, "<h3>")
-											.replace(/`([^`]+)`/g, "<code>$1</code>"),
-									}}
+									className="prose prose-gray max-w-none"
+									dangerouslySetInnerHTML={{ __html: question.richAnswer }}
 								/>
-							</div>
-						</CardContent>
-					</Card>
+							</CardContent>
+						</Card>
+					)}
 
-					{/* Code Solutions */}
-					<div className="space-y-6">
-						{question.solutions.map((solution, index) => (
-							<Card key={index}>
-								<CardHeader>
-									<div className="flex items-center justify-between">
-										<CardTitle className="text-lg flex items-center gap-2">
-											<Code2 className="h-5 w-5" />
-											{solution.title}
-										</CardTitle>
-										<Button
-											variant="outline"
-											size="sm"
-											onClick={() =>
-												copyToClipboard(solution.code, solution.title)
-											}
-											className="gap-2">
-											{copiedCode === solution.title ? (
-												<Check className="h-4 w-4" />
-											) : (
-												<Copy className="h-4 w-4" />
-											)}
-											{copiedCode === solution.title ? "Copied!" : "Copy"}
-										</Button>
-									</div>
-								</CardHeader>
-								<CardContent>
-									<div className="bg-gray-900 rounded-lg p-4 mb-4 overflow-x-auto">
-										<pre className="text-sm text-gray-100">
-											<code>{solution.code}</code>
-										</pre>
-									</div>
-									<p className="text-gray-600 leading-relaxed">
-										{solution.explanation}
-									</p>
-								</CardContent>
-							</Card>
-						))}
-					</div>
+					{/* Solutions */}
+					{question.solutions?.length > 0 && (
+						<div className="space-y-6">
+							{question.solutions.map((solution, index) => (
+								<Card key={index}>
+									<CardHeader>
+										<div className="flex items-center justify-between">
+											<CardTitle className="text-lg flex items-center gap-2">
+												<Code2 className="h-5 w-5" />
+												{solution.title || `Solution ${index + 1}`}
+											</CardTitle>
+											<Button
+												variant="outline"
+												size="sm"
+												onClick={() =>
+													copyToClipboard(
+														solution.code,
+														solution.title || `Solution ${index + 1}`
+													)
+												}
+												className="gap-2">
+												{copiedCode ===
+												(solution.title || `Solution ${index + 1}`) ? (
+													<Check className="h-4 w-4" />
+												) : (
+													<Copy className="h-4 w-4" />
+												)}
+												{copiedCode ===
+												(solution.title || `Solution ${index + 1}`)
+													? "Copied!"
+													: "Copy"}
+											</Button>
+										</div>
+									</CardHeader>
+									<CardContent>
+										{solution.code && (
+											<div className="bg-gray-900 rounded-lg p-4 mb-4 overflow-x-auto">
+												<pre className="text-sm text-gray-100">
+													<code>{solution.code}</code>
+												</pre>
+											</div>
+										)}
+										{solution.explanation && (
+											<p className="text-gray-600 leading-relaxed">
+												{solution.explanation}
+											</p>
+										)}
+									</CardContent>
+								</Card>
+							))}
+						</div>
+					)}
 
 					{/* Best Practices */}
-					<Card>
-						<CardHeader>
-							<CardTitle className="text-lg flex items-center gap-2">
-								<Star className="h-5 w-5" />
-								Best Practices
-							</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<ul className="space-y-2">
-								{question.bestPractices.map((practice, index) => (
-									<li key={index} className="flex items-start gap-2">
-										<div className="h-1.5 w-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
-										<span className="text-gray-700">{practice}</span>
-									</li>
-								))}
-							</ul>
-						</CardContent>
-					</Card>
+					{question.bestPractices?.length > 0 && (
+						<Card>
+							<CardHeader>
+								<CardTitle className="text-lg flex items-center gap-2">
+									<Star className="h-5 w-5" />
+									Best Practices
+								</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<ul className="space-y-2">
+									{question.bestPractices.map((practice, index) => (
+										<li key={index} className="flex items-start gap-2">
+											<div className="h-1.5 w-1.5 rounded-full bg-blue-500 mt-2 flex-shrink-0" />
+											<span className="text-gray-700">{practice}</span>
+										</li>
+									))}
+								</ul>
+							</CardContent>
+						</Card>
+					)}
+
+					{/* Hints */}
+					{question.hints?.length > 0 && (
+						<Card>
+							<CardHeader>
+								<CardTitle className="text-lg flex items-center gap-2">
+									<Zap className="h-5 w-5" />
+									Hints
+								</CardTitle>
+							</CardHeader>
+							<CardContent>
+								<ul className="space-y-2">
+									{question.hints.map((hint, index) => (
+										<li key={index} className="flex items-start gap-2">
+											<div className="h-1.5 w-1.5 rounded-full bg-yellow-500 mt-2 flex-shrink-0" />
+											<span className="text-gray-700">{hint.content}</span>
+										</li>
+									))}
+								</ul>
+							</CardContent>
+						</Card>
+					)}
 				</TabsContent>
 
 				<TabsContent value="discussion" className="space-y-6">
@@ -455,7 +351,7 @@ export const QuestionDetailView = ({
 								<Textarea
 									placeholder="Share your thoughts, ask questions, or provide additional insights..."
 									value={newComment}
-									onChange={(e: any) => setNewComment(e.target.value)}
+									onChange={(e) => setNewComment(e.target.value)}
 									className="min-h-[100px]"
 								/>
 								<div className="flex justify-end">
@@ -469,72 +365,38 @@ export const QuestionDetailView = ({
 						</CardContent>
 					</Card>
 
-					{/* Comments */}
-					<div className="space-y-4">
-						{question.comments.map((comment) => (
-							<Card key={comment.id}>
-								<CardContent className="p-6">
-									<div className="flex items-start gap-4">
-										<Avatar className="h-10 w-10">
-											<AvatarFallback>{comment.avatar}</AvatarFallback>
-										</Avatar>
-										<div className="flex-1">
-											<div className="flex items-center gap-2 mb-2">
-												<span className="font-semibold text-gray-900">
-													{comment.author}
-												</span>
-												<span className="text-sm text-gray-500">
-													{comment.timeAgo}
-												</span>
-											</div>
-											<p className="text-gray-700 mb-3">{comment.content}</p>
-											<div className="flex items-center gap-4">
-												<Button
-													variant="ghost"
-													size="sm"
-													className="gap-1 text-gray-500">
-													<ThumbsUp className="h-4 w-4" />
-													{comment.likes}
-												</Button>
-												<Button
-													variant="ghost"
-													size="sm"
-													className="gap-1 text-gray-500">
-													<MessageCircle className="h-4 w-4" />
-													Reply
-												</Button>
-											</div>
-										</div>
-									</div>
-								</CardContent>
-							</Card>
-						))}
-					</div>
+					{/* Comments would go here */}
 				</TabsContent>
 
 				<TabsContent value="related" className="space-y-4">
-					{question.relatedQuestions.map((relatedQ) => (
-						<Card
-							key={relatedQ.id}
-							className="hover:shadow-md transition-shadow cursor-pointer">
-							<CardContent className="p-6">
-								<div className="flex items-center justify-between">
-									<div className="flex-1">
-										<div className="flex items-center gap-3 mb-2">
-											<Badge
-												className={getDifficultyColor(relatedQ.difficulty)}>
-												{relatedQ.difficulty}
-											</Badge>
+					{question.relatedQuestions?.length > 0 ? (
+						question.relatedQuestions.map((relatedQ) => (
+							<Card
+								key={relatedQ._id}
+								className="hover:shadow-md transition-shadow cursor-pointer">
+								<CardContent className="p-6">
+									<div className="flex items-center justify-between">
+										<div className="flex-1">
+											<div className="flex items-center gap-3 mb-2">
+												<Badge
+													className={getDifficultyColor(relatedQ.difficulty)}>
+													{relatedQ.difficulty}
+												</Badge>
+											</div>
+											<h3 className="font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+												{relatedQ.title}
+											</h3>
 										</div>
-										<h3 className="font-semibold text-gray-900 hover:text-blue-600 transition-colors">
-											{relatedQ.title}
-										</h3>
+										<ChevronRight className="h-5 w-5 text-gray-400" />
 									</div>
-									<ChevronRight className="h-5 w-5 text-gray-400" />
-								</div>
-							</CardContent>
-						</Card>
-					))}
+								</CardContent>
+							</Card>
+						))
+					) : (
+						<p className="text-gray-500 text-center py-4">
+							No related questions found
+						</p>
+					)}
 				</TabsContent>
 			</Tabs>
 		</div>

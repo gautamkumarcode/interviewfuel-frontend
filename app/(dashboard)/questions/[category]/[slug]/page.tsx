@@ -5,11 +5,11 @@ import { useParams } from "next/navigation";
 
 export default function QuestionPage() {
 	const params = useParams();
-	const questionId = Number(params.id);
+	const slug = params.slug as string;
 
 	return (
 		<QuestionsDetailsHOC
-			questionId={questionId}
+			questionId={slug as string}
 			onBack={() => window.history.back()}
 		/>
 	);

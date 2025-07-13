@@ -10,127 +10,126 @@ import React, {
 } from "react";
 
 type ToasterState = {
-  message: string;
-  status: boolean;
-  color: string;
-  type: string;
+	message: string;
+	status: boolean;
+	color: string;
+	type: string;
 };
 
 type Toast = {
-  error: (message: string) => void;
-  success: (message: string) => void;
+	error: (message: string) => void;
+	success: (message: string) => void;
 };
 
 interface ThemeContextProps {
-  setShowToaster: React.Dispatch<React.SetStateAction<ToasterState>>;
-  toast: Toast;
-  showToaster: ToasterState;
-  toggleMode: () => void;
-  isDarkMode: boolean;
+	setShowToaster: React.Dispatch<React.SetStateAction<ToasterState>>;
+	toast: Toast;
+	showToaster: ToasterState;
+	toggleMode: () => void;
+	isDarkMode: boolean;
 }
 
 interface ThemeProviderProps {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }
 
 export const ThemeContext = createContext<ThemeContextProps>(
-  {} as ThemeContextProps,
+	{} as ThemeContextProps
 );
 
 export const ThemeProvider: FunctionComponent<ThemeProviderProps> = ({
-  children,
+	children,
 }) => {
-  const [showToaster, setShowToaster] = useState<ToasterState>({
-    status: false,
-    message: "",
-    color: "",
-    type: "",
-  });
+	const [showToaster, setShowToaster] = useState<ToasterState>({
+		status: false,
+		message: "",
+		color: "",
+		type: "",
+	});
 
-  const [isDarkMode, setIsDarkMode] = useState(true);
+	const [isDarkMode, setIsDarkMode] = useState(true);
 
-  useEffect(() => {
-    // Check the saved mode from localStorage
-    const savedMode = localStorage.getItem("theme");
+	useEffect(() => {
+		// Check the saved mode from localStorage
+		const savedMode = localStorage.getItem("theme");
 
-    if (savedMode) {
-      setIsDarkMode(savedMode === "dark");
-      if (savedMode === "dark") {
-        document.documentElement.classList.add("dark");
-      } else {
-        document.documentElement.classList.remove("dark");
-      }
-    } else {
-      // Default mode is dark if not stored
-      setIsDarkMode(true); // Set state to dark mode
-      document.documentElement.classList.add("dark"); // Add the dark class by default
-      localStorage.setItem("theme", "dark"); // Optionally, save dark mode as default
-    }
-  }, []);
+		if (savedMode) {
+			setIsDarkMode(savedMode === "dark");
+			if (savedMode === "dark") {
+				document.documentElement.classList.add("dark");
+			} else {
+				document.documentElement.classList.remove("dark");
+			}
+		} else {
+			// Default mode is dark if not stored
+			setIsDarkMode(true); // Set state to dark mode
+			document.documentElement.classList.add("dark"); // Add the dark class by default
+			localStorage.setItem("theme", "dark"); // Optionally, save dark mode as default
+		}
+	}, []);
 
-  const toggleMode = () => {
-    setIsDarkMode((prev) => !prev);
-    const newMode = !isDarkMode ? "dark" : "light";
-    localStorage.setItem("theme", newMode);
-    if (newMode === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  };
+	const toggleMode = () => {
+		setIsDarkMode((prev) => !prev);
+		const newMode = !isDarkMode ? "dark" : "light";
+		localStorage.setItem("theme", newMode);
+		if (newMode === "dark") {
+			document.documentElement.classList.add("dark");
+		} else {
+			document.documentElement.classList.remove("dark");
+		}
+	};
 
-  let toasterTimeout: NodeJS.Timeout;
-  const toast = {
-    error: (message: string) => {
-      setShowToaster({
-        ...showToaster,
-        message: message,
-        status: true,
-        type: "Error",
-      });
-      toasterTimeout = setTimeout(() => {
-        setShowToaster({
-          ...showToaster,
-          status: false,
-        });
-      }, 3000);
-    },
-    success: (message: string) => {
-      setShowToaster({
-        ...showToaster,
-        message: message,
-        status: true,
-        type: "Success",
-      });
-      toasterTimeout = setTimeout(() => {
-        setShowToaster({
-          ...showToaster,
-          status: false,
-        });
-      }, 3000);
-    },
-  };
+	let toasterTimeout: NodeJS.Timeout;
+	const toast = {
+		error: (message: string) => {
+			setShowToaster({
+				...showToaster,
+				message: message,
+				status: true,
+				type: "Error",
+			});
+			toasterTimeout = setTimeout(() => {
+				setShowToaster({
+					...showToaster,
+					status: false,
+				});
+			}, 3000);
+		},
+		success: (message: string) => {
+			setShowToaster({
+				...showToaster,
+				message: message,
+				status: true,
+				type: "Success",
+			});
+			toasterTimeout = setTimeout(() => {
+				setShowToaster({
+					...showToaster,
+					status: false,
+				});
+			}, 3000);
+		},
+	};
 
-  useEffect(() => {
-    return () => {
-      clearTimeout(toasterTimeout);
-    };
-  }, []);
+	useEffect(() => {
+		return () => {
+			clearTimeout(toasterTimeout);
+		};
+	}, []);
 
-  return (
-    <ThemeContext.Provider
-      value={{ showToaster, toast, setShowToaster, isDarkMode, toggleMode }}
-    >
-      {showToaster.status && <Toaster />}
-      {children}
-    </ThemeContext.Provider>
-  );
+	return (
+		<ThemeContext.Provider
+			value={{ showToaster, toast, setShowToaster, isDarkMode, toggleMode }}>
+			{showToaster.status && <Toaster />}
+			{children}
+		</ThemeContext.Provider>
+	);
 };
 
 export const useTheme = (): ThemeContextProps => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
+	const context = useContext(ThemeContext);
+	if (!context) {
+		throw new Error("useTheme must be used within a ThemeProvider");
+	}
+	return context;
 };

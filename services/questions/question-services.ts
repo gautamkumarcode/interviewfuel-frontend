@@ -1,14 +1,37 @@
 import { apiEndPoint } from "@/constants/api";
-import { AxiosResponseTypeWithPagination } from "@/types/axios-response";
+import {
+	AxiosResponseTypeWithoutPagination,
+	AxiosResponseTypeWithPagination,
+} from "@/types/axios-response";
+import {
+	GetAllQuestionsResponseType,
+	GetSingleQuestionResponseType,
+} from "@/types/interfaces/questions/getQuestion-type";
 import { unauthenticatedInstance } from "@/utils/axios";
 
 class QuestionService {
-	public getQuestions = async (): Promise<
-		AxiosResponseTypeWithPagination<string>
+	public getAllQuestions = async (category?:string): Promise<
+		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
 	> => {
 		const { data } = await unauthenticatedInstance.get<
-			AxiosResponseTypeWithPagination<string>
-		>(apiEndPoint.login);
+			AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
+		>(`${apiEndPoint.getAllQuestions}`, {
+			params: {	
+				category: category,
+			},
+		});
+
+		return data;
+	};
+
+	public getSingleQuestion = async (
+		id: string
+	): Promise<
+		AxiosResponseTypeWithoutPagination<GetSingleQuestionResponseType>
+	> => {
+		const { data } = await unauthenticatedInstance.get<
+			AxiosResponseTypeWithoutPagination<GetSingleQuestionResponseType>
+		>(`${apiEndPoint.getAllQuestions}/${id}`);
 		return data;
 	};
 
@@ -26,15 +49,6 @@ class QuestionService {
 	//     const { data } = await authenticatedInstance.get<
 	//       AxiosResponseTypeWithoutPagination<GetAllLeaveTypeListResponseType[]>
 	//     >(availableApiRoutes.getAllLeaveTypeList);
-	//     return data;
-	//   };
-	//   public updateLeave = async (
-	//     id: string,
-	//     payload: LeaveRequestPayloadType,
-	//   ): Promise<AxiosResponseTypeWithoutPagination<LeaveRequestResponseType>> => {
-	//     const { data } = await authenticatedInstance.patch<
-	//       AxiosResponseTypeWithoutPagination<LeaveRequestResponseType>
-	//     >(`${availableApiRoutes.updateLeave}/${id}`, payload);
 	//     return data;
 	//   };
 

@@ -1,12 +1,11 @@
 import dynamic from "next/dynamic";
-import React from "react";
 
 const LandingPage = dynamic(() => import("./LandingPage"), {
-  ssr: true,
+	ssr: true,
 });
 
 const LandingPageHOC = () => {
-  return <LandingPage />;
+	return <LandingPage />;
 };
 
 export default LandingPageHOC;
