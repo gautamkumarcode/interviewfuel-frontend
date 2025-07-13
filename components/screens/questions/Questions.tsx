@@ -8,50 +8,69 @@ import {
 	AxiosErrorResponseType,
 	AxiosResponseTypeWithPagination,
 } from "@/types/axios-response";
+import { GetCategoriesResponseType } from "@/types/interfaces/category/category-type";
 import { GetAllQuestionsResponseType } from "@/types/interfaces/questions/getQuestion-type";
 import { AxiosError } from "axios";
 import { ChevronRight, Clock, Star, TrendingUp, Users } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 export default function Questions() {
-	const params = useParams();
 	const router = useRouter();
-	const category = params.category as string;
+	const queryClient = useQueryClient();
+	const params = useParams();
+	const categoryParam = params.category as string;
+	console.log("Category from params:", categoryParam);
 
-	const { data } = useQuery<
+	const decodedCategory = decodeURIComponent(categoryParam || "")
+		.trim()
+		.toLowerCase();
+
+	const cachedCategories = queryClient.getQueryData<
+		AxiosResponseTypeWithPagination<GetCategoriesResponseType[]>
+	>(["allcategories"]);
+
+	const categoryList = cachedCategories?.data?.results ?? [];
+
+	const matchedCategory = categoryList.find(
+		(cat) => cat.slug.toLowerCase() === decodedCategory
+	);
+
+	const categoryId = matchedCategory?._id;
+	const categoryName = matchedCategory?.name ?? "All";
+
+	const { data, isLoading } = useQuery<
 		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>,
 		AxiosError<AxiosErrorResponseType>
-	>(["allquestions"], () => questionService.getAllQuestions(), {
-		staleTime: 1000 * 60 * 5,
-		cacheTime: 1000 * 60 * 10,
-		keepPreviousData: true,
-	});
+	>(
+		["allquestions", categoryId],
+		() => questionService.getAllQuestions(categoryId),
+		{
+			staleTime: 1000 * 60 * 5,
+			cacheTime: 1000 * 60 * 10,
+			keepPreviousData: true,
+		}
+	);
 
-	const categoryName = category
-		? category.charAt(0).toUpperCase() + category.slice(1)
-		: "All";
+	const filteredQuestions = data?.data?.results ?? [];
 
 	const getDifficultyColor = (difficulty: string) => {
-		switch (difficulty) {
-			case "Easy":
-				return "bg-green-100 text-green-800 border-green-200";
-			case "Medium":
-				return "bg-yellow-100 text-yellow-800 border-yellow-200";
-			case "Hard":
-				return "bg-red-100 text-red-800 border-red-200";
-			default:
-				return "bg-gray-100 text-gray-800 border-gray-200";
-		}
+		const colors: Record<string, string> = {
+			Easy: "bg-green-100 text-green-800 border-green-200",
+			Medium: "bg-yellow-100 text-yellow-800 border-yellow-200",
+			Hard: "bg-red-100 text-red-800 border-red-200",
+		};
+		return colors[difficulty] || "bg-gray-100 text-gray-800 border-gray-200";
 	};
 
-	// Filter questions by category if category is specified, otherwise show all
-	const filteredQuestions = category
-		? data?.data?.results?.filter(
-				(question) =>
-					question.category?.name.toLowerCase() === category.toLowerCase()
-		  )
-		: data?.data?.results;
+	const handleCardClick = (question: GetAllQuestionsResponseType) => {
+		const questionCategory =
+			question.category?.fullPath.toLowerCase() || "general";
+		const questionSlug = encodeURIComponent(
+			question.title.toLowerCase().replace(/\s+/g, "-")
+		);
+		router.push(`/questions/${questionCategory}/${questionSlug}`);
+	};
 
 	return (
 		<>
@@ -80,20 +99,15 @@ export default function Questions() {
 				</Button>
 			</div>
 
-			{/* Questions List */}
 			<div className="space-y-4">
-				{filteredQuestions && filteredQuestions.length > 0 ? (
+				{isLoading ? (
+					<p className="text-center text-gray-500 py-8">Loading questions...</p>
+				) : filteredQuestions.length > 0 ? (
 					filteredQuestions.map((question) => (
 						<Card
 							key={question.id}
-							className="border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300 cursor-pointer group"
-							onClick={() => {
-								const questionCategory =
-									question.category?.name.toLowerCase() || category;
-								router.push(
-									`/questions/${questionCategory || "all"}/${question.id}`
-								);
-							}}>
+							onClick={() => handleCardClick(question)}
+							className="border-gray-200 hover:shadow-md transition-all duration-200 hover:border-gray-300 cursor-pointer group">
 							<CardContent className="p-6">
 								<div className="flex items-start justify-between gap-4">
 									<div className="flex-1">
@@ -151,7 +165,7 @@ export default function Questions() {
 							<div className="text-gray-500">
 								<h3 className="text-lg font-medium mb-2">No questions found</h3>
 								<p>
-									{category
+									{categoryName
 										? `Questions for ${categoryName} will be available soon.`
 										: "No questions available at the moment."}
 								</p>

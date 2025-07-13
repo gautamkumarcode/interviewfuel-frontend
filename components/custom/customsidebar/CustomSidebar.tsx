@@ -6,6 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { categoryService } from "@/services/category/categories-services";
+import {
+	AxiosErrorResponseType,
+	AxiosResponseTypeWithPagination,
+} from "@/types/axios-response";
+import { GetCategoriesResponseType } from "@/types/interfaces/category/category-type";
+import { AxiosError } from "axios";
 import {
 	Brain,
 	ChevronDown,
@@ -16,8 +23,9 @@ import {
 	TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { ReactNode, useEffect, useState } from "react";
-import { techStacks } from "./sidebardata/SideNavData";
+import { useQuery } from "react-query";
 
 type Props = {
 	children: ReactNode;
@@ -27,11 +35,22 @@ export const CustomSidebar: React.FC<Props> = ({ children }) => {
 	const [open, setOpen] = useState(false);
 	const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 	const [mounted, setMounted] = useState(false);
+	const router = useRouter();
 
 	useEffect(() => {
 		setMounted(true);
 	}, []);
 
+	const { data } = useQuery<
+		AxiosResponseTypeWithPagination<GetCategoriesResponseType[]>,
+		AxiosError<AxiosErrorResponseType>
+	>(["allcategories"], () => categoryService.getAllCategories(), {
+		staleTime: 1000 * 60 * 5,
+		cacheTime: 1000 * 60 * 10,
+		keepPreviousData: true,
+	});
+
+	const categories = data?.data.results || [];
 	const toggleCategory = (categoryName: string) => {
 		setExpandedCategories((prev) =>
 			prev.includes(categoryName)
@@ -54,65 +73,71 @@ export const CustomSidebar: React.FC<Props> = ({ children }) => {
 				)}>
 				<Sidebar open={open} setOpen={setOpen}>
 					<SidebarBody className="justify-between gap-4">
-						<div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
-							{/* Sidebar Logo */}
-							<LogoIcon open={open} setOpen={setOpen} />
-
-							<div className="mt-6 space-y-2">
-								{techStacks.map((stack, index) => (
-									<div key={stack.category}>
-										<Button
-											variant="ghost"
-											onClick={() => toggleCategory(stack.category)}
-											className="w-full justify-start h-10 px-2 hover:bg-gray-100 dark:hover:bg-gray-800">
-											<div className="flex items-center justify-between w-full cursor-pointer">
-												<div className="flex items-center gap-2">
-													{getCategoryIcon(stack.category)}
-													{open && (
-														<span className="text-sm font-medium">
-															{stack.category}
-														</span>
-													)}
-												</div>
-												{open &&
-													(isCategoryExpanded(stack.category) ? (
+						<div className="mt-6 space-y-2">
+							{categories.map((category) => (
+								<div key={category._id}>
+									<Button
+										variant="ghost"
+										onClick={() =>
+											category.subcategories.length > 0
+												? toggleCategory(category.slug)
+												: router.push(`/questions/${category.slug}`)
+										}
+										className="w-full justify-start h-10 px-2 hover:bg-gray-100 dark:hover:bg-gray-800">
+										<div className="flex items-center justify-between w-full">
+											<div className="flex items-center gap-2">
+												{/* Custom icon handling */}
+												{getCategoryIcon(category.icon)}
+												{open && (
+													<span className="text-sm font-medium truncate">
+														{category.name}
+													</span>
+												)}
+											</div>
+											{open &&
+												(category.subcategories.length > 0 ? (
+													isCategoryExpanded(category.slug) ? (
 														<ChevronDown className="h-4 w-4" />
 													) : (
 														<ChevronRight className="h-4 w-4" />
-													))}
-											</div>
-										</Button>
+													)
+												) : (
+													<Badge
+														variant="secondary"
+														className="text-[10px] px-1 py-0.5 bg-gray-100 dark:bg-gray-800">
+														{category.stats.questionCount}
+													</Badge>
+												))}
+										</div>
+									</Button>
 
-										{isCategoryExpanded(stack.category) && open && (
+									{/* Subcategories shown only if expanded */}
+									{open &&
+										isCategoryExpanded(category.slug) &&
+										category.subcategories.length > 0 && (
 											<div className="ml-6 mt-2 space-y-1">
-												{stack.items.map((item) => (
-													<SidebarLink
-														key={item.name}
-														link={{
-															href: item.href,
-															icon: (
-																<div className="flex items-center justify-between w-full cursor-pointer">
-																	<div className="flex items-center gap-2">
-																		<item.icon
-																			className={cn("h-3.5 w-3.5", item.color)}
-																		/>
-																		<span className="text-xs">{item.name}</span>
-																	</div>
-																	<Badge
-																		variant="secondary"
-																		className="text-[9px] px-1 py-0.5 bg-gray-100 dark:bg-gray-800">
-																		{item.count}
-																	</Badge>
-																</div>
-															),
-														}}
-													/>
+												{category.subcategories.map((sub) => (
+													<Button
+														key={sub._id}
+														variant="ghost"
+														onClick={() =>
+															router.push(`/questions/${sub.slug}`)
+														}
+														className="w-full justify-start h-8 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 text-sm text-left">
+														<div className="flex items-center justify-between w-full">
+															<span>{sub.name}</span>
+															<Badge
+																variant="secondary"
+																className="text-[9px] px-1 py-0.5 bg-gray-100 dark:bg-gray-800">
+																{sub.stats?.questionCount ?? 0}
+															</Badge>
+														</div>
+													</Button>
 												))}
 											</div>
 										)}
-									</div>
-								))}
-							</div>
+								</div>
+							))}
 						</div>
 
 						{/* User Profile at Bottom */}

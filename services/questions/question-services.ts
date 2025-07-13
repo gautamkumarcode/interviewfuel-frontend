@@ -10,12 +10,16 @@ import {
 import { unauthenticatedInstance } from "@/utils/axios";
 
 class QuestionService {
-	public getAllQuestions = async (): Promise<
+	public getAllQuestions = async (category?:string): Promise<
 		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
 	> => {
 		const { data } = await unauthenticatedInstance.get<
 			AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
-		>(apiEndPoint.getAllQuestions);
+		>(`${apiEndPoint.getAllQuestions}`, {
+			params: {	
+				category: category,
+			},
+		});
 
 		return data;
 	};

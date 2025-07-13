@@ -1,5 +1,7 @@
 import QuestionHOC from "@/components/screens/questions/QuestionHOC";
 
-export default function HomePage() {
+
+
+export default async function QuestionsPage() {
 	return <QuestionHOC />;
 }

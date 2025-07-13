@@ -35,6 +35,7 @@ import { useQuery } from "react-query";
 interface QuestionDetailViewProps {
 	questionId: string;
 	onBack: () => void;
+	
 }
 
 export const QuestionDetailView = ({
@@ -45,6 +46,8 @@ export const QuestionDetailView = ({
 	const [isLiked, setIsLiked] = React.useState(false);
 	const [copiedCode, setCopiedCode] = React.useState<string | null>(null);
 	const [newComment, setNewComment] = React.useState("");
+
+	console.log(questionId);
 
 	const { data, isLoading } = useQuery<
 		AxiosResponseTypeWithoutPagination<GetSingleQuestionResponseType>,
@@ -60,6 +63,7 @@ export const QuestionDetailView = ({
 	);
 
 	const question = data?.data;
+
 
 	console.log(question);
 
