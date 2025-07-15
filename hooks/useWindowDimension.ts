@@ -1,4 +1,3 @@
-"use client";
 import { useEffect, useState } from "react";
 
 function useWindowDimensions() {
@@ -8,6 +7,7 @@ function useWindowDimensions() {
 	});
 
 	useEffect(() => {
+		// Check if window is available (ensures this runs only on the client side)
 		if (typeof window !== "undefined") {
 			const handleResize = () => {
 				setDimensions({
@@ -15,10 +15,14 @@ function useWindowDimensions() {
 					height: window.innerHeight,
 				});
 			};
+
+			// Set initial dimensions
 			handleResize();
 
+			// Add event listener
 			window.addEventListener("resize", handleResize);
 
+			// Cleanup event listener on component unmount
 			return () => window.removeEventListener("resize", handleResize);
 		}
 	}, []);

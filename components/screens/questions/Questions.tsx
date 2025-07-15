@@ -12,19 +12,22 @@ import { GetCategoriesResponseType } from "@/types/interfaces/category/category-
 import { GetAllQuestionsResponseType } from "@/types/interfaces/questions/getQuestion-type";
 import { AxiosError } from "axios";
 import { ChevronRight, Clock, Star, TrendingUp, Users } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "react-query";
 
-export default function Questions() {
+type QuestionsPageProps = {
+	category?: string;
+};
+
+export default function Questions({ category }: QuestionsPageProps) {
 	const router = useRouter();
 	const queryClient = useQueryClient();
-	const params = useParams();
-	const categoryParam = params.category as string;
-	console.log("Category from params:", categoryParam);
 
-	const decodedCategory = decodeURIComponent(categoryParam || "")
+	const decodedCategory = decodeURIComponent(category || "")
 		.trim()
 		.toLowerCase();
+
+	console.log("Category from params:", decodedCategory);
 
 	const cachedCategories = queryClient.getQueryData<
 		AxiosResponseTypeWithPagination<GetCategoriesResponseType[]>
@@ -32,11 +35,14 @@ export default function Questions() {
 
 	const categoryList = cachedCategories?.data?.results ?? [];
 
+	console.log(categoryList);
+
 	const matchedCategory = categoryList.find(
-		(cat) => cat.slug.toLowerCase() === decodedCategory
+		(cat) => cat.slug === decodedCategory
 	);
 
-	const categoryId = matchedCategory?._id;
+	const categoryId = matchedCategory?.parentCategory;
+	console.log("Matched category:", categoryId);
 	const categoryName = matchedCategory?.name ?? "All";
 
 	const { data, isLoading } = useQuery<
@@ -69,7 +75,7 @@ export default function Questions() {
 		const questionSlug = encodeURIComponent(
 			question.title.toLowerCase().replace(/\s+/g, "-")
 		);
-		router.push(`/questions/${questionCategory}/${questionSlug}`);
+		router.push(`/questions/${questionCategory}/${question.id}`);
 	};
 
 	return (
