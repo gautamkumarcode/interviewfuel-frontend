@@ -69,6 +69,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 		AxiosResponseTypeWithPagination<GetCategoriesResponseType[]>
 	>(["allcategories"], () => categoryService.getAllCategories());
 
+
 	const categories = data?.data?.results || [];
 
 	useEffect(() => {
@@ -140,7 +141,6 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 								className="border-none">
 								<AccordionTrigger
 									onClick={() => {
-										handleNavigate(`/questions/${category.slug}`);
 										setActiveParent(category.name);
 									}}
 									className="flex items-start gap-2 text-sm hover:no-underline">
@@ -159,7 +159,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 													"bg-gray-100 dark:bg-gray-800"
 											)}
 											onClick={() => {
-												handleNavigate(`/questions/${subCategory.name}`);
+												handleNavigate(`/questions/${subCategory.slug}`);
 												setActiveChild(subCategory.name);
 												setMinimized(false);
 											}}>

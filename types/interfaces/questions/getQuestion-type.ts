@@ -22,6 +22,7 @@ export interface GetAllQuestionsResponseType {
 	contributors: any[];
 	createdAt: Date;
 	updatedAt: Date;
+	slug: string;
 	difficultyScore: number;
 	id: string;
 }

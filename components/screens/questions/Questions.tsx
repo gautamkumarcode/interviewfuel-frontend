@@ -23,11 +23,10 @@ export default function Questions({ category }: QuestionsPageProps) {
 	const router = useRouter();
 	const queryClient = useQueryClient();
 
+
 	const decodedCategory = decodeURIComponent(category || "")
 		.trim()
 		.toLowerCase();
-
-	console.log("Category from params:", decodedCategory);
 
 	const cachedCategories = queryClient.getQueryData<
 		AxiosResponseTypeWithPagination<GetCategoriesResponseType[]>
@@ -35,16 +34,22 @@ export default function Questions({ category }: QuestionsPageProps) {
 
 	const categoryList = cachedCategories?.data?.results ?? [];
 
-	console.log(categoryList);
+	let matchedSubcategory = null;
 
-	const matchedCategory = categoryList.find(
-		(cat) => cat.slug === decodedCategory
-	);
+	for (const cat of categoryList) {
+		const sub = cat.subcategories?.find(
+			(sub) => sub.slug.toLowerCase() === decodedCategory
+		);
+		if (sub) {
+			matchedSubcategory = sub;
+			break;
+		}
+	}
 
-	const categoryId = matchedCategory?.parentCategory;
-	console.log("Matched category:", categoryId);
-	const categoryName = matchedCategory?.name ?? "All";
-
+	console.log(matchedSubcategory);
+	const categoryId = matchedSubcategory?._id;
+	const categoryName = matchedSubcategory?.name ?? "All";
+	console.log(categoryId);
 	const { data, isLoading } = useQuery<
 		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>,
 		AxiosError<AxiosErrorResponseType>
@@ -71,11 +76,11 @@ export default function Questions({ category }: QuestionsPageProps) {
 
 	const handleCardClick = (question: GetAllQuestionsResponseType) => {
 		const questionCategory =
-			question.category?.fullPath.toLowerCase() || "general";
+			question.category?.name?.toLowerCase() || "general";
 		const questionSlug = encodeURIComponent(
 			question.title.toLowerCase().replace(/\s+/g, "-")
 		);
-		router.push(`/questions/${questionCategory}/${question.id}`);
+		router.push(`/questions/${questionCategory}/${question.slug}`);
 	};
 
 	return (
