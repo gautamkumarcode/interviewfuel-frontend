@@ -1,167 +1,353 @@
 "use client";
-
-import { Bell, LogOut, Moon, Search, Settings, Sun, User } from "lucide-react";
-import * as React from "react";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { userLogout } from "@/app/[locale]/(auth)/get-user-profile";
+// import { NotificationIcon } from "@/components/screens/notification/components/NotificationIcon";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+// import {
+//   Popover,
+//   PopoverContent,
+//   PopoverTrigger,
+// } from "@/components/ui/popover";
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { useTheme } from "@/context/theme.context";
-import { useRouter } from "next/navigation";
-import { MobileBreadcrumb } from "../mobileNav/MobileBreadcrumb";
-import { MobileSearch } from "../mobileNav/MobileSearch";
-import { BreadcrumbNav } from "./BreadcrumbNav";
+	Sheet,
+	SheetContent,
+	SheetHeader,
+	SheetTrigger,
+} from "@/components/ui/sheet";
+import useWindowDimensions from "@/hooks/useWindowDimension";
+// import { useAuth, useNotification, useTheme } from "@/contexts";
+// import { NotificationService } from "@/services";
+// import {
+//   AxiosErrorResponseType,
+//   AxiosResponseTypeWithoutPagination,
+// } from "@/types/axios-response.types";
+// import { UserRoles } from "@/types/enums";
+// import {
+//   NotificationResponseType,
+//   NotificationSingleResponseType,
+// } from "@/types/interfaces/notifications";
+// import { formatDateTime } from "@/utils/formatDate";
+import { Mail, Menu } from "lucide-react";
+// import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
+import { forwardRef, useEffect, useState } from "react";
+// import { CommandSearch } from "../GlobalSearch";
 
-export function AppNavbar() {
-	const [searchQuery, setSearchQuery] = React.useState("");
-	const [mobileSearchOpen, setMobileSearchOpen] = React.useState(false);
+const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 	const router = useRouter();
-	const { isDarkMode, toggleMode } = useTheme();
+	const urlPaths = usePathname();
+	const [pathname, setPathname] = useState<string | null>(null);
 
-	// Initialize dark mode from localStorage or system preference
+	useEffect(() => {
+		const parts = urlPaths.split("/");
+		const lastSegment = parts[parts.length - 1];
+		setPathname(lastSegment);
+	}, [urlPaths]);
+
+	//   const signOut = async () => {
+	//     const response = await userLogout();
+	//     if (response?.success) {
+	//       router.push("/login");
+	//     }
+	//   };
+
+	// State to control popover open/close
+	const [open, setOpen] = useState<boolean>(false);
+	const { width } = useWindowDimensions();
+
+	const navbarOptions = [
+		{
+			id: 1,
+			name: "Analytics",
+			path: "/analytics",
+		},
+		{
+			id: 2,
+			name: "News",
+			path: "/news",
+		},
+	];
+
+	if (!width) {
+		return (
+			<div className="fixed top-0 right-0 dark:bg-primaryGreyBg bg-[#FFFFFF] flex items-center justify-end xl:justify-normal gap-4 px-8 h-16 dark:text-white text-black shadow-sm"></div>
+		);
+	}
 
 	return (
-		<>
-			<header className="sticky  border-gray-300 top-0 z-10 border-b  bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-				<div className="flex h-16 items-center gap-4 px-4 md:px-6">
-					<div className="md:hidden flex-1 flex items-center justify-between">
-						<MobileBreadcrumb />
-						<div className="flex items-center gap-2">
-							<MobileSearch
-								isOpen={mobileSearchOpen}
-								onToggle={() => setMobileSearchOpen(!mobileSearchOpen)}
-							/>
-							<Button
-								variant="ghost"
-								size="sm"
-								onClick={() => toggleMode()}
-								className="h-10 w-10 p-0">
-								{isDarkMode ? (
-									<Sun className="h-5 w-5 text-green-600" />
-								) : (
-									<Moon className="h-5 w-5 text-blue-600" />
-								)}
-							</Button>
-							<Button variant="ghost" size="sm" className="h-10 w-10 p-0">
-								<Bell className="h-5 w-5" />
-							</Button>
-						</div>
+		<div
+			ref={ref}
+			className={`fixed top-0 right-0 dark:bg-primaryGreyBg bg-[#FFFFFF] flex items-center  xl:justify-normal gap-4 px-8 h-16 dark:text-white text-black shadow-sm `}>
+			<div className="hidden md:flex lg:flex xl:flex 2xl:flex 3xl:flex items-center gap-9 h-3/4 flex-1 text-primary">
+				{width > 840 && (
+					<div className="h-full flex items-center justify-center">
+						{/* <CommandSearch userRole={user?.user?.role} t={t} /> */}
 					</div>
+				)}
 
-					{/* Desktop Layout */}
-					<div className="hidden md:flex items-center gap-4 flex-1">
-						<BreadcrumbNav />
+				<ul className="hidden xl:flex 2xl:flex 3xl:flex text-primary gap-9">
+					{navbarOptions.map(({ id, path, name }) => (
+						<li
+							key={id}
+							className={`text-xs font-manrope font-semibold ${
+								`/${pathname}` === path
+									? "text-gren"
+									: "text-black dark:text-white"
+							}`}>
+							<Link href={path} className="font-manrope">
+								{name}
+							</Link>
+						</li>
+					))}
+				</ul>
+			</div>
 
-						<Separator orientation="vertical" className="h-4 mx-2" />
+			<div className="flex items-center gap-6">
+				{/* <Image src={mail} alt="chevronLeft-icon" /> */}
+				<Mail className="h-5 w-5 text-primary" />
+				{/* <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <div className="relative cursor-pointer">
+              <MessageSquareMore className="h-5 w-5 text-primary" />
+              {unreadNotificationsCount > 0 && (
+                <Badge
+                  variant={"destructive"}
+                  className="absolute top-[-15px] left-3 bg-red-500 w-fit z-20 cursor-pointer"
+                >
+                  <p>{unreadNotificationsCount}</p>
+                </Badge>
+              )}
+            </div>
+          </PopoverTrigger>
 
-						{/* Search and Dark Mode Toggle */}
-						<div className="flex items-center gap-4 ml-auto">
-							<div className="relative max-w-md">
-								<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-								<Input
-									placeholder="Search interview questions..."
-									value={searchQuery}
-									onChange={(e) => setSearchQuery(e.target.value)}
-									className="pl-10 bg-gray-50 border-gray-200 focus:bg-white transition-colors w-80"
-								/>
-							</div>
+          <PopoverContent className="min-w-[400px] dark:bg-primaryGreyBg bg-white p-0 absolute right-0 top-4 outline-none dark:border-primaryGreyBg">
+            <div className="flex items-center justify-between p-4">
+              <p className="text-lg font-semibold dark:text-white ">
+                Notification
+              </p>
+              <div
+                className={`flex gap-3 items-center  ${
+                  unreadNotificationsCount > 0
+                    ? "text-white cursor-pointer"
+                    : "text-grey cursor-not-allowed"
+                }`}
+                aria-disabled={unreadNotificationsCount === 0}
+                onClick={handleMarkAllSeen}
+              >
+                <CheckCheck className="h-4 w-4" />
+                <p className="text-sm "> Mark all as read </p>
+              </div>
+            </div>
 
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={() => toggleMode()}
-								className="gap-2 bg-transparent border-green-200 hover:border-green-300 hover:bg-green-50 dark:border-green-700 dark:hover:border-green-600 dark:hover:bg-green-900/20">
-								{isDarkMode ? (
-									<Sun className="h-4 w-4 text-green-600" />
-								) : (
-									<Moon className="h-4 w-4 text-blue-600" />
-								)}
-								{isDarkMode ? "Light" : "Dark"}
-							</Button>
-						</div>
-					</div>
+            {notifications && notifications.length > 0 ? (
+              <div className="flex flex-col gap-2 pb-4 w-full">
+                {notifications
+                  .slice(0, 3)
+                  .map((notification: NotificationResponseType) => (
+                    <div
+                      key={notification.id}
+                      onClick={() => {
+                        handleNotificationClick(notification);
+                        router.push(notification.url);
+                      }}
+                      className="dark:border-gray-700 border-b-[0.5px] group border-grey flex px-4 py-4 gap-2 items-center cursor-pointer dark:bg-gray-800 dark:hover:bg-gray-700"
+                    >
+                      <Avatar className="bg-red-100 items-center text-center justify-center">
+                        <NotificationIcon type={notification.type} />
+                      </Avatar>
 
-					{/* User Menu - Always Visible */}
-					<div className="hidden md:flex items-center gap-3">
-						<Button variant="ghost" size="sm">
-							<Bell className="h-4 w-4" />
-						</Button>
+                      <div className="flex-1 dark:text-white">
+                        <p className="text-sm font-semibold font-manrope text-primary">
+                          {notification.message}
+                        </p>
+                        <span className="flex text-gray-400 text-xs">
+                          This is the Dummy description updated later
+                        </span>
+                      </div>
 
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button
-									variant="ghost"
-									className="relative h-8 w-8 rounded-full">
-									<Avatar className="h-8 w-8">
-										<AvatarImage src="/placeholder-user.jpg" alt="User" />
-										<AvatarFallback>JD</AvatarFallback>
-									</Avatar>
+                      <div className="text-xs flex flex-col items-end justify-start gap-1">
+                        <div className="h-7 w-7 z-50">
+                          <Trash2
+                            className="h-7 w-7 rounded-full p-1 bg-primaryGreyBg text-red-500  hidden group-hover:flex "
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent the event from bubbling up
+                              handleDeleteNotificationAPICall(notification);
+                            }}
+                          />
+                        </div>
+
+                        <p className="text-gray-400">
+                          {formatDateTime(notification.createdAt!)}
+                        </p>
+                        {!notification.seen && (
+                          <Badge
+                            variant={"destructive"}
+                            className="bg-red-500 cursor-pointer h-2 w-2 rounded-full p-0"
+                          ></Badge>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+
+                <div className="px-4">
+                  <Button
+                    variant="default"
+                    className="text-center w-full dark:bg-white dark:outline-none outline-dashed font-semibold text-gray-800 h-12 items-center"
+                    onClick={handleViewAllClick}
+                  >
+                    Show All Notification
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2 px-4 pb-4">
+                <div className="h-[200px] flex justify-center text-center items-center">
+                  <p className="text-xl font-semibold font-manrope dark:text-white text-black">
+                    No Notifications
+                  </p>
+                </div>
+              </div>
+            )}
+          </PopoverContent>
+        </Popover> */}
+
+				<div className="xl:block 2xl:block 3xl:block hidden relative">
+					{/* <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Avatar className="cursor-pointer">
+                <AvatarImage
+                  src={
+                    user?.user?.profilePic !== null
+                      ? user?.user?.profilePic
+                      : `https://ui-avatars.com/api/?name=${user?.user?.name}`
+                  }
+                  alt="@shadcn"
+                />
+                <AvatarFallback>USER</AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56 bg-white text-black dark:bg-primaryGreyBg dark:text-white absolute  right-0">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-grey" />
+              <DropdownMenuGroup>
+                {user?.user?.role !== UserRoles.organization && (
+                  <DropdownMenuItem
+                    className="cursor-pointer gap-1 items-center"
+                    onClick={handleProfile}
+                  >
+                    Profile
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem
+                  className="cursor-pointer gap-1 items-center justify-between"
+                  onClick={() => router.push("/settings?view=password")}
+                >
+                  Change Password
+                  <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => router.push("/news")}
+                >
+                  Latest News
+                  <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator className="bg-grey" />
+              <DropdownMenuItem onClick={signOut} className="cursor-pointer">
+                Log out
+                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu> */}
+				</div>
+			</div>
+
+			<nav className="block xl:hidden 2xl:hidden 3xl:hidden">
+				<div className="px-4 h-16 flex items-center justify-between gap-4">
+					{/* Left section with menu and search */}
+					<div className="flex items-center gap-2">
+						<Sheet>
+							<SheetTrigger asChild>
+								<Button variant="ghost" size="icon">
+									<Menu className="h-5 w-5" />
+									<span className="sr-only">Open menu</span>
 								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent className="w-56" align="end">
-								<DropdownMenuItem onClick={() => router.push("/profile")}>
-									<User className="mr-2 h-4 w-4" />
-									Profile
-								</DropdownMenuItem>
-								<DropdownMenuItem>
-									<Settings className="mr-2 h-4 w-4" />
-									Settings
-								</DropdownMenuItem>
-								<DropdownMenuSeparator />
-								<DropdownMenuItem>
-									<LogOut className="mr-2 h-4 w-4" />
-									Log out
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</div>
+							</SheetTrigger>
+							<SheetContent
+								side="right"
+								className="w-72 dark:bg-primaryGreyBg bg-[#FFFFFF]  p-0 flex flex-col">
+								<SheetHeader className="pt-4 px-1  border-slate-800 overflow-hidden">
+									{/* <SheetTitle className="text-white ">
+                    <CommandSearch t={t} userRole={user?.user?.role} />
+                  </SheetTitle> */}
+								</SheetHeader>
 
-					{/* Mobile User Menu */}
-					<div className="md:hidden">
-						<DropdownMenu>
-							<DropdownMenuTrigger asChild>
-								<Button
-									variant="ghost"
-									className="relative h-10 w-10 rounded-full p-0">
-									<Avatar className="h-8 w-8">
-										<AvatarImage src="/placeholder-user.jpg" alt="User" />
-										<AvatarFallback>JD</AvatarFallback>
-									</Avatar>
-								</Button>
-							</DropdownMenuTrigger>
-							<DropdownMenuContent className="w-56" align="end">
-								<DropdownMenuItem onClick={() => router.push("/profile")}>
-									<User className="mr-2 h-4 w-4" />
-									Profile
-								</DropdownMenuItem>
-								<DropdownMenuItem>
-									<Settings className="mr-2 h-4 w-4" />
-									Settings
-								</DropdownMenuItem>
-								<DropdownMenuSeparator />
-								<DropdownMenuItem>
-									<LogOut className="mr-2 h-4 w-4" />
-									Log out
-								</DropdownMenuItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
+								<div className="py-2 flex-grow">
+									{navbarOptions.map(({ id, path, name }) => (
+										<Link
+											key={id}
+											href={path}
+											className={`flex items-center px-4 py-2 text-sm  font-medium  ${
+												`/${pathname}` === path
+													? "text-gren"
+													: "text-black dark:text-white"
+											}`}>
+											{name}
+										</Link>
+									))}
+								</div>
+								<div className="mt-auto bg-red-900 flex">
+									<Card className="bg-zinc-900 border-none rounded-none w-full text-white p-4 flex justify-center items-center gap-4">
+										<div className="relative h-12 w-12">
+											<Avatar>
+												{/* <AvatarImage
+                          src={
+                            user?.user?.profilePic !== null
+                              ? user?.user?.profilePic
+                              : `https://ui-avatars.com/api/?name=${user?.user?.name}`
+                          }
+                          alt="@shadcn"
+                        /> */}
+												<AvatarFallback>USER</AvatarFallback>
+											</Avatar>
+										</div>
+										{/* <div className="flex flex-col">
+                      <h1 className="font-semibold text-white text-lg">
+                        {user?.user?.name}
+                      </h1>
+                      <p className="text-zinc-400 text-sm" onClick={signOut}>
+                        Sign out
+                      </p>
+                    </div> */}
+									</Card>
+
+									{/* <div className="">
+                    {user?.user?.role === UserRoles.organization ? (
+                      ""
+                    ) : (
+                      <Button
+                        variant="secondary"
+                        className="text-center w-full mt-2"
+                        onClick={handleProfile}
+                      >
+                        Profile
+                      </Button>
+                    )}
+                  </div> */}
+								</div>
+							</SheetContent>
+						</Sheet>
 					</div>
 				</div>
-			</header>
-
-			{/* Mobile Search Overlay */}
-			<MobileSearch
-				isOpen={mobileSearchOpen}
-				onToggle={() => setMobileSearchOpen(!mobileSearchOpen)}
-			/>
-		</>
+			</nav>
+		</div>
 	);
-}
+});
+
+Navbar.displayName = "Navbar";
+
+export default Navbar;

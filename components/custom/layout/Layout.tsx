@@ -1,27 +1,36 @@
-"use client";
+// "use client";
 
-import React, { useEffect, useState } from "react";
-import { CustomSidebar } from "../CustomSidebar/CustomSidebar";
+// import React, { useEffect, useState } from "react";
+// import Sidebar from "../customsidebar/CustomSidebar";
 
-interface AppLayoutProps {
-	children: React.ReactNode;
-}
+// interface AppLayoutProps {
+// 	children: React.ReactNode;
+// }
 
-export function AppLayout({ children }: AppLayoutProps) {
-	const [mounted, setMounted] = useState(false);
+// export function AppLayout({ children }: AppLayoutProps) {
+// 	const [mounted, setMounted] = useState(false);
 
-	useEffect(() => {
-		// Avoid rendering until client-side hydration is done
-		setMounted(true);
-	}, []);
+// 	useEffect(() => {
+// 		setMounted(true);
+// 	}, []);
 
-	if (!mounted) return null; // Or show a loader/skeleton
+// 	if (!mounted) return null;
 
-	return (
-		<div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-			<CustomSidebar>
-				<main className="flex-1 p-6">{children}</main>
-			</CustomSidebar>
-		</div>
-	);
-}
+// 	return (
+// 		<div className="flex min-h-screen w-full bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+// 			{/* Sidebar */}
+// 			<div className="flex-shrink-0">
+// 				<Sidebar />
+// 			</div>
+
+// 			{/* Right Panel: Navbar + Page Content */}
+// 			<div className="flex flex-col flex-1 min-w-0">
+// 				{/* Navbar */}
+// 				<AppNavbar />
+
+// 				{/* Page Content */}
+// 				<main className="flex-1 overflow-y-auto p-4">{children}</main>
+// 			</div>
+// 		</div>
+// 	);
+// }

@@ -12,17 +12,19 @@ import { GetCategoriesResponseType } from "@/types/interfaces/category/category-
 import { GetAllQuestionsResponseType } from "@/types/interfaces/questions/getQuestion-type";
 import { AxiosError } from "axios";
 import { ChevronRight, Clock, Star, TrendingUp, Users } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "react-query";
 
-export default function Questions() {
+type QuestionsPageProps = {
+	category?: string;
+};
+
+export default function Questions({ category }: QuestionsPageProps) {
 	const router = useRouter();
 	const queryClient = useQueryClient();
-	const params = useParams();
-	const categoryParam = params.category as string;
-	console.log("Category from params:", categoryParam);
 
-	const decodedCategory = decodeURIComponent(categoryParam || "")
+
+	const decodedCategory = decodeURIComponent(category || "")
 		.trim()
 		.toLowerCase();
 
@@ -32,13 +34,22 @@ export default function Questions() {
 
 	const categoryList = cachedCategories?.data?.results ?? [];
 
-	const matchedCategory = categoryList.find(
-		(cat) => cat.slug.toLowerCase() === decodedCategory
-	);
+	let matchedSubcategory = null;
 
-	const categoryId = matchedCategory?._id;
-	const categoryName = matchedCategory?.name ?? "All";
+	for (const cat of categoryList) {
+		const sub = cat.subcategories?.find(
+			(sub) => sub.slug.toLowerCase() === decodedCategory
+		);
+		if (sub) {
+			matchedSubcategory = sub;
+			break;
+		}
+	}
 
+	console.log(matchedSubcategory);
+	const categoryId = matchedSubcategory?._id;
+	const categoryName = matchedSubcategory?.name ?? "All";
+	console.log(categoryId);
 	const { data, isLoading } = useQuery<
 		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>,
 		AxiosError<AxiosErrorResponseType>
@@ -65,11 +76,11 @@ export default function Questions() {
 
 	const handleCardClick = (question: GetAllQuestionsResponseType) => {
 		const questionCategory =
-			question.category?.fullPath.toLowerCase() || "general";
+			question.category?.name?.toLowerCase() || "general";
 		const questionSlug = encodeURIComponent(
 			question.title.toLowerCase().replace(/\s+/g, "-")
 		);
-		router.push(`/questions/${questionCategory}/${questionSlug}`);
+		router.push(`/questions/${questionCategory}/${question.slug}`);
 	};
 
 	return (
