@@ -41,10 +41,18 @@ export default function DashboardLayout({
 		};
 	}, []);
 
+
+
 	return (
 		<div className="w-screen h-screen overflow-hidden dark:bg-darkBg bg-[#FAFAFA]">
 			<Sidebar ref={sidebarRef} />
-			<Navbar ref={navbarRef} />
+			<div
+				style={{
+					width: `calc(100vw - ${sidebarWidth}px)`,
+				}}
+				className="fixed top-0 right-0">
+				<Navbar ref={navbarRef} />
+			</div>
 
 			<main
 				style={{

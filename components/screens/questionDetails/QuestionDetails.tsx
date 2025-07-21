@@ -47,7 +47,6 @@ export const QuestionDetailView = ({
 	const [copiedCode, setCopiedCode] = React.useState<string | null>(null);
 	const [newComment, setNewComment] = React.useState("");
 
-	console.log(questionId);
 
 	const { data, isLoading } = useQuery<
 		AxiosResponseTypeWithoutPagination<GetSingleQuestionResponseType>,
@@ -65,7 +64,6 @@ export const QuestionDetailView = ({
 	const question = data?.data;
 
 
-	console.log(question);
 
 	const getDifficultyColor = (difficulty: string) => {
 		switch (difficulty) {

@@ -12,19 +12,18 @@ import { GetCategoriesResponseType } from "@/types/interfaces/category/category-
 import { GetAllQuestionsResponseType } from "@/types/interfaces/questions/getQuestion-type";
 import { AxiosError } from "axios";
 import { ChevronRight, Clock, Star, TrendingUp, Users } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "nextjs-toploader/app";
 import { useQuery, useQueryClient } from "react-query";
 
-type QuestionsPageProps = {
-	category?: string;
-};
-
-export default function Questions({ category }: QuestionsPageProps) {
+export default function Questions() {
+	const params = useSearchParams();
+	const category = params?.get("category");
 	const router = useRouter();
+
 	const queryClient = useQueryClient();
 
-
-	const decodedCategory = decodeURIComponent(category || "")
+	const decodedCategory = decodeURIComponent((category as string) || "")
 		.trim()
 		.toLowerCase();
 
@@ -46,10 +45,8 @@ export default function Questions({ category }: QuestionsPageProps) {
 		}
 	}
 
-	console.log(matchedSubcategory);
 	const categoryId = matchedSubcategory?._id;
 	const categoryName = matchedSubcategory?.name ?? "All";
-	console.log(categoryId);
 	const { data, isLoading } = useQuery<
 		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>,
 		AxiosError<AxiosErrorResponseType>
@@ -77,9 +74,7 @@ export default function Questions({ category }: QuestionsPageProps) {
 	const handleCardClick = (question: GetAllQuestionsResponseType) => {
 		const questionCategory =
 			question.category?.name?.toLowerCase() || "general";
-		const questionSlug = encodeURIComponent(
-			question.title.toLowerCase().replace(/\s+/g, "-")
-		);
+
 		router.push(`/questions/${questionCategory}/${question.slug}`);
 	};
 

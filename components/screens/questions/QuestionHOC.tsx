@@ -1,15 +1,9 @@
-"use client";
+import dynamic from "next/dynamic";
 
-import { useSearchParams } from "next/navigation";
-import Questions from "./Questions";
-
-// const QuestionPage = dynamic(() => import("./Questions"), {
-// 	ssr: false, // Client-only
-// });
+const QuestionPage = dynamic(() => import("./Questions"), {
+	ssr: true, // Client-only
+});
 
 export default function QuestionsPageWrapper() {
-	const searchParams = useSearchParams();
-	const category = searchParams.get("category");
-
-	return <Questions category={category || "all"} />;
+	return <QuestionPage />;
 }

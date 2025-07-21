@@ -2,11 +2,11 @@
 
 import { Toaster } from "@/components/custom/Toaster/Toaster";
 import React, {
-  createContext,
-  FunctionComponent,
-  useContext,
-  useEffect,
-  useState,
+	createContext,
+	FunctionComponent,
+	useContext,
+	useEffect,
+	useState,
 } from "react";
 
 type ToasterState = {
@@ -50,7 +50,6 @@ export const ThemeProvider: FunctionComponent<ThemeProviderProps> = ({
 	const [isDarkMode, setIsDarkMode] = useState(true);
 
 	useEffect(() => {
-		// Check the saved mode from localStorage
 		const savedMode = localStorage.getItem("theme");
 
 		if (savedMode) {
@@ -61,10 +60,9 @@ export const ThemeProvider: FunctionComponent<ThemeProviderProps> = ({
 				document.documentElement.classList.remove("dark");
 			}
 		} else {
-			// Default mode is dark if not stored
-			setIsDarkMode(true); // Set state to dark mode
-			document.documentElement.classList.add("dark"); // Add the dark class by default
-			localStorage.setItem("theme", "dark"); // Optionally, save dark mode as default
+			setIsDarkMode(true);
+			document.documentElement.classList.add("dark");
+			localStorage.setItem("theme", "dark");
 		}
 	}, []);
 

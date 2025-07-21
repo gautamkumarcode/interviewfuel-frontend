@@ -66,43 +66,41 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 		},
 		{
 			id: 2,
-			name: "News",
-			path: "/news",
+			name: "Practice",
+			path: "/practice",
 		},
 	];
-
-	if (!width) {
-		return (
-			<div className="fixed top-0 right-0 dark:bg-primaryGreyBg bg-[#FFFFFF] flex items-center justify-end xl:justify-normal gap-4 px-8 h-16 dark:text-white text-black shadow-sm"></div>
-		);
-	}
 
 	return (
 		<div
 			ref={ref}
-			className={`fixed top-0 right-0 dark:bg-primaryGreyBg bg-[#FFFFFF] flex items-center  xl:justify-normal gap-4 px-8 h-16 dark:text-white text-black shadow-sm `}>
+			className={` dark:bg-primaryGreyBg bg-[#FFFFFF] flex items-center  xl:justify-normal gap-4 px-8 h-16 dark:text-white text-black shadow-sm `}>
 			<div className="hidden md:flex lg:flex xl:flex 2xl:flex 3xl:flex items-center gap-9 h-3/4 flex-1 text-primary">
 				{width > 840 && (
 					<div className="h-full flex items-center justify-center">
+						<ul className="hidden xl:flex 2xl:flex 3xl:flex text-primary gap-9">
+							{navbarOptions.map(({ id, path, name }) => (
+								<li
+									key={id}
+									className={`text-xs font-manrope font-semibold ${
+										`/${pathname}` === path
+											? "text-gren"
+											: "text-black dark:text-white"
+									}`}>
+									<Link href={path} className="font-manrope">
+										{name}
+									</Link>
+								</li>
+							))}
+						</ul>
+						{/* <Input
+							placeholder="Search..."
+							className="h-10 w-64 bg-white dark:bg-gray-800 text-black dark:text-white"
+							// onChange={(e) => setSearchQuery(e.target.value)}
+						/> */}
 						{/* <CommandSearch userRole={user?.user?.role} t={t} /> */}
 					</div>
 				)}
-
-				<ul className="hidden xl:flex 2xl:flex 3xl:flex text-primary gap-9">
-					{navbarOptions.map(({ id, path, name }) => (
-						<li
-							key={id}
-							className={`text-xs font-manrope font-semibold ${
-								`/${pathname}` === path
-									? "text-gren"
-									: "text-black dark:text-white"
-							}`}>
-							<Link href={path} className="font-manrope">
-								{name}
-							</Link>
-						</li>
-					))}
-				</ul>
 			</div>
 
 			<div className="flex items-center gap-6">
