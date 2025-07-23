@@ -1,6 +1,8 @@
 "use client";
 
 import { ClusterDataProvider } from "@/context/clusterData-context";
+import { AuthModal } from "@/components/custom/modal/AuthModal";
+import { AuthModalProvider } from "@/context/AuthModalContext";
 import { ModalProvider } from "@/context/modal-context";
 import { ThemeProvider as CustomThemeProvider } from "@/context/theme.context";
 import NextTopLoader from "nextjs-toploader";
@@ -29,8 +31,11 @@ export const Provider: React.FC<{
 			<ClusterDataProvider>
 				<CustomThemeProvider>
 					<ModalProvider>
-						<NextTopLoader showSpinner={false} color="#0CAF60" />
-						{children}
+						<AuthModalProvider>
+							<NextTopLoader showSpinner={false} color="#0CAF60" />
+							{children}
+							<AuthModal />
+						</AuthModalProvider>
 					</ModalProvider>
 				</CustomThemeProvider>
 			</ClusterDataProvider>

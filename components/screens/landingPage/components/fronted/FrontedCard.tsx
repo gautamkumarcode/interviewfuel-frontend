@@ -10,6 +10,7 @@ type FrontedCardProps = {
 };
 const FrontedCard: React.FC<FrontedCardProps> = ({ frontedTopics }) => {
 	const router = useRouter();
+	
 	return (
 		<div className="p-5 w-[90vw] mx-auto mt-10">
 			<h2 className="text-3xl font-semibold text-center mb-6"></h2>
