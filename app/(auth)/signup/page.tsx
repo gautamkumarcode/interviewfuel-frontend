@@ -1,8 +1,12 @@
-import SignupHOC from "@/components/screens/signup/SignupHOC";
-
+import SignupHOC from '@/components/screens/signup/SignupHOC'
+import React from 'react'
 
 const page = () => {
-	return <SignupHOC />;
-};
+  return (
+    <div>
+       <SignupHOC/>
+    </div>
+  )
+}
 
-export default page;
+export default page
