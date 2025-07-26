@@ -50,7 +50,7 @@ export const ThemeProvider: FunctionComponent<ThemeProviderProps> = ({
 	const [isDarkMode, setIsDarkMode] = useState(true);
 
 	useEffect(() => {
-		const savedMode = localStorage.getItem("theme");
+		const savedMode = localStorage.getItem("light");
 
 		if (savedMode) {
 			setIsDarkMode(savedMode === "dark");
