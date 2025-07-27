@@ -1,8 +1,5 @@
-// utils/axios.ts
 import { API_URL } from "@/constants/api";
 import axios, { AxiosInstance } from "axios";
-
-console.log(API_URL);
 
 // Utility to get token from cookies (or localStorage if needed)
 const getToken = (): string | undefined => {

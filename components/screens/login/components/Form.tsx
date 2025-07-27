@@ -10,16 +10,15 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuthModal } from "@/context/AuthModalContext";
+import { useTheme } from "@/context/theme.context";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { type LoginFormData, loginSchema } from "./validation/loginSchema";
-import { useTheme } from "@/context/theme.context";
-import { loginUser } from "@/services/authservices";
-import Link from "next/link";
-import { useAuthModal } from "@/context/AuthModalContext";
 
 const LoginForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 	const [lookUpPass, setLookUpPass] = useState(false);
@@ -27,7 +26,7 @@ const LoginForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 
 	const router = useRouter();
 	const { toast } = useTheme();
-	const { setView } = useAuthModal();
+	const { openSignup ,closeModal} = useAuthModal();
 
 	const form = useForm<LoginFormData>({
 		resolver: zodResolver(loginSchema),
@@ -39,17 +38,18 @@ const LoginForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 	});
 
 	const onSubmit = async (data: LoginFormData) => {
-		console.log("check out the url ",process.env.NEXT_PUBLIC_API_BASE_URL)
 		try {
 			setIsLoading(true);
-			const response = await loginUser(data);
-			if (response?.success) {
+			const result = await signIn("credentials", {
+				redirect: false,
+				...data,
+			});
+			if (result?.error) {
+				toast.error(result.error);
+			} else if (result?.ok) {
 				toast.success("Login successful");
-				onSuccess?.();
-				console.log("Navigating to /questions");
-				router.push("/questions");
-			} else {
-				toast.error("Invalid email or password");
+				closeModal?.();
+
 			}
 		} catch (error) {
 			toast.error("Something went wrong");
@@ -110,8 +110,7 @@ const LoginForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 										<button
 											type="button"
 											onClick={() => setLookUpPass((prev) => !prev)}
-											className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-										>
+											className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
 											{lookUpPass ? <EyeOff size={18} /> : <Eye size={18} />}
 										</button>
 									</div>
@@ -134,9 +133,8 @@ const LoginForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 					Don&apos;t have an account?{" "}
 					<button
 						type="button"
-						onClick={() => setView("signup")}
-						className="text-blue-600 hover:text-blue-700 font-semibold hover:underline transition-colors"
-					>
+						onClick={() => openSignup()}
+						className="text-blue-600 hover:text-blue-700 font-semibold hover:underline transition-colors">
 						Create one here
 					</button>
 				</p>

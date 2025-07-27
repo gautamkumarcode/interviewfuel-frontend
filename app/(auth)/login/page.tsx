@@ -1,12 +1,7 @@
-import LoginHOC from '@/components/screens/login/LoginHOC'
-import React from 'react'
+import LoginHOC from "@/components/screens/login/LoginHOC";
 
 const page = () => {
-  return (
-    <div>
-       <LoginHOC/>
-    </div>
-  )
-}
+	return <LoginHOC />;
+};
 
-export default page
+export default page;

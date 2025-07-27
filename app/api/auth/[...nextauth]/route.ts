@@ -30,18 +30,19 @@ const handler = NextAuth({
 					});
 
 					const user = response?.data?.user;
+					const token = response?.data?.token; // This is your backend JWT
 
-					if (user) {
+					if (user && token) {
 						return {
 							id: user._id,
 							name: user.name,
-							email: user.email,
+							role: user.role,
+							accessToken: token, // send backend token
 						};
 					}
-
 					return null;
 				} catch (error) {
-					console.error("Login error in authorize():", error);
+					console.error("Login error:", error);
 					return null;
 				}
 			},
@@ -51,25 +52,31 @@ const handler = NextAuth({
 		signIn: "/login",
 	},
 	session: {
-		strategy: "jwt", // still fine; just won't store backend token here
+		strategy: "jwt",
 	},
 	callbacks: {
 		async jwt({ token, user }) {
-			// No backend token available here; just return token
 			if (user) {
 				token.id = user.id;
-				token.email = user.email;
+
+				token.role = user.role;
+				token.accessToken = user.accessToken; // persist backend token
 			}
 			return token;
 		},
 		async session({ session, token }) {
 			if (session.user) {
-				session.user!.id = token.id as string;
+				session.user.id = token.id as string;
 				session.user.email = token.email as string;
+				session.user.role = token.role as string;
 			}
+			// Expose token for backend usage on client
+			(session as any).accessToken = token.accessToken;
 			return session;
 		},
 	},
+	secret: process.env.NEXTAUTH_SECRET,
 });
 
 export { handler as GET, handler as POST };
+

@@ -47,24 +47,24 @@ export const ThemeProvider: FunctionComponent<ThemeProviderProps> = ({
 		type: "",
 	});
 
-	const [isDarkMode, setIsDarkMode] = useState(true);
+	const [isDarkMode, setIsDarkMode] = useState(false);
 
-	useEffect(() => {
-		const savedMode = localStorage.getItem("theme");
+	// useEffect(() => {
+	// 	const savedMode = localStorage.getItem("theme");
 
-		if (savedMode) {
-			setIsDarkMode(savedMode === "dark");
-			if (savedMode === "dark") {
-				document.documentElement.classList.add("dark");
-			} else {
-				document.documentElement.classList.remove("dark");
-			}
-		} else {
-			setIsDarkMode(true);
-			document.documentElement.classList.add("dark");
-			localStorage.setItem("theme", "dark");
-		}
-	}, []);
+	// 	if (savedMode) {
+	// 		setIsDarkMode(savedMode === "dark");
+	// 		if (savedMode === "dark") {
+	// 			document.documentElement.classList.add("dark");
+	// 		} else {
+	// 			document.documentElement.classList.remove("dark");
+	// 		}
+	// 	} else {
+	// 		setIsDarkMode(true);
+	// 		document.documentElement.classList.add("dark");
+	// 		localStorage.setItem("theme", "dark");
+	// 	}
+	// }, []);
 
 	const toggleMode = () => {
 		setIsDarkMode((prev) => !prev);

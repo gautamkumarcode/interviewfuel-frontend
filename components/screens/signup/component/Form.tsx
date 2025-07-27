@@ -1,16 +1,22 @@
 "use client";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { type SignupFormData, signupSchema } from "./validation/signupSchema";
-import { signupUser } from "@/services/authservices";
 import { CustomButton } from "@/components/custom/CustomButton/CustomButton";
-import { Mail, User, Lock, EyeOff, Eye } from "lucide-react";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { useTheme } from "@/context/theme.context";
-import { useAuthModal } from "@/context/AuthModalContext";
+import { signupUser } from "@/services/authservices";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { type SignupFormData, signupSchema } from "./validation/signupSchema";
 
 type Props = {
 	onSuccess?: () => void;
@@ -21,7 +27,6 @@ export const SignupForm = ({ onSuccess }: Props) => {
 	const [lookUpPass, setLookUpPass] = useState<boolean>(false);
 
 	const { toast } = useTheme();
-	const { setView } = useAuthModal();
 
 	const form = useForm<SignupFormData>({
 		resolver: zodResolver(signupSchema),
@@ -33,8 +38,6 @@ export const SignupForm = ({ onSuccess }: Props) => {
 		},
 		mode: "onChange",
 	});
-
-	console.log(process.env)
 
 	const onSubmit = async (data: SignupFormData) => {
 		try {
@@ -66,7 +69,11 @@ export const SignupForm = ({ onSuccess }: Props) => {
 								<FormControl>
 									<div className="relative">
 										<User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-										<Input className="pl-10" placeholder="Gautam Kumar" {...field} />
+										<Input
+											className="pl-10"
+											placeholder="Gautam Kumar"
+											{...field}
+										/>
 									</div>
 								</FormControl>
 								<FormMessage />
@@ -102,7 +109,12 @@ export const SignupForm = ({ onSuccess }: Props) => {
 								<FormControl>
 									<div className="relative">
 										<Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
-										<Input type="email" className="pl-10" placeholder="gautam@gmail.com" {...field} />
+										<Input
+											type="email"
+											className="pl-10"
+											placeholder="gautam@gmail.com"
+											{...field}
+										/>
 									</div>
 								</FormControl>
 								<FormMessage />
@@ -129,8 +141,7 @@ export const SignupForm = ({ onSuccess }: Props) => {
 										<button
 											type="button"
 											onClick={() => setLookUpPass((prev) => !prev)}
-											className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-										>
+											className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
 											{lookUpPass ? <EyeOff size={18} /> : <Eye size={18} />}
 										</button>
 									</div>
@@ -155,9 +166,8 @@ export const SignupForm = ({ onSuccess }: Props) => {
 					Already have an account?{" "}
 					<button
 						type="button"
-						onClick={() => setView("login")}
-						className="text-blue-600 hover:text-blue-700 font-semibold hover:underline transition-colors"
-					>
+						// onClick={() => setView("login")}
+						className="text-blue-600 hover:text-blue-700 font-semibold hover:underline transition-colors">
 						Login Here
 					</button>
 				</p>

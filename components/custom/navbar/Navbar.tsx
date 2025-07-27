@@ -4,6 +4,14 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 // import {
 //   Popover,
 //   PopoverContent,
@@ -15,7 +23,9 @@ import {
 	SheetHeader,
 	SheetTrigger,
 } from "@/components/ui/sheet";
+import { useAuthModal } from "@/context/AuthModalContext";
 import useWindowDimensions from "@/hooks/useWindowDimension";
+import { handleSignOutAPI } from "@/services/authservices";
 // import { useAuth, useNotification, useTheme } from "@/contexts";
 // import { NotificationService } from "@/services";
 // import {
@@ -29,14 +39,18 @@ import useWindowDimensions from "@/hooks/useWindowDimension";
 // } from "@/types/interfaces/notifications";
 // import { formatDateTime } from "@/utils/formatDate";
 import { Mail, Menu } from "lucide-react";
+import { useSession } from "next-auth/react";
 // import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "nextjs-toploader/app";
 import { forwardRef, useEffect, useState } from "react";
+
 // import { CommandSearch } from "../GlobalSearch";
 
 const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
+	const { data: session, status } = useSession();
+	const { openLogin } = useAuthModal();
 	const router = useRouter();
 	const urlPaths = usePathname();
 	const [pathname, setPathname] = useState<string | null>(null);
@@ -47,12 +61,9 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 		setPathname(lastSegment);
 	}, [urlPaths]);
 
-	//   const signOut = async () => {
-	//     const response = await userLogout();
-	//     if (response?.success) {
-	//       router.push("/login");
-	//     }
-	//   };
+	const handleSignout = async () => {
+		handleSignOutAPI();
+	};
 
 	// State to control popover open/close
 	const [open, setOpen] = useState<boolean>(false);
@@ -70,6 +81,9 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 			path: "/practice",
 		},
 	];
+	if (status === "loading") {
+		return <div>Loading...</div>;
+	}
 
 	return (
 		<div
@@ -212,56 +226,46 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
           </PopoverContent>
         </Popover> */}
 
-				<div className="xl:block 2xl:block 3xl:block hidden relative">
-					{/* <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Avatar className="cursor-pointer">
-                <AvatarImage
-                  src={
-                    user?.user?.profilePic !== null
-                      ? user?.user?.profilePic
-                      : `https://ui-avatars.com/api/?name=${user?.user?.name}`
-                  }
-                  alt="@shadcn"
-                />
-                <AvatarFallback>USER</AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56 bg-white text-black dark:bg-primaryGreyBg dark:text-white absolute  right-0">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-grey" />
-              <DropdownMenuGroup>
-                {user?.user?.role !== UserRoles.organization && (
-                  <DropdownMenuItem
-                    className="cursor-pointer gap-1 items-center"
-                    onClick={handleProfile}
-                  >
-                    Profile
-                  </DropdownMenuItem>
-                )}
-                <DropdownMenuItem
-                  className="cursor-pointer gap-1 items-center justify-between"
-                  onClick={() => router.push("/settings?view=password")}
-                >
-                  Change Password
-                  <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer"
-                  onClick={() => router.push("/news")}
-                >
-                  Latest News
-                  <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator className="bg-grey" />
-              <DropdownMenuItem onClick={signOut} className="cursor-pointer">
-                Log out
-                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu> */}
-				</div>
+				{session ? (
+					// Show user dropdown if logged in
+					<div className="xl:block 2xl:block 3xl:block hidden relative">
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Avatar className="cursor-pointer">
+									{/* <AvatarImage
+										src={
+											user?.user?.profilePic
+												? user.user.profilePic
+												: `https://ui-avatars.com/api/?name=${user.user.name}`
+										}
+										alt="@user"
+									/> */}
+									<AvatarFallback>USER</AvatarFallback>
+								</Avatar>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent className="w-56">
+								<DropdownMenuLabel>My Account</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem
+									onClick={() => router.push("/settings?view=password")}>
+									Change Password
+								</DropdownMenuItem>
+								<DropdownMenuItem onClick={() => router.push("/news")}>
+									Latest News
+								</DropdownMenuItem>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem onClick={handleSignout}>
+									Log out
+								</DropdownMenuItem>
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</div>
+				) : (
+					// Show Login button if not logged in
+					<Button onClick={openLogin} className="text-sm font-semibold">
+						Login
+					</Button>
+				)}
 			</div>
 
 			<nav className="block xl:hidden 2xl:hidden 3xl:hidden">
