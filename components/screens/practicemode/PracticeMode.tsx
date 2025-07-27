@@ -6,6 +6,7 @@ import {
 	ArrowRight,
 	BarChart3,
 	CheckCircle,
+	ChevronLeft,
 	Clock,
 	Pause,
 	Play,
@@ -300,10 +301,10 @@ export function PracticeMode() {
 
 	if (sessionState === "setup") {
 		return (
-			<div className="max-w-2xl mx-auto">
+			<div className="w-full mx-auto">
 				<div className="flex items-center gap-4 mb-6">
 					<Button variant="ghost"  className="gap-2">
-						<ArrowLeft className="h-4 w-4" />
+						<ChevronLeft className="h-4 w-4" />
 						Back to Questions
 					</Button>
 				</div>
