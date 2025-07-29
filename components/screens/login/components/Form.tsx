@@ -48,8 +48,10 @@ const LoginForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 				toast.error(result.error);
 			} else if (result?.ok) {
 				toast.success("Login successful");
+				// const sessionRes = await fetch("/api/auth/session");
+				// const session = await sessionRes.json();
+				// document.cookie = `accessToken=${session.accessToken}; path=/;`;
 				closeModal?.();
-
 			}
 		} catch (error) {
 			toast.error("Something went wrong");

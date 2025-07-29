@@ -2,61 +2,121 @@ import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-const protectedRoutes = ["/dashboard", "/profile"];
-const authRoutes = ["/login", "/register"];
-const publicRoutes = ["/", "/about"];
+// Route configuration with more granular control
+const routeConfig = {
+  protected: [
+    "/dashboard",
+    "/profile",
+    "/settings",
+    "/account",
+    "/billing"
+  ],
+  auth: [
+    "/login",
+    "/register",
+    "/reset-password",
+    "/forgot-password"
+  ],
+  public: [
+    "/",
+    "/about",
+    "/contact",
+    "/pricing",
+    "/blog",
+    "/blog/:path*"
+  ],
+  api: [
+    "/api/auth",
+    "/api/public"
+  ]
+};
 
 export async function middleware(request: NextRequest) {
-	const path = request.nextUrl.pathname;
-	const isProtectedRoute = protectedRoutes.some((route) =>
-		path.startsWith(route)
-	);
-	const isAuthRoute = authRoutes.includes(path);
-	const isPublicRoute = publicRoutes.includes(path);
+  const { pathname } = request.nextUrl;
+  const isApiRoute = pathname.startsWith('/api');
 
-	// Get token from cookies
-	const token = await getToken({
-		req: request,
-		secret: process.env.NEXTAUTH_SECRET,
-	});
+  // Skip middleware for API auth routes and static files
+  if (
+    isApiRoute && routeConfig.api.some(route => pathname.startsWith(route)) ||
+    pathname.startsWith('/_next/') ||
+    pathname.includes('.') // Static files
+  ) {
+    return NextResponse.next();
+  }
 
-	// Handle auth routes
-	if (isAuthRoute) {
-		if (token) {
-			return NextResponse.redirect(new URL("/dashboard", request.url));
-		}
-		return NextResponse.next();
-	}
+  // Get token with additional security options
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+    cookieName: process.env.NODE_ENV === 'production' 
+      ? '__Secure-next-auth.session-token' 
+      : 'next-auth.session-token',
+    secureCookie: process.env.NODE_ENV === 'production'
+  });
 
-	// Handle protected routes
-	if (isProtectedRoute) {
-		if (!token) {
-			return NextResponse.redirect(new URL("/login", request.url));
-		}
+  // Check route types with more efficient matching
+  const isProtectedRoute = routeConfig.protected.some(route => 
+    pathname.startsWith(route)
+  );
+  const isAuthRoute = routeConfig.auth.includes(pathname);
+  const isPublicRoute = routeConfig.public.some(route => 
+    pathname === route || pathname.startsWith(route.replace(':path*', ''))
+  );
 
-		// You can also verify token expiration here if needed
-		if (token.error === "RefreshAccessTokenError") {
-			return NextResponse.redirect(new URL("/login", request.url));
-		}
+  // Handle authentication routes
+  if (isAuthRoute) {
+    if (token) {
+      // Redirect to previous page or dashboard
+      const redirectUrl = request.nextUrl.searchParams.get('callbackUrl') || '/dashboard';
+      return NextResponse.redirect(new URL(redirectUrl, request.url));
+    }
+    return NextResponse.next();
+  }
 
-		return NextResponse.next();
-	}
+  // Handle protected routes
+  if (isProtectedRoute) {
+    if (!token) {
+      // Store the attempted URL for redirect after login
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
 
-	// Handle public routes
-	if (isPublicRoute) {
-		return NextResponse.next();
-	}
+    // Additional token validation
+    if (token.error === "RefreshAccessTokenError") {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('error', 'SessionExpired');
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // You can add role-based access control here
+    // if (pathname.startsWith('/admin') && token.role !== 'admin') {
+    //   return NextResponse.redirect(new URL('/unauthorized', request.url));
+    // }
+
+    return NextResponse.next();
+  }
+
+  // Handle public routes
+  if (isPublicRoute) {
+    return NextResponse.next();
+  }
+
+  // Default behavior for unmatched routes (404 or redirect)
+  return NextResponse.next();
+  // Alternatively, redirect to 404 page:
+  // return NextResponse.rewrite(new URL('/404', request.url));
 }
 
 export const config = {
-	matcher: [
-		/*
-		 * Match all request paths except for the ones starting with:
-		 * - api (API routes)
-		 * - _next/static (static files)
-		 * - _next/image (image optimization files)
-		 * - favicon.ico (favicon file)
-		 */
-		"/((?!api|_next/static|_next/image|favicon.ico).*)",
-	],
+  matcher: [
+    /*
+     * Match all request paths except for:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - images - .svg, .png, .jpg, etc.
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 };

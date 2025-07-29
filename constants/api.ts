@@ -6,5 +6,5 @@ export const apiEndPoint = {
 	getAllQuestions: "/questions",
 	getCategory: "/categories",
 	logout: "/auth/logout",
-	getUserProfile: "/users/profile",
+	getUserProfile: "/auth/me",
 };

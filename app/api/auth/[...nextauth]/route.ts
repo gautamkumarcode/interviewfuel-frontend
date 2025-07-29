@@ -1,3 +1,4 @@
+// /app/api/auth/[...nextauth]/route.ts
 import { loginUser } from "@/services/authservices";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -15,68 +16,86 @@ const handler = NextAuth({
 			clientSecret: process.env.GITHUB_CLIENT_SECRET!,
 		}),
 		CredentialsProvider({
+			id: "credentials",
 			name: "Credentials",
 			credentials: {
-				email: { label: "Email", type: "email" },
+				email: {
+					label: "Email",
+					type: "email",
+					placeholder: "user@example.com",
+				},
 				password: { label: "Password", type: "password" },
 			},
 			async authorize(credentials) {
-				if (!credentials?.email || !credentials?.password) return null;
-
 				try {
+					if (!credentials?.email || !credentials?.password) {
+						throw new Error("Email and password are required");
+					}
+
 					const response = await loginUser({
 						email: credentials.email,
 						password: credentials.password,
 					});
 
-					const user = response?.data?.user;
-					const token = response?.data?.token; // This is your backend JWT
-
-					if (user && token) {
-						return {
-							id: user._id,
-							name: user.name,
-							role: user.role,
-							accessToken: token, // send backend token
-						};
+					if (!response?.data?.user || !response?.data?.token) {
+						throw new Error("Invalid credentials");
 					}
-					return null;
+
+					return {
+						id: response.data.user._id,
+						name: response.data.user.name,
+						email: response.data.user.email,
+						role: response.data.user.role,
+						accessToken: response.data.token,
+						refreshToken: response.data.refreshToken,
+					};
 				} catch (error) {
-					console.error("Login error:", error);
+					console.error("Authorization error:", error);
 					return null;
 				}
 			},
 		}),
 	],
-	pages: {
-		signIn: "/login",
-	},
 	session: {
 		strategy: "jwt",
+		maxAge: 15 * 60, // 15 minutes (matches your access token expiry)
 	},
 	callbacks: {
-		async jwt({ token, user }) {
+		async jwt({ token, user, trigger, session }) {
+			// Initial sign in
 			if (user) {
 				token.id = user.id;
-
+				token.name = user.name;
 				token.role = user.role;
-				token.accessToken = user.accessToken; // persist backend token
+				token.accessToken = user.accessToken;
+				token.refreshToken = user.refreshToken;
 			}
+
+			// Handle session updates (if needed)
+			if (trigger === "update" && session?.accessToken) {
+				token.accessToken = session.accessToken;
+			}
+
 			return token;
 		},
 		async session({ session, token }) {
-			if (session.user) {
-				session.user.id = token.id as string;
-				session.user.email = token.email as string;
-				session.user.role = token.role as string;
+			if (token && session.user) {
+				session.user.id = token.id;
+				session.user.name = token.name;
+				session.user.role = token.role;
+				session.accessToken = token.accessToken;
+				session.refreshToken = token.refreshToken;
+				session.error = token.error; // For handling token refresh errors
 			}
-			// Expose token for backend usage on client
-			(session as any).accessToken = token.accessToken;
 			return session;
 		},
 	},
+	pages: {
+		signIn: "/login",
+		error: "/login", // Error code passed in query string as ?error=
+	},
 	secret: process.env.NEXTAUTH_SECRET,
+	debug: process.env.NODE_ENV === "development",
 });
 
 export { handler as GET, handler as POST };
-

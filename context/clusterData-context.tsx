@@ -23,22 +23,7 @@ const ClusterDataContext = createContext<ClusterDataContextType | undefined>(
 export const ClusterDataProvider = ({ children }: { children: ReactNode }) => {
 	const { data: session, status } = useSession();
 
-	// Optional: log session for debugging
-	if (process.env.NODE_ENV === "development") {
-		console.log("Session in ClusterDataProvider:", session);
-	}
-
-	// Separate user profile query (change key to avoid collision)
-	const {
-		data: userData,
-		isLoading: userLoading,
-		error: userError,
-	} = useQuery<AxiosResponseTypeWithoutPagination<any[]>>(
-		["userProfile"],
-		userServices.getUserProfile
-	);
-
-	// Fetch all categories
+	
 	const {
 		data: categoryData,
 		isLoading: categoryLoading,
@@ -47,7 +32,15 @@ export const ClusterDataProvider = ({ children }: { children: ReactNode }) => {
 		["allcategories"],
 		categoryService.getAllCategories
 	);
+	const {
+		data: userData,
+		isLoading: userIsLoading,
+		error: userError,
+	} = useQuery<AxiosResponseTypeWithoutPagination<any>>(["userProfile"], () =>
+		userServices.getUserProfile()
+	);
 
+	console.log(userData, "User Data");
 	const value = useMemo<ClusterDataContextType>(
 		() => ({
 			categoryData: categoryData?.data?.results || null,
