@@ -14,6 +14,10 @@ import { useQuery } from "react-query";
 type ClusterDataContextType = {
 	categoryData: GetCategoriesResponseType[] | null;
 	categoryLoading: boolean;
+	userData: any | null;
+	userLoading: boolean;
+	userError: any;
+	refetchUser: () => void;
 };
 
 const ClusterDataContext = createContext<ClusterDataContextType | undefined>(
@@ -23,7 +27,6 @@ const ClusterDataContext = createContext<ClusterDataContextType | undefined>(
 export const ClusterDataProvider = ({ children }: { children: ReactNode }) => {
 	const { data: session, status } = useSession();
 
-	
 	const {
 		data: categoryData,
 		isLoading: categoryLoading,
@@ -36,17 +39,36 @@ export const ClusterDataProvider = ({ children }: { children: ReactNode }) => {
 		data: userData,
 		isLoading: userIsLoading,
 		error: userError,
-	} = useQuery<AxiosResponseTypeWithoutPagination<any>>(["userProfile"], () =>
-		userServices.getUserProfile()
+		refetch: refetchUser,
+	} = useQuery<AxiosResponseTypeWithoutPagination<any>>(
+		["userProfile"],
+		() => userServices.getUserProfile(),
+		{
+			enabled: status === "authenticated" && !!session?.accessToken,
+			staleTime: 1000 * 60 * 5, // 5 minutes
+			cacheTime: 1000 * 60 * 10, // 10 minutes
+		}
 	);
 
 	console.log(userData, "User Data");
+
 	const value = useMemo<ClusterDataContextType>(
 		() => ({
 			categoryData: categoryData?.data?.results || null,
 			categoryLoading,
+			userData: userData?.data || null,
+			userLoading: userIsLoading,
+			userError,
+			refetchUser,
 		}),
-		[categoryData, categoryLoading]
+		[
+			categoryData,
+			categoryLoading,
+			userData,
+			userIsLoading,
+			userError,
+			refetchUser,
+		]
 	);
 
 	return (

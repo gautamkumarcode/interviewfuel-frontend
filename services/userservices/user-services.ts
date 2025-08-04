@@ -6,11 +6,27 @@ class UserServices {
 	public getUserProfile = async (): Promise<
 		AxiosResponseTypeWithoutPagination<any[]>
 	> => {
-		const { data } = await authenticatedInstance.get<
-			AxiosResponseTypeWithoutPagination<any[]>
-		>(apiEndPoint.getUserProfile);
+		try {
+			console.log("User service: Fetching user profile");
 
-		return data;
+			const { data } = await authenticatedInstance.get<
+				AxiosResponseTypeWithoutPagination<any[]>
+			>(apiEndPoint.getUserProfile);
+
+			console.log("User service: Profile fetched successfully", {
+				hasData: !!data,
+				hasUser: !!data?.data,
+			});
+
+			return data;
+		} catch (error: any) {
+			console.error("User service: Get profile error:", {
+				message: error?.message,
+				response: error?.response?.data,
+				status: error?.response?.status,
+			});
+			throw error;
+		}
 	};
 }
 

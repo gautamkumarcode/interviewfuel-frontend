@@ -42,13 +42,27 @@ export const SignupForm = ({ onSuccess }: Props) => {
 	const onSubmit = async (data: SignupFormData) => {
 		try {
 			setIsLoading(true);
+			console.log("Signup attempt for:", data.email);
+
 			const response = await signupUser(data);
+			
 			if (response?.success) {
-				toast.success("Signup successful");
+				toast.success("Account created successfully! Please login to continue.");
 				onSuccess?.();
+			} else {
+				toast.error(response?.message || "Signup failed. Please try again.");
 			}
 		} catch (error: any) {
-			toast.error(error.message || "Something went wrong");
+			console.error("Signup error:", {
+				message: error?.message,
+				response: error?.response?.data,
+				status: error?.response?.status,
+			});
+			
+			const errorMessage = error?.response?.data?.message || 
+							   error?.message || 
+							   "Something went wrong. Please try again.";
+			toast.error(errorMessage);
 		} finally {
 			setIsLoading(false);
 		}

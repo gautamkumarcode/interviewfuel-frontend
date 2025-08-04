@@ -104,6 +104,14 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 
 	const handleResize = () => {
 		const newVal = !minimized;
+
+		// Dispatch custom event BEFORE state change for instant response
+		window.dispatchEvent(
+			new CustomEvent("sidebarToggle", {
+				detail: { minimized: newVal, width: newVal ? 56 : 288 },
+			})
+		);
+
 		setMinimized(newVal);
 		sessionStorage.setItem("minimized", JSON.stringify(newVal));
 	};

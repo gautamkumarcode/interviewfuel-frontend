@@ -44,17 +44,21 @@ const LoginForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 				redirect: false,
 				...data,
 			});
+			
 			if (result?.error) {
-				toast.error(result.error);
+				console.error("Login error:", result.error);
+				toast.error(
+					"Invalid credentials. Please check your email and password."
+				);
 			} else if (result?.ok) {
-				toast.success("Login successful");
-				// const sessionRes = await fetch("/api/auth/session");
-				// const session = await sessionRes.json();
-				// document.cookie = `accessToken=${session.accessToken}; path=/;`;
+				toast.success("Login successful! Welcome back.");
 				closeModal?.();
+				onSuccess?.();
+				// Profile will be automatically fetched by UserProfileProvider
 			}
-		} catch (error) {
-			toast.error("Something went wrong");
+		} catch (error: any) {
+			console.error("Login form error:", error);
+			toast.error("Something went wrong. Please try again.");
 		} finally {
 			setIsLoading(false);
 		}

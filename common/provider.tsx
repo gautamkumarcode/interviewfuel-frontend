@@ -23,11 +23,6 @@ export const Provider: React.FC<{
 	});
 
 	return (
-		// <NextThemesProvider
-		// 	attribute="class"
-		// 	defaultTheme="light"
-		// 	enableSystem
-		// 	disableTransitionOnChange>
 		<QueryClientProvider client={queryClient}>
 			<SessionProvider>
 				<ClusterDataProvider>
@@ -43,6 +38,5 @@ export const Provider: React.FC<{
 				</ClusterDataProvider>
 			</SessionProvider>
 		</QueryClientProvider>
-		// </NextThemesProvider>
 	);
 };

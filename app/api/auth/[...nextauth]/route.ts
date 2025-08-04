@@ -29,17 +29,28 @@ const handler = NextAuth({
 			async authorize(credentials) {
 				try {
 					if (!credentials?.email || !credentials?.password) {
+						console.error("Missing credentials");
 						throw new Error("Email and password are required");
 					}
+
+					console.log("Attempting login for:", credentials.email);
 
 					const response = await loginUser({
 						email: credentials.email,
 						password: credentials.password,
 					});
 
+					console.log("Login response status:", response?.status);
+
 					if (!response?.data?.user || !response?.data?.token) {
+						console.error("Invalid response structure:", {
+							hasUser: !!response?.data?.user,
+							hasToken: !!response?.data?.token,
+						});
 						throw new Error("Invalid credentials");
 					}
+
+					console.log("Login successful for user:", response.data.user.email);
 
 					return {
 						id: response.data.user._id,
@@ -49,8 +60,15 @@ const handler = NextAuth({
 						accessToken: response.data.token,
 						refreshToken: response.data.refreshToken,
 					};
-				} catch (error) {
-					console.error("Authorization error:", error);
+				} catch (error: any) {
+					console.error("Authorization error:", {
+						message: error?.message,
+						response: error?.response?.data,
+						status: error?.response?.status,
+					});
+
+					// Return null to indicate authentication failure
+					// NextAuth will handle showing the error
 					return null;
 				}
 			},
@@ -58,7 +76,7 @@ const handler = NextAuth({
 	],
 	session: {
 		strategy: "jwt",
-		maxAge: 15 * 60, // 15 minutes (matches your access token expiry)
+		maxAge: 24 * 60 * 60, // 24 hours for better UX
 	},
 	callbacks: {
 		async jwt({ token, user, trigger, session }) {
@@ -99,3 +117,4 @@ const handler = NextAuth({
 });
 
 export { handler as GET, handler as POST };
+

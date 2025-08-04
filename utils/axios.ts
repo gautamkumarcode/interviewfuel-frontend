@@ -10,15 +10,49 @@ import { getSession, signOut } from "next-auth/react";
 // Create axios instances
 const unauthenticatedInstance: AxiosInstance = axios.create({
 	baseURL: API_URL,
-	timeout: 10000,
+	timeout: 30000, // Increased timeout to 30 seconds
 	withCredentials: true,
+	headers: {
+		"Content-Type": "application/json",
+	},
 });
 
 const authenticatedInstance: AxiosInstance = axios.create({
 	baseURL: API_URL,
-	timeout: 10000,
+	timeout: 30000, // Increased timeout to 30 seconds
 	withCredentials: true,
+	headers: {
+		"Content-Type": "application/json",
+	},
 });
+
+// Add retry logic for network errors on unauthenticated requests
+unauthenticatedInstance.interceptors.response.use(
+	(response: AxiosResponse) => response,
+	async (error: AxiosError) => {
+		const config = error.config as InternalAxiosRequestConfig & {
+			_retryCount?: number;
+		};
+
+		// Retry logic for network errors (not auth errors)
+		if (
+			!config ||
+			(config._retryCount || 0) >= 2 ||
+			error.response?.status === 401 ||
+			error.response?.status === 403
+		) {
+			return Promise.reject(error);
+		}
+
+		config._retryCount = (config._retryCount || 0) + 1;
+
+		// Wait before retry (exponential backoff)
+		const delay = Math.pow(2, config._retryCount) * 1000;
+		await new Promise((resolve) => setTimeout(resolve, delay));
+
+		return unauthenticatedInstance(config);
+	}
+);
 
 // Token refresh state management
 let isRefreshing = false;

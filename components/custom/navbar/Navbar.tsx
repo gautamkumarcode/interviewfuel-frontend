@@ -24,6 +24,7 @@ import {
 	SheetTrigger,
 } from "@/components/ui/sheet";
 import { useAuthModal } from "@/context/AuthModalContext";
+import { useClusterData } from "@/context/clusterData-context";
 import useWindowDimensions from "@/hooks/useWindowDimension";
 import { handleSignOutAPI } from "@/services/authservices";
 // import { useAuth, useNotification, useTheme } from "@/contexts";
@@ -50,6 +51,7 @@ import { forwardRef, useEffect, useState } from "react";
 
 const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 	const { data: session, status } = useSession();
+	const { userData: profile, userLoading: profileLoading } = useClusterData();
 	const { openLogin } = useAuthModal();
 	const router = useRouter();
 	const urlPaths = usePathname();
@@ -232,20 +234,49 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
 								<Avatar className="cursor-pointer">
-									{/* <AvatarImage
-										src={
-											user?.user?.profilePic
-												? user.user.profilePic
-												: `https://ui-avatars.com/api/?name=${user.user.name}`
-										}
-										alt="@user"
-									/> */}
-									<AvatarFallback>USER</AvatarFallback>
+									{profileLoading ? (
+										<AvatarFallback>
+											<div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+										</AvatarFallback>
+									) : (
+										<AvatarFallback>
+											{profile?.name
+												? profile.name
+														.split(" ")
+														.map((n: string) => n[0])
+														.join("")
+														.toUpperCase()
+												: session.user?.name
+														?.split(" ")
+														.map((n: string) => n[0])
+														.join("")
+														.toUpperCase() || "U"}
+										</AvatarFallback>
+									)}
 								</Avatar>
 							</DropdownMenuTrigger>
 							<DropdownMenuContent className="w-56">
-								<DropdownMenuLabel>My Account</DropdownMenuLabel>
+								<DropdownMenuLabel>
+									{profileLoading ? (
+										<div className="flex items-center gap-2">
+											<div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+											Loading...
+										</div>
+									) : (
+										<div>
+											<div className="font-medium">
+												{profile?.name || session.user?.name || "User"}
+											</div>
+											<div className="text-xs text-gray-500 font-normal">
+												{profile?.email || session.user?.email}
+											</div>
+										</div>
+									)}
+								</DropdownMenuLabel>
 								<DropdownMenuSeparator />
+								<DropdownMenuItem onClick={() => router.push("/profile")}>
+									Profile Settings
+								</DropdownMenuItem>
 								<DropdownMenuItem
 									onClick={() => router.push("/settings?view=password")}>
 									Change Password
