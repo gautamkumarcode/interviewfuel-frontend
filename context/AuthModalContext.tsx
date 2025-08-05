@@ -1,6 +1,5 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 type ViewType = "login" | "signup";
@@ -20,12 +19,6 @@ const AuthModalContext = createContext<AuthModalContextType | undefined>(
 export const AuthModalProvider = ({ children }: { children: ReactNode }) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [view, setView] = useState<ViewType>("login");
-
-	const { data: session, status } = useSession();
-
-	const { user } = session || {};
-
-	console.log(user);
 
 	const openLogin = () => {
 		setView("login");

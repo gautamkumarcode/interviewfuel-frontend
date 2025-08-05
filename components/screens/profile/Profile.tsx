@@ -259,13 +259,12 @@ export function ProfilePage() {
 
 	const handleSaveProfile = () => {
 		// In a real app, this would make an API call
-		console.log("Saving profile:", editedData);
+
 		setIsEditing(false);
 	};
 
 	const handleExportData = () => {
 		// In a real app, this would generate and download user data
-		console.log("Exporting user data...");
 	};
 
 	return (

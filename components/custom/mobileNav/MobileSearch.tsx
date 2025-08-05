@@ -23,7 +23,6 @@ export function MobileSearch({ isOpen, onToggle }: MobileSearchProps) {
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		// Handle search submission
-		console.log("Search:", searchQuery);
 		onToggle(); // Close search after submission
 	};
 

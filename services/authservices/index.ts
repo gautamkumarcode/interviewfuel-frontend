@@ -6,19 +6,13 @@ import { signOut } from "next-auth/react";
 
 export const loginUser = async (data: LoginFormData) => {
 	try {
-		console.log("Login service: Attempting login for", data.email);
 
 		const response = await unauthenticatedInstance.post(
 			`${API_URL}${apiEndPoint.login}`,
 			data
 		);
 
-		console.log("Login service: Response received", {
-			status: response.status,
-			hasData: !!response.data,
-			hasUser: !!response.data?.data?.user,
-			hasToken: !!response.data?.data?.token,
-		});
+		
 
 		return response.data;
 	} catch (error: any) {
@@ -33,17 +27,12 @@ export const loginUser = async (data: LoginFormData) => {
 
 export const signupUser = async (signupData: SignupPayloadData) => {
 	try {
-		console.log("Signup service: Attempting signup for", signupData.email);
 
 		const response = await unauthenticatedInstance.post<SignupResponse>(
 			`${API_URL}${apiEndPoint.signup}`,
 			signupData
 		);
 
-		console.log("Signup service: Response received", {
-			status: response.status,
-			hasData: !!response.data,
-		});
 
 		return response.data;
 	} catch (error: any) {
@@ -58,20 +47,14 @@ export const signupUser = async (signupData: SignupPayloadData) => {
 
 export const sendForgotPassword = async (emailData: { email: string }) => {
 	try {
-		console.log(
-			"Forgot password service: Sending reset email to",
-			emailData.email
-		);
+		
 
 		const response = await unauthenticatedInstance.post(
 			`${API_URL}/auth/forgot-password`,
 			emailData
 		);
 
-		console.log("Forgot password service: Response received", {
-			status: response.status,
-			hasData: !!response.data,
-		});
+	
 
 		return response.data;
 	} catch (error: any) {

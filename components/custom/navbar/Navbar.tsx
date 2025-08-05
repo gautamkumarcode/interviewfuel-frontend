@@ -50,7 +50,7 @@ import { forwardRef, useEffect, useState } from "react";
 // import { CommandSearch } from "../GlobalSearch";
 
 const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
-	const { data: session, status } = useSession();
+	const { data: session } = useSession();
 	const { userData: profile, userLoading: profileLoading } = useClusterData();
 	const { openLogin } = useAuthModal();
 	const router = useRouter();
@@ -68,7 +68,6 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 	};
 
 	// State to control popover open/close
-	const [open, setOpen] = useState<boolean>(false);
 	const { width } = useWindowDimensions();
 
 	const navbarOptions = [
@@ -83,9 +82,6 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 			path: "/practice",
 		},
 	];
-	if (status === "loading") {
-		return <div>Loading...</div>;
-	}
 
 	return (
 		<div

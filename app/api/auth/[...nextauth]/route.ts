@@ -33,14 +33,12 @@ const handler = NextAuth({
 						throw new Error("Email and password are required");
 					}
 
-					console.log("Attempting login for:", credentials.email);
 
 					const response = await loginUser({
 						email: credentials.email,
 						password: credentials.password,
 					});
 
-					console.log("Login response status:", response?.status);
 
 					if (!response?.data?.user || !response?.data?.token) {
 						console.error("Invalid response structure:", {
@@ -50,7 +48,6 @@ const handler = NextAuth({
 						throw new Error("Invalid credentials");
 					}
 
-					console.log("Login successful for user:", response.data.user.email);
 
 					return {
 						id: response.data.user._id,

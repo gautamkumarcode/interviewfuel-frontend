@@ -42,7 +42,6 @@ export const SignupForm = ({ onSuccess }: Props) => {
 	const onSubmit = async (data: SignupFormData) => {
 		try {
 			setIsLoading(true);
-			console.log("Signup attempt for:", data.email);
 
 			const response = await signupUser(data);
 			

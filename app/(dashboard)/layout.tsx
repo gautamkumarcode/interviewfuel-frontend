@@ -4,13 +4,10 @@ import Sidebar from "@/components/custom/customsidebar/CustomSidebar";
 import Navbar from "@/components/custom/navbar/Navbar";
 import { useEffect, useRef, useState } from "react";
 
-export default function DashboardLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
 	const sidebarRef = useRef<HTMLDivElement>(null);
 	const navbarRef = useRef<HTMLDivElement>(null);
+	const [isHydrated, setIsHydrated] = useState(false);
 
 	// Get initial state from sessionStorage if available
 	const getInitialMinimized = () => {
@@ -20,14 +17,14 @@ export default function DashboardLayout({
 		return false;
 	};
 
-	const [isMinimized, setIsMinimized] = useState(getInitialMinimized());
+	const [isMinimized, setIsMinimized] = useState(false); // Start with false to prevent hiding
 	const [isTransitioning, setIsTransitioning] = useState(false);
 
-	// Calculate widths based on minimized state
-	const sidebarWidth = isMinimized ? 56 : 288; // w-14 : w-72
-	const navbarHeight = 64; // Default navbar height
-
 	useEffect(() => {
+		// Set the correct initial state after hydration
+		setIsMinimized(getInitialMinimized());
+		setIsHydrated(true);
+
 		const handleTransitionStart = () => {
 			setIsTransitioning(true);
 		};
@@ -74,23 +71,29 @@ export default function DashboardLayout({
 		};
 	}, []);
 
-	// Apply CSS variables to root element for perfect sync
+	// Calculate widths based on minimized state
+	const sidebarWidth = isMinimized ? 56 : 288; // w-14 : w-72
+	const navbarHeight = 64; // Default navbar height
+
+	// Apply CSS variables to root element
 	useEffect(() => {
-		const root = document.documentElement;
-		root.style.setProperty("--sidebar-width", `${sidebarWidth}px`);
-		root.style.setProperty("--navbar-height", `${navbarHeight}px`);
-	}, [sidebarWidth, navbarHeight]);
+		if (isHydrated) {
+			const root = document.documentElement;
+			root.style.setProperty("--sidebar-width", `${sidebarWidth}px`);
+			root.style.setProperty("--navbar-height", `${navbarHeight}px`);
+		}
+	}, [sidebarWidth, navbarHeight, isHydrated]);
 
 	return (
 		<div className="w-screen h-screen overflow-hidden dark:bg-darkBg bg-[#FAFAFA]">
 			<Sidebar ref={sidebarRef} />
 
-			{/* Navbar with immediate width adjustment */}
+			{/* Navbar - using inline styles to prevent FOUC */}
 			<div
 				className="fixed top-0 z-10 min-h-[64px] bg-white dark:bg-primaryGreyBg"
 				style={{
-					marginLeft: `var(--sidebar-width)`,
-					width: `calc(100vw - var(--sidebar-width))`,
+					marginLeft: `${sidebarWidth}px`,
+					width: `calc(100vw - ${sidebarWidth}px)`,
 					transition: isTransitioning
 						? "none"
 						: "margin-left 300ms ease-in-out, width 300ms ease-in-out",
@@ -98,14 +101,14 @@ export default function DashboardLayout({
 				<Navbar ref={navbarRef} />
 			</div>
 
-			{/* Main content with immediate width adjustment */}
+			{/* Main content - using inline styles to prevent FOUC */}
 			<main
 				className="overflow-auto p-4"
 				style={{
-					marginLeft: `var(--sidebar-width)`,
-					marginTop: `var(--navbar-height)`,
-					width: `calc(100vw - var(--sidebar-width))`,
-					height: `calc(100vh - var(--navbar-height))`,
+					marginLeft: `${sidebarWidth}px`,
+					marginTop: `${navbarHeight}px`,
+					width: `calc(100vw - ${sidebarWidth}px)`,
+					height: `calc(100vh - ${navbarHeight}px)`,
 					transition: isTransitioning
 						? "none"
 						: "margin-left 300ms ease-in-out, width 300ms ease-in-out",

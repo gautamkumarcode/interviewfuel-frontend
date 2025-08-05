@@ -50,7 +50,6 @@ export const ClusterDataProvider = ({ children }: { children: ReactNode }) => {
 		}
 	);
 
-	console.log(userData, "User Data");
 
 	const value = useMemo<ClusterDataContextType>(
 		() => ({
