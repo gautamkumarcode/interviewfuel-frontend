@@ -84,20 +84,57 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 
 	// ✅ Set active parent & child from URL param
 	useEffect(() => {
-		if (!params || !Array.isArray(categories) || categories.length === 0)
-			return;
+		if (!Array.isArray(categories) || categories.length === 0) return;
 
-		const decodedParam = decodeURIComponent(params as string).toLowerCase();
+		// Check if we're on /questions route with category query parameter
+		const currentPath = window.location.pathname;
+		const urlParams = new URLSearchParams(window.location.search);
+		const categoryParam = urlParams.get("category");
 
-		for (const category of categories) {
-			const match = category.subcategories.find(
-				(sub) => sub.slug.toLowerCase() === decodedParam
+		// Reset active states first
+		setActiveParent(null);
+		setActiveChild(null);
+
+		if (currentPath === "/questions" && categoryParam) {
+			// Handle /questions?category=some-category
+			const decodedParam = decodeURIComponent(categoryParam).toLowerCase();
+
+			// First check if it's a main category
+			const mainCategory = categories.find(
+				(cat) => cat.name.toLowerCase().replace(/\s+/g, "-") === decodedParam
 			);
 
-			if (match) {
-				setActiveParent(category.name);
-				setActiveChild(match.name);
-				break;
+			if (mainCategory) {
+				setActiveParent(mainCategory.name);
+				return;
+			}
+
+			// Then check if it's a subcategory
+			for (const category of categories) {
+				const subMatch = category.subcategories.find(
+					(sub) => sub.slug.toLowerCase() === decodedParam
+				);
+
+				if (subMatch) {
+					setActiveParent(category.name);
+					setActiveChild(subMatch.name);
+					return;
+				}
+			}
+		} else if (params) {
+			// Handle /questions/[category] route (subcategory slug in path)
+			const decodedParam = decodeURIComponent(params as string).toLowerCase();
+
+			for (const category of categories) {
+				const subMatch = category.subcategories.find(
+					(sub) => sub.slug.toLowerCase() === decodedParam
+				);
+
+				if (subMatch) {
+					setActiveParent(category.name);
+					setActiveChild(subMatch.name);
+					return;
+				}
 			}
 		}
 	}, [params, categories]);
@@ -160,8 +197,12 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 					setActiveChild(null);
 				}}
 				className={cn(
-					"flex items-center gap-3 bg-green-600 text-white rounded-md p-3 mb-4 cursor-pointer transition",
-					minimized && "justify-center p-2"
+					"flex items-center gap-3 rounded-md p-3 mb-4 cursor-pointer transition",
+					minimized && "justify-center p-2",
+					// Highlight if we're on /questions without any category or with no active selection
+					!activeParent && !activeChild
+						? "bg-green-700 text-white"
+						: "bg-green-600 text-white hover:bg-green-700"
 				)}>
 				{!minimized && (
 					<span className="text-sm font-semibold">All Questions</span>
@@ -185,6 +226,15 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 								className="border-none outline-none" // ✅ removes bottom border
 							>
 								<AccordionTrigger
+									onClick={(e) => {
+										// Navigate to main category when clicking the trigger
+										const categorySlug = category.name
+											.toLowerCase()
+											.replace(/\s+/g, "-");
+										handleNavigate(`/questions?category=${categorySlug}`);
+										setActiveParent(category.name);
+										setActiveChild(null);
+									}}
 									className={cn(
 										"flex items-center gap-3 px-3 py-2 rounded-md transition-colors duration-200 border-none outline-none text-decoration-none hover:text-decoration-none hover:no-underline",
 										activeParent === category.name
@@ -233,7 +283,15 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 								key={item._id}
 								variant="ghost"
 								size="icon"
+								className={cn(
+									activeParent === item.name &&
+										"bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+								)}
 								onClick={() => {
+									const categorySlug = item.name
+										.toLowerCase()
+										.replace(/\s+/g, "-");
+									handleNavigate(`/questions?category=${categorySlug}`);
 									setActiveParent(item.name);
 									setActiveChild(null);
 									setMinimized(false);
