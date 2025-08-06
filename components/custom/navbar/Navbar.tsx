@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/sheet";
 import { useAuthModal } from "@/context/AuthModalContext";
 import { useClusterData } from "@/context/clusterData-context";
+import { useTheme } from "@/context/theme.context";
 import useWindowDimensions from "@/hooks/useWindowDimension";
 import { handleSignOutAPI } from "@/services/authservices";
 // import { useAuth, useNotification, useTheme } from "@/contexts";
@@ -55,6 +56,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 	const { openLogin } = useAuthModal();
 	const router = useRouter();
 	const urlPaths = usePathname();
+	const {toast}=useTheme()
 	const [pathname, setPathname] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -65,6 +67,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 
 	const handleSignout = async () => {
 		handleSignOutAPI();
+		toast.success("logged out successfully")
 	};
 
 	// State to control popover open/close
@@ -81,6 +84,11 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 			name: "Practice",
 			path: "/practice",
 		},
+		{
+			id: 3,
+			name: "Questions",
+			path: "/questions",
+		},
 	];
 
 	return (
@@ -96,7 +104,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 									key={id}
 									className={`text-xs font-manrope font-semibold ${
 										`/${pathname}` === path
-											? "text-gren"
+											? " text-green-500 underline"
 											: "text-black dark:text-white"
 									}`}>
 									<Link href={path} className="font-manrope">
@@ -118,6 +126,16 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 			<div className="flex items-center gap-6">
 				{/* <Image src={mail} alt="chevronLeft-icon" /> */}
 				<Mail className="h-5 w-5 text-primary" />
+				
+				{/* Add Question Button - only show if user is logged in */}
+				{session && (
+					<Button 
+						onClick={() => router.push("/questions/create")}
+						className="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2"
+					>
+						Add Question
+					</Button>
+				)}
 				{/* <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <div className="relative cursor-pointer">
@@ -235,7 +253,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 											<div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
 										</AvatarFallback>
 									) : (
-										<AvatarFallback>
+										<AvatarFallback className="bg-gradient-to-r from-green-400 to-green-600 text-white">
 											{profile?.name
 												? profile.name
 														.split(" ")
@@ -328,6 +346,15 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 											{name}
 										</Link>
 									))}
+									
+									{/* Add Question link for mobile - only show if user is logged in */}
+									{session && (
+										<Link
+											href="/questions/create"
+											className="flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400">
+											Add Question
+										</Link>
+									)}
 								</div>
 								<div className="mt-auto bg-red-900 flex">
 									<Card className="bg-zinc-900 border-none rounded-none w-full text-white p-4 flex justify-center items-center gap-4">

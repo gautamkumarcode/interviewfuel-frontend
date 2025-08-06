@@ -1,4 +1,4 @@
-import { LoginFormData } from '@/components/screens/login/components/validation/loginSchema';
+import { LoginFormData } from '@/components/screens/auth/login/components/validation/loginSchema';
 import { API_URL, apiEndPoint } from '@/constants/api';
 import { SignupPayloadData, SignupResponse } from '@/types/auth/signup';
 import { authenticatedInstance, unauthenticatedInstance } from "@/utils/axios";
