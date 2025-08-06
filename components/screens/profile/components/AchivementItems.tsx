@@ -1,4 +1,4 @@
-import { formatTimeAgo, getActivityIcon } from "@/utils/profileUtils";
+import { formatTimeAgo } from "@/utils/profileUtils";
 
 interface ActivityItemProps {
 	activity: {

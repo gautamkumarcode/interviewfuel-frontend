@@ -3,7 +3,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
 	formatDate,
-	getAchievementIcon,
 	getRarityColor,
 } from "@/utils/profileUtils";
 
