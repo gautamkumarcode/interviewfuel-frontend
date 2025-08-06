@@ -13,12 +13,10 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { type LoginFormData, loginSchema } from "./validation/loginSchema"
-import { loginUser } from "@/services/authservices"
 
 const LoginForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [lookUpPass, setLookUpPass] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
   const { toast } = useTheme()
   const { openSignup, closeModal } = useAuthModal()
 

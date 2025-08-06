@@ -22,7 +22,7 @@ interface AchievementCardProps {
 }
 
 export default function AchievementCard({ achievement }: AchievementCardProps) {
-	const IconComponent = getAchievementIcon(achievement?.icon || "trophy");
+	// const IconComponent = getAchievementIcon(achievement?.icon || "trophy");
 
 	return (
 		<Card

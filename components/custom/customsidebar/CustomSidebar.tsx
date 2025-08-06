@@ -226,7 +226,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 								className="border-none outline-none" // ✅ removes bottom border
 							>
 								<AccordionTrigger
-									onClick={(e) => {
+									onClick={() => {
 										// Navigate to main category when clicking the trigger
 										const categorySlug = category.name
 											.toLowerCase()
