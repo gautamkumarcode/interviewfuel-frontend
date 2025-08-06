@@ -1,19 +1,17 @@
 import { apiEndPoint } from "@/constants/api";
 import { AxiosResponseTypeWithoutPagination } from "@/types/axios-response";
+import { User } from "@/types/user";
 import { authenticatedInstance } from "@/utils/axios";
 
 class UserServices {
 	public getUserProfile = async (): Promise<
-		AxiosResponseTypeWithoutPagination<any[]>
+		AxiosResponseTypeWithoutPagination<User>
 	> => {
-	
+		const { data } = await authenticatedInstance.get<
+			AxiosResponseTypeWithoutPagination<User>
+		>(apiEndPoint.getUserProfile);
 
-			const { data } = await authenticatedInstance.get<
-				AxiosResponseTypeWithoutPagination<any[]>
-			>(apiEndPoint.getUserProfile);
-
-			return data;
-		
+		return data;
 	};
 }
 

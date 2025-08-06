@@ -24,27 +24,56 @@ export interface UserStats {
   favoriteCategory: string;
 }
 
+export interface Achievement {
+	id: string;
+	title: string;
+	description: string;
+	icon: string;
+	rarity: "common" | "uncommon" | "rare" | "epic" | "legendary";
+	earned: boolean;
+	earnedAt?: string;
+	category: string;
+	points: number;
+	progress?: number;
+	target?: number;
+}
+
+export interface Activity {
+	id: string;
+	type: "practice" | "achievement" | "milestone";
+	title: string;
+	description: string;
+	timestamp: string;
+	details?: {
+		category?: string;
+		score?: number;
+		duration?: number;
+	};
+}
+
 export interface User {
-  social: SocialLinks;
-  preferences: UserPreferences;
-  stats: UserStats;
-  _id: string;
-  name: string;
-  email: string;
-  username: string;
-  avatar: string | null;
-  bio: string;
-  location: string;
-  website: string;
-  isActive: boolean;
-  role: string;
-  achievements: any[];
-  lastActive: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  profileUrl: string;
-  id: string;
+	social: SocialLinks;
+	preferences: UserPreferences;
+	stats: UserStats;
+	_id: string;
+	name: string;
+	email: string;
+	userName: string;
+	avatar: string | null;
+	bio: string;
+	location: string;
+	website: string;
+	isActive: boolean;
+	role: string;
+	achievements: Achievement[];
+	recentActivity: Activity[];
+	lastActive: string;
+	createdAt: string;
+	updatedAt: string;
+	joinDate: string;
+	__v: number;
+	profileUrl: string;
+	id: string;
 }
 
 

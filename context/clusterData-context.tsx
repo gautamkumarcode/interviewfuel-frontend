@@ -27,14 +27,11 @@ const ClusterDataContext = createContext<ClusterDataContextType | undefined>(
 export const ClusterDataProvider = ({ children }: { children: ReactNode }) => {
 	const { data: session, status } = useSession();
 
-	const {
-		data: categoryData,
-		isLoading: categoryLoading,
-		error: categoryError,
-	} = useQuery<AxiosResponseTypeWithPagination<GetCategoriesResponseType[]>>(
-		["allcategories"],
-		categoryService.getAllCategories
-	);
+
+
+	const { data: categoryData, isLoading: categoryLoading } = useQuery<
+		AxiosResponseTypeWithPagination<GetCategoriesResponseType[]>
+	>(["allcategories"], categoryService.getAllCategories);
 	const {
 		data: userData,
 		isLoading: userIsLoading,
@@ -50,12 +47,11 @@ export const ClusterDataProvider = ({ children }: { children: ReactNode }) => {
 		}
 	);
 
-
 	const value = useMemo<ClusterDataContextType>(
 		() => ({
 			categoryData: categoryData?.data?.results || null,
 			categoryLoading,
-			userData: userData?.data || null,
+			userData: userData?.data?.user || null,
 			userLoading: userIsLoading,
 			userError,
 			refetchUser,
