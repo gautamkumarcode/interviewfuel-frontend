@@ -3,7 +3,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
 	formatDate,
-	getAchievementIcon,
 	getRarityColor,
 } from "@/utils/profileUtils";
 
@@ -22,7 +21,7 @@ interface AchievementCardProps {
 }
 
 export default function AchievementCard({ achievement }: AchievementCardProps) {
-	const IconComponent = getAchievementIcon(achievement?.icon || "trophy");
+	// const IconComponent = getAchievementIcon(achievement?.icon || "trophy");
 
 	return (
 		<Card

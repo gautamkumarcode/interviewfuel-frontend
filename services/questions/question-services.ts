@@ -7,7 +7,7 @@ import {
 	GetAllQuestionsResponseType,
 	GetSingleQuestionResponseType,
 } from "@/types/interfaces/questions/getQuestion-type";
-import { unauthenticatedInstance } from "@/utils/axios";
+import { unauthenticatedInstance, authenticatedInstance } from "@/utils/axios";
 
 class QuestionService {
 	public getAllQuestions = async (category?:string): Promise<
@@ -32,6 +32,15 @@ class QuestionService {
 		const { data } = await unauthenticatedInstance.get<
 			AxiosResponseTypeWithoutPagination<GetSingleQuestionResponseType>
 		>(`${apiEndPoint.getAllQuestions}/${id}`);
+		return data;
+	};
+
+	public createQuestion = async (
+		payload: any
+	): Promise<AxiosResponseTypeWithoutPagination<any>> => {
+		const { data } = await authenticatedInstance.post<
+			AxiosResponseTypeWithoutPagination<any>
+		>(`${apiEndPoint.getAllQuestions}`, payload);
 		return data;
 	};
 

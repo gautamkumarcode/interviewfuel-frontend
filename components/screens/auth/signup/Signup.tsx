@@ -1,12 +1,11 @@
 "use client";
 
-import { SignupForm } from "./component/Form";
-
+import AuthTabs from "../AuthTabs";
 
 const Signup = () => {
 	return (
 		<div>
-			<SignupForm />
+			<AuthTabs />
 		</div>
 	);
 };
