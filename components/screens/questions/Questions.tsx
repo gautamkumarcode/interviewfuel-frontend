@@ -1,13 +1,14 @@
 "use client";
 
+import HashLoader from "@/components/custom/loader/Loader";
 import { ApiStateLoader } from "@/components/custom/loader/PageLoader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { questionService } from "@/services/questions/question-services";
 import {
-	AxiosErrorResponseType,
-	AxiosResponseTypeWithPagination,
+  AxiosErrorResponseType,
+  AxiosResponseTypeWithPagination,
 } from "@/types/axios-response";
 import { GetCategoriesResponseType } from "@/types/interfaces/category/category-type";
 import { GetAllQuestionsResponseType } from "@/types/interfaces/questions/getQuestion-type";
@@ -18,33 +19,33 @@ import { useRouter } from "nextjs-toploader/app";
 import { useQuery, useQueryClient } from "react-query";
 
 export default function Questions() {
-	const params = useSearchParams();
-	const category = params?.get("category");
-	const router = useRouter();
+  const params = useSearchParams();
+  const category = params?.get("category");
+  const router = useRouter();
 
-	const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-	const decodedCategory = decodeURIComponent((category as string) || "")
-		.trim()
-		.toLowerCase();
+  const decodedCategory = decodeURIComponent((category as string) || "")
+    .trim()
+    .toLowerCase();
 
-	const cachedCategories = queryClient.getQueryData<
-		AxiosResponseTypeWithPagination<GetCategoriesResponseType[]>
-	>(["allcategories"]);
+  const cachedCategories = queryClient.getQueryData<
+    AxiosResponseTypeWithPagination<GetCategoriesResponseType[]>
+  >(["allcategories"]);
 
-	const categoryList = cachedCategories?.data?.results ?? [];
+  const categoryList = cachedCategories?.data?.results ?? [];
 
-	let matchedSubcategory = null;
+  let matchedSubcategory = null;
 
-	for (const cat of categoryList) {
-		const sub = cat.subcategories?.find(
-			(sub) => sub.slug.toLowerCase() === decodedCategory
-		);
-		if (sub) {
-			matchedSubcategory = sub;
-			break;
-		}
-	}
+  for (const cat of categoryList) {
+    const sub = cat.subcategories?.find(
+      (sub) => sub.slug.toLowerCase() === decodedCategory
+    );
+    if (sub) {
+      matchedSubcategory = sub;
+      break;
+    }
+  }
 
 	const categoryId = matchedSubcategory?._id;
 	const categoryName = matchedSubcategory?.name ?? "All";
@@ -68,7 +69,7 @@ export default function Questions() {
 		}
 	);
 
-	const filteredQuestions = data?.data?.results ?? [];
+  const filteredQuestions = data?.data?.results ?? [];
 
 	// Loading skeleton component
 	const QuestionSkeleton = () => (
@@ -107,12 +108,12 @@ export default function Questions() {
 		return colors[difficulty] || "bg-gray-100 text-gray-800 border-gray-200";
 	};
 
-	const handleCardClick = (question: GetAllQuestionsResponseType) => {
-		const questionCategory =
-			question.category?.name?.toLowerCase() || "general";
+  const handleCardClick = (question: GetAllQuestionsResponseType) => {
+    const questionCategory =
+      question.category?.name?.toLowerCase() || "general";
 
-		router.push(`/questions/${questionCategory}/${question.slug}`);
-	};
+    router.push(`/questions/${questionCategory}/${question.slug}`);
+  };
 
 	return (
 		<>
@@ -130,21 +131,23 @@ export default function Questions() {
 				</p>
 			</div>
 
-			<div className="flex items-center gap-4 mb-6">
-				<Button
-					onClick={() => router.push("/practice")}
-					className="gap-2 bg-green-600 hover:bg-green-700">
-					<Clock className="h-4 w-4" />
-					Practice {categoryName}
-				</Button>
-				<Button
-					variant="outline"
-					className="gap-2 bg-transparent"
-					onClick={() => router.push("/analytics")}>
-					<TrendingUp className="h-4 w-4" />
-					View Progress
-				</Button>
-			</div>
+      <div className="flex items-center gap-4 mb-6">
+        <Button
+          onClick={() => router.push("/practice")}
+          className="gap-2 bg-green-600 hover:bg-green-700"
+        >
+          <Clock className="h-4 w-4" />
+          Practice {categoryName}
+        </Button>
+        <Button
+          variant="outline"
+          className="gap-2 bg-transparent"
+          onClick={() => router.push("/analytics")}
+        >
+          <TrendingUp className="h-4 w-4" />
+          View Progress
+        </Button>
+      </div>
 
 			<ApiStateLoader
 				isLoading={isLoading}

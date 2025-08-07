@@ -1,86 +1,89 @@
 "use client";
 
 import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { useClusterData } from "@/context/clusterData-context";
 import { cn } from "@/lib/utils";
 import logo from "@/public/logo.png";
 import {
-	BookOpen,
-	Brain,
-	ChevronLeft,
-	Code2,
-	Database,
-	Globe,
-	MessageCircleQuestion,
-	Settings,
-	Smartphone,
-	TrendingUp,
+  BookOpen,
+  Brain,
+  ChevronLeft,
+  Code2,
+  Database,
+  Globe,
+  MessageCircleQuestion,
+  Settings,
+  Smartphone,
+  TrendingUp,
 } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useRouter } from "nextjs-toploader/app";
 import {
-	forwardRef,
-	useEffect,
-	useLayoutEffect,
-	useRef,
-	useState,
+  forwardRef,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
 } from "react";
+import { CustomButton } from "../CustomButton/CustomButton";
+import { useModal } from "@/context/modal-context";
+import AdminQuestionsHOC from "@/components/screens/adminQuestionsPanel/adminQuestionsHOC";
 
 const getCategoryIcon = (category: string) => {
-	const classes = "h-5 w-5";
-	switch (category) {
-		case "Frontend":
-			return <Globe className={classes + " text-blue-500"} />;
-		case "Backend":
-			return <Database className={classes + " text-purple-500"} />;
-		case "Mobile":
-			return <Smartphone className={classes + " text-green-500"} />;
-		case "Data Science":
-			return <TrendingUp className={classes + " text-pink-500"} />;
-		case "System Design":
-			return <Brain className={classes + " text-orange-500"} />;
-		case "DevOps":
-			return <Settings className={classes + " text-red-500"} />;
-		case "Programming":
-			return <Code2 className={classes + " text-indigo-500"} />;
-		default:
-			return <BookOpen className={classes + " text-gray-400"} />;
-	}
+  const classes = "h-5 w-5";
+  switch (category) {
+    case "Frontend":
+      return <Globe className={classes + " text-blue-500"} />;
+    case "Backend":
+      return <Database className={classes + " text-purple-500"} />;
+    case "Mobile":
+      return <Smartphone className={classes + " text-green-500"} />;
+    case "Data Science":
+      return <TrendingUp className={classes + " text-pink-500"} />;
+    case "System Design":
+      return <Brain className={classes + " text-orange-500"} />;
+    case "DevOps":
+      return <Settings className={classes + " text-red-500"} />;
+    case "Programming":
+      return <Code2 className={classes + " text-indigo-500"} />;
+    default:
+      return <BookOpen className={classes + " text-gray-400"} />;
+  }
 };
 
 const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
-	const param = useParams();
-	const router = useRouter();
-	const params = param?.category || "";
+  const param = useParams();
+  const router = useRouter();
+  const params = param?.category || "";
 
-	// const params = useSearchParams().get("category");
-	const headerRef = useRef<HTMLDivElement>(null);
-	const footerRef = useRef<HTMLDivElement>(null);
-	const [bodyMaxHeight, setBodyMaxHeight] = useState("100vh");
-	const [minimized, setMinimized] = useState(false);
-	const [activeParent, setActiveParent] = useState<string | null>(null);
-	const [activeChild, setActiveChild] = useState<string | null>(null);
-	const { categoryData } = useClusterData();
+  // const params = useSearchParams().get("category");
+  const headerRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+  const [bodyMaxHeight, setBodyMaxHeight] = useState("100vh");
+  const [minimized, setMinimized] = useState(false);
+  const [activeParent, setActiveParent] = useState<string | null>(null);
+  const [activeChild, setActiveChild] = useState<string | null>(null);
+  const { categoryData } = useClusterData();
 
-	const categories = categoryData!;
+  const categories = categoryData!;
 
-	useEffect(() => {
-		const getMinimized = sessionStorage.getItem("minimized");
-		setMinimized(getMinimized ? JSON.parse(getMinimized) : false);
-	}, []);
+  useEffect(() => {
+    const getMinimized = sessionStorage.getItem("minimized");
+    setMinimized(getMinimized ? JSON.parse(getMinimized) : false);
+  }, []);
 
-	useLayoutEffect(() => {
-		const headerHeight = headerRef.current?.offsetHeight || 0;
-		const footerHeight = footerRef.current?.offsetHeight || 0;
-		setBodyMaxHeight(`calc(100vh - ${headerHeight + footerHeight}px)`);
-	}, [minimized]);
+  useLayoutEffect(() => {
+    const headerHeight = headerRef.current?.offsetHeight || 0;
+    const footerHeight = footerRef.current?.offsetHeight || 0;
+    setBodyMaxHeight(`calc(100vh - ${headerHeight + footerHeight}px)`);
+  }, [minimized]);
 
 	// ✅ Set active parent & child from URL param
 	useEffect(() => {
@@ -153,42 +156,46 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 		sessionStorage.setItem("minimized", JSON.stringify(newVal));
 	};
 
-	const handleNavigate = (link: string) => {
-		if (window.location.pathname !== link) {
-			router.push(link);
-		}
-	};
+  const handleNavigate = (link: string) => {
+    if (window.location.pathname !== link) {
+      router.push(link);
+    }
+  };
 
-	return (
-		<aside
-			ref={ref}
-			className={cn(
-				"fixed top-0 left-0 bottom-0 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 flex flex-col transition-all duration-300 shadow-sm",
-				minimized ? "w-14 px-2" : "w-72 px-4"
-			)}>
-			<div ref={headerRef} className="py-2 flex items-center ">
-				<Image
-					src={logo}
-					alt="Logo"
-					width={60}
-					height={60}
-					onClick={() => handleResize()}
-				/>
-				{!minimized && (
-					<h2 className="text-xl font-bold  text-yellow-600 cursor-pointer">
-						Interview<span className="text-green-600">Fuel</span>
-					</h2>
-				)}
-				<Button
-					size="icon"
-					variant="ghost"
-					onClick={handleResize}
-					className="ml-auto">
-					<ChevronLeft
-						className={cn("transition-transform", minimized && "rotate-180")}
-					/>
-				</Button>
-			</div>
+  const { openModal, closeModal } = useModal();
+
+  return (
+    <aside
+      ref={ref}
+      className={cn(
+        "fixed top-0 left-0 bottom-0 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 flex flex-col transition-all duration-300 shadow-sm",
+        minimized ? "w-14 px-2" : "w-72 px-4"
+      )}
+    >
+      <div ref={headerRef} className="py-2 flex items-center ">
+        <Image
+          src={logo}
+          alt="Logo"
+          width={60}
+          height={60}
+          onClick={() => handleResize()}
+        />
+        {!minimized && (
+          <h2 className="text-xl font-bold  text-yellow-600 cursor-pointer">
+            Interview<span className="text-green-600">Fuel</span>
+          </h2>
+        )}
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={handleResize}
+          className="ml-auto"
+        >
+          <ChevronLeft
+            className={cn("transition-transform", minimized && "rotate-180")}
+          />
+        </Button>
+      </div>
 
 			<div
 				onClick={() => {
@@ -247,9 +254,9 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 									</span>
 								</AccordionTrigger>
 
-								<AccordionContent className="pl-8 pr-2 py-2 space-y-1">
-									{category?.subcategories?.map((subCategory) => {
-										const isActive = activeChild === subCategory.name;
+                <AccordionContent className="pl-8 pr-2 py-2 space-y-1">
+                  {category?.subcategories?.map((subCategory) => {
+                    const isActive = activeChild === subCategory.name;
 
 										return (
 											<Button
@@ -303,28 +310,37 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 				)}
 			</div>
 
-			<div ref={footerRef} className="py-4 space-y-3">
-				<div
-					className={cn(
-						"flex items-center gap-2 cursor-pointer",
-						minimized && "justify-center"
-					)}
-					onClick={() => handleNavigate("/help-center")}>
-					<MessageCircleQuestion className="h-4 w-4" />
-					{!minimized && <span className="text-xs">Help Center</span>}
-				</div>
-				<div
-					className={cn(
-						"flex items-center gap-2 cursor-pointer",
-						minimized && "justify-center"
-					)}
-					onClick={() => handleNavigate("/settings")}>
-					<Settings className="h-4 w-4" />
-					{!minimized && <span className="text-xs">Settings</span>}
-				</div>
-			</div>
-		</aside>
-	);
+      <div ref={footerRef} className="py-4 space-y-3">
+        <div>
+          <CustomButton
+            onClick={() => openModal(<AdminQuestionsHOC />)}
+            content="Add Questions"
+            className="py-1 px-2 rounded-lg bg-green-600 hover:bg-green-700"
+          />
+        </div>
+        <div
+          className={cn(
+            "flex items-center gap-2 cursor-pointer",
+            minimized && "justify-center"
+          )}
+          onClick={() => handleNavigate("/help-center")}
+        >
+          <MessageCircleQuestion className="h-4 w-4" />
+          {!minimized && <span className="text-xs">Help Center</span>}
+        </div>
+        <div
+          className={cn(
+            "flex items-center gap-2 cursor-pointer",
+            minimized && "justify-center"
+          )}
+          onClick={() => handleNavigate("/settings")}
+        >
+          <Settings className="h-4 w-4" />
+          {!minimized && <span className="text-xs">Settings</span>}
+        </div>
+      </div>
+    </aside>
+  );
 });
 
 Sidebar.displayName = "Sidebar";
