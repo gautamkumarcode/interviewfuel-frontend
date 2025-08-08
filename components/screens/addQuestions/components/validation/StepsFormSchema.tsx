@@ -61,7 +61,7 @@ export const questionSchema = z.object({
   verifiedBy: z.string().optional(), // ObjectId
   verifiedAt: z.date().optional(),
 
-  slug: z.string().min(1, "Slug is required"),
+  slug: z.string(),
 
   author: z.string(), // ObjectId
 
