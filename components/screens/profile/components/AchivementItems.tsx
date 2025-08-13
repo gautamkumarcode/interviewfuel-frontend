@@ -1,4 +1,4 @@
-import { formatTimeAgo, getActivityIcon } from "@/utils/profileUtils";
+import { formatTimeAgo } from "@/utils/profileUtils";
 
 interface ActivityItemProps {
 	activity: {
@@ -16,7 +16,7 @@ interface ActivityItemProps {
 }
 
 export default function ActivityItem({ activity }: ActivityItemProps) {
-	const IconComponent = getActivityIcon(activity?.type || "default");
+	// const IconComponent = getActivityIcon(activity?.type || "default");
 
 	return (
 		<div className="flex items-start gap-4 p-4 border border-gray-200 rounded-lg">

@@ -1,9 +1,7 @@
 "use client";
 
-import LoginForm from "@/components/screens/login/components/Form";
-import { SignupForm } from "@/components/screens/signup/component/Form";
+import AuthTabs from "@/components/screens/auth/AuthTabs";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-
 import { useAuthModal } from "@/context/AuthModalContext";
 
 export const AuthModal = () => {
@@ -11,11 +9,10 @@ export const AuthModal = () => {
 
     return (
         <div>
-
         <Dialog open={isOpen} onOpenChange={closeModal}>
             <DialogContent className="max-w-lg w-full p-0 bg-transparent border-none shadow-none">
                 <DialogTitle>{""}</DialogTitle>
-                {view === "login" ? <LoginForm onSuccess={closeModal} /> : <SignupForm onSuccess={closeModal} />}
+                <AuthTabs initialTab={view} onSuccess={closeModal} />
             </DialogContent>
         </Dialog>
         </div>
