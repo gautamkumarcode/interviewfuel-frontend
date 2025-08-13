@@ -7,4 +7,9 @@ export const apiEndPoint = {
 	getCategory: "/categories",
 	logout: "/auth/logout",
 	getUserProfile: "/auth/me",
+	createPracticeSession: "/practice/sessions/create",
+	getPracticeSession: "/practice/sessions", // GET /practice/sessions/:id
+	submitAnswer: "/practice/sessions", // PUT /practice/sessions/:id/answer
+	completeSession: "/practice/sessions", // PUT /practice/sessions/:id/complete
+	getUserSessions: "/practice/sessions", // GET /practice/sessions
 };
