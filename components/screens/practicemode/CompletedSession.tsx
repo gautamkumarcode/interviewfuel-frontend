@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { practiceServices } from "@/services/practiceservices/practice-services";
 import {
-    ArrowLeft,
-    ExternalLink,
-    RotateCcw,
-    Share2,
-    Trophy,
+	ArrowLeft,
+	ExternalLink,
+	RotateCcw,
+	Share2,
+	Trophy,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { AnswersTab } from "./components/AnswersTab";
@@ -111,20 +111,6 @@ export function CompletedSession({
 					return;
 				}
 
-				console.log("Session structure:", {
-					sessionId: session._id,
-					questionsCount: session.questions.length,
-					questions: session.questions.map((q, idx) => ({
-						index: idx,
-						_id: q._id,
-						title: q.title,
-						hasAnswer: !!session.answers[q._id],
-						answer: session.answers[q._id]?.substring(0, 50) + "...",
-					})),
-				});
-
-				console.log("Submitting answers:", { answers: answersArray });
-
 				// Submit all answers for AI evaluation
 				const evaluationResponse = await practiceServices.submitAllAnswers(
 					session._id,
@@ -138,12 +124,10 @@ export function CompletedSession({
 					// aiResults is an array of { score, feedback, notes }
 					const evaluations = evaluationResponse.data;
 					setAiEvaluations(Array.isArray(evaluations) ? evaluations : []);
-					console.log("AI evaluations received:", evaluations);
 				}
 
 				// Complete the session
 				await practiceServices.completeSession(session._id);
-				console.log("Session completed successfully!");
 
 				// Clear persisted session data since session is now completed
 				SessionPersistence.clearSession();

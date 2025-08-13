@@ -1,6 +1,6 @@
 import { practiceServices } from "@/services/practiceservices/practice-services";
 import { useEffect, useState } from "react";
-import { PracticeSession } from "../types";
+import { GetUserSessionsResponse } from "../types";
 
 interface UsePracticeHistoryProps {
 	autoLoad?: boolean;
@@ -11,7 +11,7 @@ export function usePracticeHistory({
 	autoLoad = true,
 	pageSize = 10,
 }: UsePracticeHistoryProps = {}) {
-	const [sessions, setSessions] = useState<PracticeSession[]>([]);
+	const [sessions, setSessions] = useState<GetUserSessionsResponse[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [pagination, setPagination] = useState({
@@ -29,20 +29,16 @@ export function usePracticeHistory({
 			const response = await practiceServices.getUserSessions(page, limit);
 
 			if (response.success && response.data) {
-				const sessionData = response.data.data;
+				const sessionData = response.data;
 				if (sessionData) {
-					setSessions(sessionData.sessions);
-					setPagination(
-						sessionData.pagination || {
-							page,
-							limit,
-							total: sessionData.sessions.length,
-							totalPages: Math.ceil(sessionData.sessions.length / limit),
-						}
-					);
+					setSessions(sessionData?.results);
+					setPagination({
+						page: sessionData?.page,
+						limit: sessionData?.limit,
+						total: sessionData?.totalResults,
+						totalPages: sessionData?.totalPages,
+					});
 				}
-			} else {
-				throw new Error(response.message || "Failed to load sessions");
 			}
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Failed to load sessions");

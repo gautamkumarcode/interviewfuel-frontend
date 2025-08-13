@@ -41,13 +41,8 @@ export function useSessionPersistence(): UseSessionPersistenceResult {
 						// Session is valid, restore it
 						setRestoredSession(persistedSession);
 						setHasPersistedSession(true);
-						console.log(
-							"Session restored successfully:",
-							persistedSession.session._id
-						);
 					} else {
 						// Session is invalid, clear it
-						console.log("Persisted session is invalid, clearing...");
 						SessionPersistence.clearSession();
 						setHasPersistedSession(false);
 					}

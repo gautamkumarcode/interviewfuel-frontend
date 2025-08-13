@@ -128,19 +128,7 @@ export interface GetSessionResponse {
 	};
 }
 
-export interface GetUserSessionsResponse {
-	success: boolean;
-	message: string;
-	data?: {
-		sessions: PracticeSession[];
-		pagination?: {
-			page: number;
-			limit: number;
-			total: number;
-			totalPages: number;
-		};
-	};
-}
+
 
 export interface Question {
 	aiGenerated: boolean;
@@ -161,6 +149,39 @@ export enum Source {
 	AI = "ai",
 }
 
+
+
+export interface Settings {
+	duration: number;
+	questionCount: number;
+	difficulty: Difficulty;
+	categories: Category[];
+	includeTimer: boolean;
+	randomOrder: boolean;
+	source: Source;
+}
+export interface GetUserSessionsResponse {
+	settings: Settings;
+	results: Results;
+	_id: string;
+	user: string;
+	title: string;
+	questions: Question[];
+	status: string;
+	totalPausedTime: number;
+	startedAt: Date;
+	createdAt: Date;
+	updatedAt: Date;
+	__v: number;
+	completedAt: Date;
+	startTime?: Date | null;
+	endTime?: Date | null;
+	answers: { [key: string]: string };
+	timeRemaining: number;
+	totalTime: number;
+	isActive: boolean;
+}
+
 export interface Results {
 	totalQuestions: number;
 	answeredQuestions: number;
@@ -171,12 +192,10 @@ export interface Results {
 	averageTimePerQuestion: number;
 }
 
-export interface Settings {
-	duration: number;
-	questionCount: number;
-	difficulty: Difficulty;
-	categories: string[];
-	includeTimer: boolean;
-	randomOrder: boolean;
-	source: Source;
+export interface Category {
+	_id: string;
+	name: string;
+	color: string;
+	fullPath: string;
+	id: string;
 }

@@ -7,7 +7,10 @@ import {
 	SubmitAnswerResponse,
 } from "@/components/screens/practicemode/types";
 import { apiEndPoint } from "@/constants/api";
-import { AxiosResponseTypeWithoutPagination } from "@/types/axios-response";
+import {
+	AxiosResponseTypeWithoutPagination,
+	AxiosResponseTypeWithPagination,
+} from "@/types/axios-response";
 import { authenticatedInstance } from "@/utils/axios";
 
 interface CreatePracticeSessionPayload {
@@ -148,7 +151,7 @@ class PracticeServices {
 	public async getUserSessions(
 		page?: number,
 		limit?: number
-	): Promise<AxiosResponseTypeWithoutPagination<GetUserSessionsResponse>> {
+	): Promise<AxiosResponseTypeWithPagination<GetUserSessionsResponse[]>> {
 		const params = new URLSearchParams();
 		if (page) params.append("page", page.toString());
 		if (limit) params.append("limit", limit.toString());
@@ -159,7 +162,7 @@ class PracticeServices {
 			: apiEndPoint.getUserSessions;
 
 		const { data } = await authenticatedInstance.get<
-			AxiosResponseTypeWithoutPagination<GetUserSessionsResponse>
+			AxiosResponseTypeWithPagination<GetUserSessionsResponse[]>
 		>(url);
 		return data;
 	}
