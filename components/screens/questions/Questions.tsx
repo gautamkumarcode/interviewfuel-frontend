@@ -4,6 +4,7 @@ import { ApiStateLoader } from "@/components/custom/loader/PageLoader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useClusterData } from "@/context/clusterData-context";
 import { questionService } from "@/services/questions/question-services";
 import {
 	AxiosErrorResponseType,
@@ -32,22 +33,34 @@ export default function Questions() {
 		AxiosResponseTypeWithPagination<GetCategoriesResponseType[]>
 	>(["allcategories"]);
 
+	const { categoryLoading } = useClusterData();
+
 	const categoryList = cachedCategories?.data?.results ?? [];
 
-	let matchedSubcategory = null;
+	let matchedCategoryOrSubcategory = null;
 
-	for (const cat of categoryList) {
-		const sub = cat.subcategories?.find(
-			(sub) => sub.slug.toLowerCase() === decodedCategory
-		);
-		if (sub) {
-			matchedSubcategory = sub;
-			break;
+	// First, try to match a top-level category
+	const topLevelCategoryMatch = categoryList.find(
+		(cat) => cat.slug.toLowerCase() === decodedCategory
+	);
+
+	if (topLevelCategoryMatch) {
+		matchedCategoryOrSubcategory = topLevelCategoryMatch;
+	} else {
+		// If no top-level match, try to match a subcategory
+		for (const cat of categoryList) {
+			const sub = cat.subcategories?.find(
+				(sub) => sub.slug.toLowerCase() === decodedCategory
+			);
+			if (sub) {
+				matchedCategoryOrSubcategory = sub;
+				break;
+			}
 		}
 	}
 
-	const categoryId = matchedSubcategory?._id;
-	const categoryName = matchedSubcategory?.name ?? "All";
+	const categoryId = matchedCategoryOrSubcategory?._id;
+	const categoryName = matchedCategoryOrSubcategory?.name ?? "All";
 	const { data, isLoading, isFetching, error } = useQuery<
 		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>,
 		AxiosError<AxiosErrorResponseType>
@@ -58,9 +71,14 @@ export default function Questions() {
 			staleTime: 1000 * 60 * 5,
 			cacheTime: 1000 * 60 * 10,
 			keepPreviousData: true,
+			enabled: !categoryLoading && (!!categoryId || category === null),
 			refetchOnWindowFocus: false,
 			retry: (failureCount, error) => {
-				if (error?.response?.status && error.response.status >= 400 && error.response.status < 500) {
+				if (
+					error?.response?.status &&
+					error.response.status >= 400 &&
+					error.response.status < 500
+				) {
 					return false;
 				}
 				return failureCount < 2;
@@ -148,12 +166,11 @@ export default function Questions() {
 
 			<ApiStateLoader
 				isLoading={isLoading}
-				isFetching={isFetching}
+				isFetching={isFetching || categoryLoading}
 				error={error}
 				loadingText="Loading questions..."
 				renderSkeleton={() => <QuestionSkeleton />}
-				skeletonCount={5}
-			>
+				skeletonCount={5}>
 				<div className="space-y-4">
 					{filteredQuestions.length > 0 ? (
 						filteredQuestions.map((question) => (
@@ -216,7 +233,9 @@ export default function Questions() {
 						<Card className="border-gray-200">
 							<CardContent className="p-12 text-center">
 								<div className="text-gray-500">
-									<h3 className="text-lg font-medium mb-2">No questions found</h3>
+									<h3 className="text-lg font-medium mb-2">
+										No questions found
+									</h3>
 									<p>
 										{categoryName
 											? `Questions for ${categoryName} will be available soon.`

@@ -73,7 +73,13 @@ export function PracticeMode() {
 
 	// Renders the completed screen if the state is 'completed'
 	if (sessionState === "completed" && session) {
-		return <CompletedSession session={session} onNewSession={resetToSetup} />;
+		return (
+			<CompletedSession
+				session={session}
+				onNewSession={resetToSetup}
+				previousQuestion={previousQuestion}
+			/>
+		);
 	}
 
 	return null;

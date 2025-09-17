@@ -48,6 +48,7 @@ const History = () => {
 
 	const sessions = data?.data.results || [];
 
+
 	// Helper functions
 	const formatDate = (dateString: Date) => {
 		return new Date(dateString).toLocaleDateString("en-US", {
@@ -129,25 +130,22 @@ const History = () => {
 	}
 
 	return (
-		<div className="max-w-6xl mx-auto p-6">
+		<div className=" mx-auto p-6">
 			{/* Header */}
-			<div className="flex items-center justify-between mb-8">
-				<div className="flex items-center gap-4">
-					<Link href="/practice">
-						<Button variant="outline" size="sm">
-							<ArrowLeft className="h-4 w-4 mr-2" />
-							Back to Practice
-						</Button>
-					</Link>
-					<div>
-						<h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-							<Calendar className="h-8 w-8 text-blue-600" />
-							Practice History
-						</h1>
-						<p className="text-gray-600 mt-1">
-							Track your progress and review past sessions
-						</p>
-					</div>
+			<div className="flex  justify-between mb-8 w-full">
+				<Link href="/practice">
+					<Button variant="outline" size="sm">
+						<ArrowLeft className="h-4 w-4 mr-2" />
+						Back to Practice
+					</Button>
+				</Link>
+				<div className="">
+					<h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+						Practice History
+					</h1>
+					<p className="text-gray-600 mt-1">
+						Track your progress and review past sessions
+					</p>
 				</div>
 
 				{sessions?.length > 0 && (

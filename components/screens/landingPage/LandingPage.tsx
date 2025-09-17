@@ -10,9 +10,7 @@ const LandingPage = () => {
 	const { categoryData, categoryLoading } = useClusterData();
 
 	const categories = categoryData || [];
-	const frontedTopics =
-		categories?.find((category) => category.name === "Frontend")
-			?.subcategories || [];
+	
 	return (
 		<div className=" h-screen">
 			<header className="flex justify-center items-center h-[40vh] ">
@@ -26,7 +24,7 @@ const LandingPage = () => {
 			</header>
 
 			{!categoryLoading ? (
-				<FrontedCard frontedTopics={frontedTopics} />
+				<FrontedCard frontedTopics={categories} />
 			) : (
 				<div className="flex items-center justify-center h-[60vh]">
 					<HashLoader color="#19c862" />

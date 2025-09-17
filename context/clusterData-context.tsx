@@ -32,6 +32,8 @@ export const ClusterDataProvider = ({ children }: { children: ReactNode }) => {
 	const { data: categoryData, isLoading: categoryLoading } = useQuery<
 		AxiosResponseTypeWithPagination<GetCategoriesResponseType[]>
 	>(["allcategories"], categoryService.getAllCategories);
+
+
 	const {
 		data: userData,
 		isLoading: userIsLoading,
@@ -46,6 +48,7 @@ export const ClusterDataProvider = ({ children }: { children: ReactNode }) => {
 			cacheTime: 1000 * 60 * 10, // 10 minutes
 		}
 	);
+
 
 	const value = useMemo<ClusterDataContextType>(
 		() => ({

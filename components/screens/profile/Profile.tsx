@@ -70,11 +70,8 @@ export function ProfilePage() {
 
 	const currentUserData = profile;
 
-	console.log(profile);
 
-	const handleExportData = () => {
-		console.log("Exporting data...");
-	};
+	const handleExportData = () => {};
 
 	return (
 		<PageLoader

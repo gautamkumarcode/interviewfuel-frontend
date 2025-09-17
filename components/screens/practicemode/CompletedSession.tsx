@@ -80,82 +80,91 @@ export function CompletedSession({
 
 			setIsSubmitting(true);
 			setSubmitError(null);
-			setHasSubmitted(true); // Set flag immediately to prevent duplicate calls
+			setHasSubmitted(true);
 
 			try {
-				// Prepare only answered questions for submission
+				// Prepare answered questions for submission
 				const answersArray = session.questions
 					.map((question, index) => {
 						const answer = session.answers[question._id];
-						// Only include questions that have non-empty answers
 						if (answer && answer.trim()) {
 							return {
 								questionIndex: index,
-								questionId: question._id, // Add question ID for backend reference
 								answer: answer.trim(),
 								timeSpent: Math.floor(
 									(session.totalTime - session.timeRemaining) /
-										session.questions.length
+										Math.max(session.questions.length, 1)
 								),
 							};
 						}
 						return null;
 					})
-					.filter((item): item is NonNullable<typeof item> => item !== null); // Type-safe filter
+					.filter((item): item is NonNullable<typeof item> => item !== null);
 
-				// Only submit if there are answered questions
 				if (answersArray.length === 0) {
 					setSubmitError(
 						"No answers to submit. Please answer at least one question."
 					);
+					setHasSubmitted(false);
 					return;
 				}
 
-				// Submit all answers for AI evaluation
+				// Submit answers for evaluation
 				const evaluationResponse = await practiceServices.submitAllAnswers(
 					session._id,
-					{
-						answers: answersArray,
-					}
+					{ answers: answersArray }
 				);
 
 				if (evaluationResponse.success && evaluationResponse.data) {
-					// Backend returns: { success: true, data: aiResults }
-					// aiResults is an array of { score, feedback, notes }
 					const evaluations = evaluationResponse.data;
 					setAiEvaluations(Array.isArray(evaluations) ? evaluations : []);
+				} else {
+					console.warn(
+						"Evaluation response was not successful:",
+						evaluationResponse
+					);
+					setAiEvaluations([]);
 				}
 
 				// Complete the session
-				await practiceServices.completeSession(session._id);
+				const completionResponse = await practiceServices.completeSession(
+					session._id
+				);
 
-				// Clear persisted session data since session is now completed
+				if (!completionResponse.success) {
+					console.warn(
+						"Session completion response was not successful:",
+						completionResponse
+					);
+				}
+
+				// Clear persisted session data
 				SessionPersistence.clearSession();
 			} catch (error: any) {
 				console.error("Failed to submit answers or complete session:", error);
-				console.error("Error details:", {
-					message: error.message,
-					response: error.response?.data,
-					status: error.response?.status,
-				});
 
-				const errorMessage =
-					error.response?.data?.message ||
-					error.response?.data?.errors?.[0]?.msg ||
-					"Failed to submit answers for evaluation. Your progress has been saved locally.";
+				let errorMessage = "Failed to submit answers for evaluation.";
+
+				if (error.response?.data?.message) {
+					errorMessage = error.response.data.message;
+				} else if (error.response?.data?.errors?.[0]?.msg) {
+					errorMessage = error.response.data.errors[0].msg;
+				} else if (error.message) {
+					errorMessage = error.message;
+				}
 
 				setSubmitError(errorMessage);
-				setHasSubmitted(false); // Reset flag on error to allow retry
+				setHasSubmitted(false); // Allow retry on error
 			} finally {
 				setIsSubmitting(false);
 			}
 		};
 
-		// Only submit if not already submitted or submitting
+		// Only submit if session exists and hasn't been submitted yet
 		if (session && !hasSubmitted && !isSubmitting) {
 			submitAllAnswers();
 		}
-	}, [session._id, hasSubmitted, isSubmitting]); // Add hasSubmitted to dependencies
+	}, [session._id, hasSubmitted, isSubmitting]);
 
 	return (
 		<div className="max-w-4xl mx-auto">

@@ -48,7 +48,7 @@ export function ActiveSession({
 	};
 
 	return (
-		<div className="max-w-4xl mx-auto">
+		<div className=" mx-auto">
 			{showRestoredBanner && (
 				<SessionRestoredBanner
 					sessionId={session._id}
@@ -66,14 +66,18 @@ export function ActiveSession({
 				onEndSession={onEndSession}
 			/>
 
-			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+			<div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-6">
 				<QuestionPanel question={currentQuestion} />
 
 				<AnswerPanel
 					currentAnswer={currentAnswer}
 					onAnswerChange={onAnswerChange}
-					onPrevious={onPrevious}
-					onNext={onNext}
+					onPrevious={() => {
+						onPrevious();
+					}}
+					onNext={() => {
+						onNext();
+					}}
 					canGoPrevious={session.currentQuestionIndex > 0}
 					isLastQuestion={
 						session.currentQuestionIndex === session.questions.length - 1

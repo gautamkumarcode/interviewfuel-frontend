@@ -34,7 +34,6 @@ export function usePracticeSession({
 	// Restore session from persistence on component mount
 	useEffect(() => {
 		if (!isRestoring && restoredSession && !session) {
-			console.log("Restoring session from persistence...");
 			setSession(restoredSession.session);
 			setSessionState(restoredSession.sessionState);
 			setSettings(restoredSession.settings);
@@ -67,7 +66,12 @@ export function usePracticeSession({
 
 	// Auto-save functionality - saves answer every 30 seconds
 	useEffect(() => {
-		if (session && currentAnswer && sessionState === "active" && session.isActive) {
+		if (
+			session &&
+			currentAnswer &&
+			sessionState === "active" &&
+			session.isActive
+		) {
 			// Clear previous auto-save timer
 			if (autoSaveRef.current) {
 				clearTimeout(autoSaveRef.current);
@@ -131,7 +135,12 @@ export function usePracticeSession({
 				clearInterval(timerRef.current);
 			}
 		};
-	}, [session?.isActive, session?.isPaused, session?.timeRemaining, sessionState]); // Add sessionState to dependencies
+	}, [
+		session?.isActive,
+		session?.isPaused,
+		session?.timeRemaining,
+		sessionState,
+	]); // Add sessionState to dependencies
 
 	// Cleanup on unmount
 	useEffect(() => {
@@ -169,7 +178,6 @@ export function usePracticeSession({
 			// On a successful API response, populate the session state
 			const now = new Date();
 
-			console.log(sessionData);
 			const duration = sessionData.settings?.duration || 0;
 			const newSession: PracticeSession = {
 				_id: sessionData._id,
@@ -227,15 +235,15 @@ export function usePracticeSession({
 		if (isLastQuestion) {
 			// If it's the last question, update local state and transition to 'completed'
 			// The CompletedSession component will handle submitting all answers at once
-			const updatedSession = { 
-				...session, 
+			const updatedSession = {
+				...session,
 				answers: updatedAnswers,
 				isActive: false, // Mark session as inactive when completed
-				isPaused: false  // Ensure paused is false when completed
+				isPaused: false, // Ensure paused is false when completed
 			};
 			setSession(updatedSession);
 			setSessionState("completed");
-			
+
 			// Clear persistence immediately when completing
 			clearPersistedSession();
 		} else {
@@ -257,7 +265,9 @@ export function usePracticeSession({
 
 	// Function to go back to the previous question
 	const previousQuestion = () => {
-		if (!session || session.currentQuestionIndex === 0) return;
+		if (!session || session.currentQuestionIndex === 0) {
+			return;
+		}
 
 		// Save the current answer before moving back
 		const updatedAnswers = {
@@ -271,12 +281,13 @@ export function usePracticeSession({
 			answers: updatedAnswers,
 			currentQuestionIndex: newQuestionIndex,
 		};
+
 		setSession(updatedSession);
 		// Load the previous question's answer
-		setCurrentAnswer(
+		const previousAnswer =
 			updatedSession.answers[updatedSession.questions[newQuestionIndex]._id] ||
-				""
-		);
+			"";
+		setCurrentAnswer(previousAnswer);
 	};
 
 	// Pauses or resumes the session timer

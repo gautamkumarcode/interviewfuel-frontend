@@ -7,6 +7,13 @@ export interface PracticeQuestion {
 	aiGenerated?: boolean;
 	source?: string;
 	startedAt?: string;
+	answer?: string;
+	timeSpent?: number;
+	completedAt?: string;
+	score?: number;
+	isCorrect?: boolean;
+	feedback?: string;
+	notes?: string;
 }
 
 export interface PracticeSession {
@@ -97,8 +104,11 @@ export interface SubmitAnswerResponse {
 	success: boolean;
 	message: string;
 	data?: Array<{
-		score: number;
+		question: string;
+		userAnswer: string;
+		isCorrect: boolean;
 		feedback: string;
+		score: number;
 		notes?: string;
 	}>;
 }

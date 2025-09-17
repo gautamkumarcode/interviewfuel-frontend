@@ -20,11 +20,13 @@ import { calculateResults } from "./sessionUtils";
 interface CompletedSessionProps {
 	session: PracticeSession;
 	onNewSession: () => void;
+	previousQuestion: () => void;
 }
 
 export function CompletedSession({
 	session,
 	onNewSession,
+	previousQuestion,
 }: CompletedSessionProps) {
 	const results = calculateResults(session);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -96,19 +98,8 @@ export function CompletedSession({
 					return;
 				}
 
-				console.log("Session structure:", {
-					sessionId: session._id,
-					questionsCount: session.questions.length,
-					questions: session.questions.map((q, idx) => ({
-						index: idx,
-						_id: q._id,
-						title: q.title,
-						hasAnswer: !!session.answers[q._id],
-						answer: session.answers[q._id]?.substring(0, 50) + "...",
-					})),
-				});
+			
 
-				console.log("Submitting answers:", { answers: answersArray });
 
 				// Submit all answers for AI evaluation
 				const evaluationResponse = await practiceServices.submitAllAnswers(
@@ -123,12 +114,10 @@ export function CompletedSession({
 					// aiResults is an array of { score, feedback, notes }
 					const evaluations = evaluationResponse.data;
 					setAiEvaluations(Array.isArray(evaluations) ? evaluations : []);
-					console.log("AI evaluations received:", evaluations);
 				}
 
 				// Complete the session
 				await practiceServices.completeSession(session._id);
-				console.log("Session completed successfully!");
 
 				// Clear persisted session data since session is now completed
 				SessionPersistence.clearSession();
@@ -244,7 +233,7 @@ export function CompletedSession({
 						</Button>
 					</a>
 				)}
-				<Button className="gap-2">
+				<Button onClick={previousQuestion} className="gap-2">
 					<ArrowLeft className="h-4 w-4" />
 					Back to Questions
 				</Button>

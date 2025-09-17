@@ -51,12 +51,12 @@ import { forwardRef, useEffect, useState } from "react";
 // import { CommandSearch } from "../GlobalSearch";
 
 const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
-	const { data: session } = useSession();
+	const { data: session, status } = useSession();
 	const { userData: profile, userLoading: profileLoading } = useClusterData();
 	const { openLogin } = useAuthModal();
 	const router = useRouter();
 	const urlPaths = usePathname();
-	const {toast}=useTheme()
+	const { toast } = useTheme();
 	const [pathname, setPathname] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -67,7 +67,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 
 	const handleSignout = async () => {
 		handleSignOutAPI();
-		toast.success("logged out successfully")
+		toast.success("logged out successfully");
 	};
 
 	// State to control popover open/close
@@ -126,13 +126,12 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 			<div className="flex items-center gap-6">
 				{/* <Image src={mail} alt="chevronLeft-icon" /> */}
 				<Mail className="h-5 w-5 text-primary" />
-				
+
 				{/* Add Question Button - only show if user is logged in */}
 				{session && (
-					<Button 
+					<Button
 						onClick={() => router.push("/questions/create")}
-						className="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2"
-					>
+						className="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2">
 						Add Question
 					</Button>
 				)}
@@ -242,7 +241,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
           </PopoverContent>
         </Popover> */}
 
-				{session ? (
+				{status === "loading" ? null : session ? ( // Optionally render a skeleton or null during loading
 					// Show user dropdown if logged in
 					<div className="xl:block 2xl:block 3xl:block hidden relative">
 						<DropdownMenu>
@@ -346,7 +345,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 											{name}
 										</Link>
 									))}
-									
+
 									{/* Add Question link for mobile - only show if user is logged in */}
 									{session && (
 										<Link

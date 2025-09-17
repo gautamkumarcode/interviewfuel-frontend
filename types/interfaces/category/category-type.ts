@@ -12,8 +12,8 @@ export interface GetCategoriesResponseType {
 	stats: Stats;
 	isActive: boolean;
 	order: number;
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt: string;
+	updatedAt: string;
 	__v: number;
 }
 
@@ -29,8 +29,8 @@ export interface Subcategory {
 	stats: Stats;
 	isActive: boolean;
 	order: number;
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt: string;
+	updatedAt: string;
 	__v: number;
 	subcategories: any[];
 }
