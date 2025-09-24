@@ -11,9 +11,8 @@ const routeConfig = {
     "/account",
     "/billing"
   ],
+  // Remove auth routes since you're using modals instead of dedicated pages
   auth: [
-    "/login",
-    "/register",
     "/reset-password",
     "/forgot-password"
   ],
@@ -31,6 +30,7 @@ const routeConfig = {
   ]
 };
 
+// Enhanced middleware with better session handling
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isApiRoute = pathname.startsWith('/api');
@@ -44,7 +44,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Get token with additional security options
+  // Get token with enhanced session validation
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
@@ -53,6 +53,12 @@ export async function middleware(request: NextRequest) {
       : 'next-auth.session-token',
     secureCookie: process.env.NODE_ENV === 'production'
   });
+
+  // Enhanced session validation
+  const isValidSession = token && 
+    token.exp && 
+    Date.now() < (token.exp as number) * 1000 && // Check if token is not expired
+    !token.error; // Check if there are no token errors
 
   // Check route types with more efficient matching
   const isProtectedRoute = routeConfig.protected.some(route => 
@@ -63,10 +69,10 @@ export async function middleware(request: NextRequest) {
     pathname === route || pathname.startsWith(route.replace(':path*', ''))
   );
 
-  // Handle authentication routes
+  // Handle authentication routes (only for dedicated auth pages like reset-password)
   if (isAuthRoute) {
-    if (token) {
-      // Redirect to previous page or dashboard
+    if (isValidSession) {
+      // Redirect authenticated users away from auth pages
       const redirectUrl = request.nextUrl.searchParams.get('callbackUrl') || '/dashboard';
       return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
@@ -75,26 +81,44 @@ export async function middleware(request: NextRequest) {
 
   // Handle protected routes
   if (isProtectedRoute) {
-    if (!token) {
-      // Store the attempted URL for redirect after login
-      const loginUrl = new URL('/login', request.url);
-      loginUrl.searchParams.set('callbackUrl', pathname);
-      return NextResponse.redirect(loginUrl);
+    if (!isValidSession) {
+      // Clear invalid session cookies
+      const response = NextResponse.redirect(new URL('/', request.url));
+      response.cookies.delete('next-auth.session-token');
+      response.cookies.delete('__Secure-next-auth.session-token');
+      
+      // Add query parameters to trigger login modal and store callback URL
+      const homeUrl = new URL('/', request.url);
+      homeUrl.searchParams.set('showLogin', 'true');
+      homeUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(homeUrl);
     }
 
-    // Additional token validation
-    if (token.error === "RefreshAccessTokenError") {
-      const loginUrl = new URL('/login', request.url);
-      loginUrl.searchParams.set('error', 'SessionExpired');
-      return NextResponse.redirect(loginUrl);
+    // Additional session-based validations
+    if (token?.error === "RefreshAccessTokenError") {
+      const homeUrl = new URL('/', request.url);
+      homeUrl.searchParams.set('showLogin', 'true');
+      homeUrl.searchParams.set('error', 'SessionExpired');
+      homeUrl.searchParams.set('callbackUrl', pathname);
+      return NextResponse.redirect(homeUrl);
     }
 
-    // You can add role-based access control here
-    // if (pathname.startsWith('/admin') && token.role !== 'admin') {
-    //   return NextResponse.redirect(new URL('/unauthorized', request.url));
-    // }
+    // Role-based access control
+    if (pathname.startsWith('/admin') && token?.role !== 'admin') {
+      return NextResponse.redirect(new URL('/unauthorized', request.url));
+    }
 
-    return NextResponse.next();
+    // Add session info to request headers for API routes
+    const requestHeaders = new Headers(request.headers);
+    requestHeaders.set('x-user-id', token?.id || '');
+    requestHeaders.set('x-user-role', token?.role || '');
+    requestHeaders.set('x-user-email', token?.email || '');
+
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
   }
 
   // Handle public routes
@@ -102,11 +126,34 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Default behavior for unmatched routes (404 or redirect)
+  // Default behavior for unmatched routes
   return NextResponse.next();
-  // Alternatively, redirect to 404 page:
-  // return NextResponse.rewrite(new URL('/404', request.url));
 }
+
+// Alternative: Using NextAuth's built-in middleware (simpler approach)
+// export { default } from "next-auth/middleware";
+
+// Or you can use withAuth for more control:
+// export default withAuth(
+//   function middleware(req) {
+//     // Additional middleware logic here
+//     return NextResponse.next();
+//   },
+//   {
+//     callbacks: {
+//       authorized: ({ token, req }) => {
+//         const { pathname } = req.nextUrl;
+//         
+//         // Check if route requires authentication
+//         if (routeConfig.protected.some(route => pathname.startsWith(route))) {
+//           return !!token && !token.error;
+//         }
+//         
+//         return true;
+//       },
+//     },
+//   }
+// );
 
 export const config = {
   matcher: [

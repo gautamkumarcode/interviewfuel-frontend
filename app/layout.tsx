@@ -11,10 +11,7 @@ export const metadata: Metadata = {
 
 	description:
 		"Generate interview questions and practice mock interviews with AI.",
-	viewport: {
-		width: "device-width",
-		initialScale: 1,
-	},
+
 	metadataBase: new URL("https://interviewfuel.com"),
 	applicationName: "InterviewFuel",
 	creator: "InterviewFuel",
@@ -43,7 +40,7 @@ export const metadata: Metadata = {
 	},
 };
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;

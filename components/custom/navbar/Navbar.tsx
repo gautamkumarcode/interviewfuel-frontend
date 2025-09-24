@@ -3,7 +3,6 @@
 // import { NotificationIcon } from "@/components/screens/notification/components/NotificationIcon";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -17,15 +16,10 @@ import {
 //   PopoverContent,
 //   PopoverTrigger,
 // } from "@/components/ui/popover";
-import {
-	Sheet,
-	SheetContent,
-	SheetHeader,
-	SheetTrigger,
-} from "@/components/ui/sheet";
 import { useAuthModal } from "@/context/AuthModalContext";
 import { useClusterData } from "@/context/clusterData-context";
 import { useTheme } from "@/context/theme.context";
+import { useIsMobile } from "@/hooks/use-mobile";
 import useWindowDimensions from "@/hooks/useWindowDimension";
 import { handleSignOutAPI } from "@/services/authservices";
 // import { useAuth, useNotification, useTheme } from "@/contexts";
@@ -42,6 +36,7 @@ import { handleSignOutAPI } from "@/services/authservices";
 // import { formatDateTime } from "@/utils/formatDate";
 import { Mail, Menu } from "lucide-react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 // import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -58,6 +53,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 	const urlPaths = usePathname();
 	const { toast } = useTheme();
 	const [pathname, setPathname] = useState<string | null>(null);
+	const isMobile = useIsMobile();
 
 	useEffect(() => {
 		const parts = urlPaths.split("/");
@@ -68,6 +64,20 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 	const handleSignout = async () => {
 		handleSignOutAPI();
 		toast.success("logged out successfully");
+	};
+
+	const toggleSidebar = () => {
+		const currentMinimized = sessionStorage.getItem("minimized") === "true";
+		const newMinimized = !currentMinimized;
+
+		sessionStorage.setItem("minimized", String(newMinimized));
+
+		// Dispatch custom event to notify layout and sidebar
+		window.dispatchEvent(
+			new CustomEvent("sidebarToggle", {
+				detail: { minimized: newMinimized },
+			})
+		);
 	};
 
 	// State to control popover open/close
@@ -94,8 +104,24 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 	return (
 		<div
 			ref={ref}
-			className={` dark:bg-primaryGreyBg bg-[#FFFFFF] flex items-center  xl:justify-normal gap-4 px-8 h-16 dark:text-white text-black shadow-sm `}>
-			<div className="hidden md:flex lg:flex xl:flex 2xl:flex 3xl:flex items-center gap-9 h-3/4 flex-1 text-primary">
+			className="dark:bg-primaryGreyBg bg-[#FFFFFF] flex items-center justify-between h-16 dark:text-white text-black shadow-sm px-4 md:px-8">
+			{/* Mobile hamburger menu */}
+			{isMobile && (
+				<div className="flex items-center ">
+					<Image src={"/logo.png"} alt="Logo" width={40} height={40} />
+
+					<Button
+						variant="ghost"
+						size="sm"
+						onClick={toggleSidebar}
+						className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 shrink-0">
+						<Menu className="h-5 w-5" />
+					</Button>
+				</div>
+			)}
+
+			{/* Desktop navigation */}
+			<div className="hidden md:flex items-center gap-9 flex-1 text-primary">
 				{width > 840 && (
 					<div className="h-full flex items-center justify-center">
 						<ul className="hidden xl:flex 2xl:flex 3xl:flex text-primary gap-9">
@@ -123,16 +149,18 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 				)}
 			</div>
 
-			<div className="flex items-center gap-6">
-				{/* <Image src={mail} alt="chevronLeft-icon" /> */}
-				<Mail className="h-5 w-5 text-primary" />
+			{/* Right section - responsive */}
+			<div className="flex items-center gap-2 md:gap-6">
+				{/* Mail icon - hide on small mobile screens */}
+				<Mail className="h-5 w-5 text-primary hidden sm:block" />
 
-				{/* Add Question Button - only show if user is logged in */}
+				{/* Add Question Button - responsive */}
 				{session && (
 					<Button
 						onClick={() => router.push("/questions/create")}
-						className="bg-green-500 hover:bg-green-600 text-white text-sm font-semibold px-4 py-2">
-						Add Question
+						className="bg-green-500 hover:bg-green-600 text-white text-xs md:text-sm font-semibold px-4 md:px-4 py-2 shrink-0">
+						<span className="hidden sm:inline">Add Question</span>
+						<span className="sm:hidden">Add</span>
 					</Button>
 				)}
 				{/* <Popover open={open} onOpenChange={setOpen}>
@@ -242,17 +270,17 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
         </Popover> */}
 
 				{status === "loading" ? null : session ? ( // Optionally render a skeleton or null during loading
-					// Show user dropdown if logged in
-					<div className="xl:block 2xl:block 3xl:block hidden relative">
+					// Show user dropdown if logged in - mobile responsive
+					<div className="relative">
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
-								<Avatar className="cursor-pointer">
+								<Avatar className="cursor-pointer h-8 w-8 md:h-10 md:w-10 shrink-0">
 									{profileLoading ? (
 										<AvatarFallback>
-											<div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+											<div className="w-3 h-3 md:w-4 md:h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
 										</AvatarFallback>
 									) : (
-										<AvatarFallback className="bg-gradient-to-r from-green-400 to-green-600 text-white">
+										<AvatarFallback className="bg-gradient-to-r from-green-400 to-green-600 text-white text-xs md:text-sm">
 											{profile?.name
 												? profile.name
 														.split(" ")
@@ -268,8 +296,8 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 									)}
 								</Avatar>
 							</DropdownMenuTrigger>
-							<DropdownMenuContent className="w-56">
-								<DropdownMenuLabel>
+							<DropdownMenuContent className="w-48 md:w-56" align="end">
+								<DropdownMenuLabel onClick={() => router.push("/profile")}>
 									{profileLoading ? (
 										<div className="flex items-center gap-2">
 											<div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -277,25 +305,24 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 										</div>
 									) : (
 										<div>
-											<div className="font-medium">
+											<div className="font-medium text-sm">
 												{profile?.name || session.user?.name || "User"}
 											</div>
-											<div className="text-xs text-gray-500 font-normal">
+											<div className="text-xs text-gray-500 font-normal truncate">
 												{profile?.email || session.user?.email}
 											</div>
 										</div>
 									)}
 								</DropdownMenuLabel>
 								<DropdownMenuSeparator />
-								<DropdownMenuItem onClick={() => router.push("/profile")}>
-									Profile Settings
+								<DropdownMenuItem onClick={() => router.push("/analytics")}>
+									Analytics
 								</DropdownMenuItem>
-								<DropdownMenuItem
-									onClick={() => router.push("/settings?view=password")}>
-									Change Password
+								<DropdownMenuItem onClick={() => router.push("/practice")}>
+									Practice
 								</DropdownMenuItem>
-								<DropdownMenuItem onClick={() => router.push("/news")}>
-									Latest News
+								<DropdownMenuItem onClick={() => router.push("/questions")}>
+									Questions
 								</DropdownMenuItem>
 								<DropdownMenuSeparator />
 								<DropdownMenuItem onClick={handleSignout}>
@@ -305,100 +332,14 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 						</DropdownMenu>
 					</div>
 				) : (
-					// Show Login button if not logged in
-					<Button onClick={openLogin} className="text-sm font-semibold">
+					// Show Login button if not logged in - responsive
+					<Button
+						onClick={openLogin}
+						className="text-xs md:text-sm font-semibold px-2 md:px-4 shrink-0">
 						Login
 					</Button>
 				)}
 			</div>
-
-			<nav className="block xl:hidden 2xl:hidden 3xl:hidden">
-				<div className="px-4 h-16 flex items-center justify-between gap-4">
-					{/* Left section with menu and search */}
-					<div className="flex items-center gap-2">
-						<Sheet>
-							<SheetTrigger asChild>
-								<Button variant="ghost" size="icon">
-									<Menu className="h-5 w-5" />
-									<span className="sr-only">Open menu</span>
-								</Button>
-							</SheetTrigger>
-							<SheetContent
-								side="right"
-								className="w-72 dark:bg-primaryGreyBg bg-[#FFFFFF]  p-0 flex flex-col">
-								<SheetHeader className="pt-4 px-1  border-slate-800 overflow-hidden">
-									{/* <SheetTitle className="text-white ">
-                    <CommandSearch t={t} userRole={user?.user?.role} />
-                  </SheetTitle> */}
-								</SheetHeader>
-
-								<div className="py-2 flex-grow">
-									{navbarOptions.map(({ id, path, name }) => (
-										<Link
-											key={id}
-											href={path}
-											className={`flex items-center px-4 py-2 text-sm  font-medium  ${
-												`/${pathname}` === path
-													? "text-gren"
-													: "text-black dark:text-white"
-											}`}>
-											{name}
-										</Link>
-									))}
-
-									{/* Add Question link for mobile - only show if user is logged in */}
-									{session && (
-										<Link
-											href="/questions/create"
-											className="flex items-center px-4 py-2 text-sm font-medium text-blue-600 dark:text-blue-400">
-											Add Question
-										</Link>
-									)}
-								</div>
-								<div className="mt-auto bg-red-900 flex">
-									<Card className="bg-zinc-900 border-none rounded-none w-full text-white p-4 flex justify-center items-center gap-4">
-										<div className="relative h-12 w-12">
-											<Avatar>
-												{/* <AvatarImage
-                          src={
-                            user?.user?.profilePic !== null
-                              ? user?.user?.profilePic
-                              : `https://ui-avatars.com/api/?name=${user?.user?.name}`
-                          }
-                          alt="@shadcn"
-                        /> */}
-												<AvatarFallback>USER</AvatarFallback>
-											</Avatar>
-										</div>
-										{/* <div className="flex flex-col">
-                      <h1 className="font-semibold text-white text-lg">
-                        {user?.user?.name}
-                      </h1>
-                      <p className="text-zinc-400 text-sm" onClick={signOut}>
-                        Sign out
-                      </p>
-                    </div> */}
-									</Card>
-
-									{/* <div className="">
-                    {user?.user?.role === UserRoles.organization ? (
-                      ""
-                    ) : (
-                      <Button
-                        variant="secondary"
-                        className="text-center w-full mt-2"
-                        onClick={handleProfile}
-                      >
-                        Profile
-                      </Button>
-                    )}
-                  </div> */}
-								</div>
-							</SheetContent>
-						</Sheet>
-					</div>
-				</div>
-			</nav>
 		</div>
 	);
 });

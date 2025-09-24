@@ -1,13 +1,20 @@
 "use client";
 
+import { HashLoader } from "@/components/custom";
 import Sidebar from "@/components/custom/customsidebar/CustomSidebar";
 import Navbar from "@/components/custom/navbar/Navbar";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useEffect, useRef, useState } from "react";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+	children,
+}: {
+	children: React.ReactNode;
+}) {
 	const sidebarRef = useRef<HTMLDivElement>(null);
 	const navbarRef = useRef<HTMLDivElement>(null);
 	const [isHydrated, setIsHydrated] = useState(false);
+	const isMobile = useIsMobile();
 
 	// Get initial state from sessionStorage if available
 	const getInitialMinimized = () => {
@@ -71,8 +78,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 		};
 	}, []);
 
-	// Calculate widths based on minimized state
-	const sidebarWidth = isMinimized ? 56 : 288; // w-14 : w-72
+	// Calculate widths based on minimized state and mobile
+	// On mobile, sidebar width should be 0 for layout calculations (overlay mode)
+	// On desktop, normal sidebar width logic applies
+	const sidebarWidth = isMobile ? 0 : isMinimized ? 56 : 288;
 	const navbarHeight = 64; // Default navbar height
 
 	// Apply CSS variables to root element
@@ -84,16 +93,41 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 		}
 	}, [sidebarWidth, navbarHeight, isHydrated]);
 
+	// Show loading state during hydration
+	if (!isHydrated) {
+		return (
+			<div className="w-screen h-screen flex items-center justify-center dark:bg-darkBg bg-[#FAFAFA]">
+				<HashLoader size={50} color="#3b82f6" />
+			</div>
+		);
+	}
+
 	return (
 		<div className="w-screen h-screen overflow-hidden dark:bg-darkBg bg-[#FAFAFA]">
 			<Sidebar ref={sidebarRef} />
 
+			{/* Mobile backdrop overlay - only show when sidebar is open on mobile */}
+			{isMobile && !isMinimized && (
+				<div
+					className="fixed inset-0 bg-black/50 z-30"
+					onClick={() => {
+						setIsMinimized(true);
+						sessionStorage.setItem("minimized", "true");
+						window.dispatchEvent(
+							new CustomEvent("sidebarToggle", {
+								detail: { minimized: true },
+							})
+						);
+					}}
+				/>
+			)}
+
 			{/* Navbar - using inline styles to prevent FOUC */}
 			<div
-				className="fixed top-0 z-10 min-h-[64px] bg-white dark:bg-primaryGreyBg"
+				className="fixed top-0 z-40 min-h-[64px] bg-white dark:bg-primaryGreyBg"
 				style={{
-					marginLeft: `${sidebarWidth}px`,
-					width: `calc(100vw - ${sidebarWidth}px)`,
+					marginLeft: isMobile ? "0px" : `${sidebarWidth}px`,
+					width: isMobile ? "100vw" : `calc(100vw - ${sidebarWidth}px)`,
 					transition: isTransitioning
 						? "none"
 						: "margin-left 300ms ease-in-out, width 300ms ease-in-out",
@@ -105,9 +139,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 			<main
 				className="overflow-auto p-4"
 				style={{
-					marginLeft: `${sidebarWidth}px`,
+					marginLeft: isMobile ? "0px" : `${sidebarWidth}px`,
 					marginTop: `${navbarHeight}px`,
-					width: `calc(100vw - ${sidebarWidth}px)`,
+					width: isMobile ? "100vw" : `calc(100vw - ${sidebarWidth}px)`,
 					height: `calc(100vh - ${navbarHeight}px)`,
 					transition: isTransitioning
 						? "none"

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useClusterData } from "@/context/clusterData-context";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import logo from "@/public/logo.png";
 import {
@@ -130,6 +131,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 	const param = useParams();
 	const router = useRouter();
 	const params = param?.category || "";
+	const isMobile = useIsMobile();
 
 	const headerRef = useRef<HTMLDivElement>(null);
 	const footerRef = useRef<HTMLDivElement>(null);
@@ -139,6 +141,9 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 	const [activeChild, setActiveChild] = useState<string | null>(null);
 	const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 	const { categoryData, categoryLoading } = useClusterData();
+
+	// On mobile, "minimized" means hidden, but we still want to show full content when open
+	const isContentCollapsed = isMobile ? false : minimized;
 
 	// Build category tree from flat data
 	const categoryTree = useMemo(
@@ -157,7 +162,33 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 
 	useEffect(() => {
 		const getMinimized = sessionStorage.getItem("minimized");
-		setMinimized(getMinimized ? JSON.parse(getMinimized) : false);
+		// On mobile, start with sidebar minimized (hidden)
+		// Only set minimized to true on mobile if no saved preference exists
+		if (getMinimized !== null) {
+			setMinimized(JSON.parse(getMinimized));
+		} else if (isMobile !== undefined) {
+			setMinimized(isMobile); // true on mobile, false on desktop
+		}
+		// Don't do anything if isMobile is still undefined (hydrating)
+	}, [isMobile]);
+
+	// Listen for sidebar toggle events
+	useEffect(() => {
+		const handleSidebarToggle = (e: CustomEvent) => {
+			setMinimized(e.detail.minimized);
+		};
+
+		window.addEventListener(
+			"sidebarToggle",
+			handleSidebarToggle as EventListener
+		);
+
+		return () => {
+			window.removeEventListener(
+				"sidebarToggle",
+				handleSidebarToggle as EventListener
+			);
+		};
 	}, []);
 
 	useLayoutEffect(() => {
@@ -384,8 +415,17 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 		<aside
 			ref={ref}
 			className={cn(
-				"fixed top-0 left-0 bottom-0 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 flex flex-col transition-all duration-300 shadow-sm",
-				minimized ? "w-14 px-2" : "w-72 px-4"
+				"fixed top-0 bottom-0 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 flex flex-col shadow-sm",
+				// Mobile: higher z-index and slide from left, Desktop: normal positioning
+				isMobile
+					? "z-[999] left-0 transition-transform duration-300 ease-in-out"
+					: "left-0 transition-all duration-300",
+				// Width and padding based on minimized state
+				minimized
+					? isMobile
+						? "-translate-x-full w-72 px-4" // Hidden on mobile when minimized
+						: "w-14 px-2" // Small width on desktop when minimized
+					: "w-72 px-4 translate-x-0" // Full width when expanded
 			)}>
 			<div ref={headerRef} className="py-2 flex items-center ">
 				<Image
@@ -393,9 +433,10 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 					alt="Logo"
 					width={60}
 					height={60}
-					onClick={() => handleResize()}
+					onClick={isMobile ? undefined : () => handleResize()}
+					className={isMobile ? "cursor-default" : "cursor-pointer"}
 				/>
-				{!minimized && (
+				{!isContentCollapsed && (
 					<h2 className="text-xl font-bold  text-yellow-600 cursor-pointer">
 						Interview<span className="text-green-600">Fuel</span>
 					</h2>
@@ -404,9 +445,12 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 					size="icon"
 					variant="ghost"
 					onClick={handleResize}
-					className="ml-auto">
+					className="ml-auto hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full p-2">
 					<ChevronLeft
-						className={cn("transition-transform", minimized && "rotate-180")}
+						className={cn(
+							"h-4 w-4 transition-transform text-gray-600 dark:text-gray-400",
+							isContentCollapsed && "rotate-180"
+						)}
 					/>
 				</Button>
 			</div>
@@ -414,7 +458,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 			<div
 				className="flex-1 overflow-y-auto scrollbar-hide"
 				style={{ maxHeight: bodyMaxHeight }}>
-				{!minimized ? (
+				{!isContentCollapsed ? (
 					<div className="space-y-1">
 						{categoryLoading
 							? Array.from({ length: 5 }).map((_, index) => (
@@ -461,20 +505,20 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 				<div
 					className={cn(
 						"flex items-center gap-2 cursor-pointer",
-						minimized && "justify-center"
+						isContentCollapsed && "justify-center"
 					)}
 					onClick={() => handleNavigate("/help-center")}>
 					<MessageCircleQuestion className="h-4 w-4" />
-					{!minimized && <span className="text-xs">Help Center</span>}
+					{!isContentCollapsed && <span className="text-xs">Help Center</span>}
 				</div>
 				<div
 					className={cn(
 						"flex items-center gap-2 cursor-pointer",
-						minimized && "justify-center"
+						isContentCollapsed && "justify-center"
 					)}
 					onClick={() => handleNavigate("/settings")}>
 					<Settings className="h-4 w-4" />
-					{!minimized && <span className="text-xs">Settings</span>}
+					{!isContentCollapsed && <span className="text-xs">Settings</span>}
 				</div>
 			</div>
 		</aside>

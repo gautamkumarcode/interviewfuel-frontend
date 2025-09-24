@@ -33,12 +33,10 @@ const handler = NextAuth({
 						throw new Error("Email and password are required");
 					}
 
-
 					const response = await loginUser({
 						email: credentials.email,
 						password: credentials.password,
 					});
-
 
 					if (!response?.data?.user || !response?.data?.token) {
 						console.error("Invalid response structure:", {
@@ -47,7 +45,6 @@ const handler = NextAuth({
 						});
 						throw new Error("Invalid credentials");
 					}
-
 
 					return {
 						id: response.data.user._id,
@@ -106,8 +103,8 @@ const handler = NextAuth({
 		},
 	},
 	pages: {
-		signIn: "/login",
-		error: "/login", // Error code passed in query string as ?error=
+		signIn: "/", // Redirect to home page where modal will be triggered
+		error: "/", // Error code passed in query string as ?error=
 	},
 	secret: process.env.NEXTAUTH_SECRET,
 	debug: process.env.NODE_ENV === "development",
