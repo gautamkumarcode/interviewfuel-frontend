@@ -101,6 +101,10 @@ export interface GetSingleQuestionResponseType {
 	updatedAt: Date;
 	difficultyScore: number;
 	id: string;
+	_id: string;
+	slug: string;
+	likedBy: string[];
+	bookmarkedBy: string[];
 }
 
 export interface Author {

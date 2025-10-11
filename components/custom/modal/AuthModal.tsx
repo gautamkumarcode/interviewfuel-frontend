@@ -8,7 +8,7 @@ import {
 	useAuthModalFromUrl,
 	usePostLoginRedirect,
 } from "@/hooks/useAuthModalFromUrl";
-import { useEffect, useRef, Suspense } from "react";
+import { Suspense, useEffect, useRef } from "react";
 
 const AuthModalContent = () => {
 	const { isOpen, closeModal, view } = useAuthModal();

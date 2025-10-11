@@ -26,7 +26,7 @@ export function ProfilePage() {
 	const [editedData, setEditedData] = useState<Partial<User>>(
 		profile || {
 			name: "",
-			username: "",
+			userName: "",
 			joinDate: new Date().toISOString(),
 			stats: {
 				questionsAnswered: 0,

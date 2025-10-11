@@ -7,7 +7,7 @@ import {
 	GetAllQuestionsResponseType,
 	GetSingleQuestionResponseType,
 } from "@/types/interfaces/questions/getQuestion-type";
-import { unauthenticatedInstance, authenticatedInstance } from "@/utils/axios";
+import { authenticatedInstance, unauthenticatedInstance } from "@/utils/axios";
 
 class QuestionService {
 	public getAllQuestions = async (category?:string): Promise<
@@ -43,6 +43,25 @@ class QuestionService {
 		>(`${apiEndPoint.getAllQuestions}`, payload);
 		return data;
 	};
+
+	public bookmarkQuestion = async (
+		id: string
+	): Promise<AxiosResponseTypeWithoutPagination<{ bookmarks: number }>> => {
+		const { data } = await authenticatedInstance.post<
+			AxiosResponseTypeWithoutPagination<{ bookmarks: number }>
+		>(`${apiEndPoint.getAllQuestions}/${id}/bookmark`);
+		return data;
+	}
+
+	public likeQuestion = async (
+		id: string
+	): Promise<AxiosResponseTypeWithoutPagination<{ likes: number }>> => {
+		const { data } = await authenticatedInstance.post<
+			AxiosResponseTypeWithoutPagination<{ likes: number }>
+		>(`${apiEndPoint.getAllQuestions}/${id}/like`);
+		return data;
+	}
+	
 
 	// 	 public getMyLeave = async (): Promise<
 	//     AxiosResponseTypeWithoutPagination<GetLeaveListResponseType[]>

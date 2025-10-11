@@ -58,7 +58,7 @@ interface CategoryNode extends Category {
 }
 
 const getCategoryIcon = (categoryName: string, iconName?: string) => {
-	const classes = "h-5 w-5";
+	const classes = "h-4 w-4";
 
 	// First try to use the category name
 	switch (categoryName) {
@@ -325,20 +325,27 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 	const renderCategoryTree = (categories: CategoryNode[], level = 0) => {
 		return categories.map((category) => {
 			const isExpanded = expandedItems.has(category._id);
+			const hasChildren = category.children && category.children.length > 0;
+			const isParentActive = activeParent === category.name;
 
 			return (
-				<div key={category._id} className={level > 0 ? "ml-4" : ""}>
-					{/* Category header - acts as accordion trigger */}
+				<div key={category._id} className={cn("relative", level > 0 && "ml-2")}>
+					{/* Category header - enhanced dropdown trigger */}
 					<div
 						className={cn(
-							"flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors",
-							activeParent === category.name
-								? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-								: "hover:bg-gray-100 dark:hover:bg-gray-800"
+							"group flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 relative overflow-hidden",
+							// Active state styling
+							isParentActive
+								? "bg-gradient-to-r from-green-100 to-emerald-50 text-green-800 shadow-sm border border-green-200 dark:from-green-900/50 dark:to-emerald-900/30 dark:text-green-300 dark:border-green-700"
+								: "hover:bg-gradient-to-r hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800/50 dark:hover:to-gray-700/50",
+							// Add subtle shadow for depth
+							level === 0 && "shadow-sm hover:shadow-md",
+							// Border styling
+							"border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
 						)}
 						onClick={(e) => {
 							e.stopPropagation();
-							if (category.children && category.children.length > 0) {
+							if (hasChildren) {
 								toggleExpandedItem(category._id);
 								handleNavigate(`/questions?category=${category.slug}`);
 								setActiveParent(category.name);
@@ -349,61 +356,149 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 								setActiveChild(null);
 							}
 						}}>
-						{category.children && category.children.length > 0 && (
-							<Button variant="ghost" size="icon" className="h-6 w-6">
+						{/* Expand/Collapse Icon */}
+						{hasChildren ? (
+							<div
+								className={cn(
+									"flex items-center justify-center w-6 h-6 rounded-lg transition-all duration-200",
+									isExpanded
+										? "bg-green-200 text-green-700 dark:bg-green-800 dark:text-green-300"
+										: "bg-gray-100 text-gray-600 group-hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:group-hover:bg-gray-700"
+								)}>
 								{isExpanded ? (
-									<ChevronUp className="h-3 w-3 " />
+									<ChevronUp className="h-3.5 w-3.5 transition-transform duration-200" />
 								) : (
-									<ChevronDown className="h-3 w-3" />
+									<ChevronDown className="h-3.5 w-3.5 transition-transform duration-200" />
 								)}
-							</Button>
+							</div>
+						) : (
+							<div className="w-6 h-6 flex items-center justify-center">
+								<div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+							</div>
 						)}
-						{!category.children || category.children.length === 0 ? (
-							<div className="w-6" /> // Spacer for items without children
-						) : null}
-						{getCategoryIcon(category.name, category.icon)}
-						<span className="text-sm font-medium">{category.name}</span>
-						<span className="ml-auto text-xs text-gray-500">
+
+						{/* Category Icon */}
+						<div
+							className={cn(
+								"flex items-center justify-center w-6 h-6 md:h-8 md:w-8 rounded-lg transition-all duration-200",
+								isParentActive
+									? "bg-white/80 shadow-sm"
+									: "bg-gray-50 group-hover:bg-white dark:bg-gray-800 dark:group-hover:bg-gray-700"
+							)}>
+							{getCategoryIcon(category.name, category.icon)}
+						</div>
+
+						{/* Category Name */}
+						<div className="flex-1 min-w-0">
+							<span
+								className={cn(
+									"text-sm font-medium transition-colors duration-200 block truncate",
+									isParentActive
+										? "text-green-800 dark:text-green-300"
+										: "text-gray-700 dark:text-gray-300"
+								)}>
+								{category.name}
+							</span>
+							{level === 0 && (
+								<span className="text-xs text-gray-500 dark:text-gray-400">
+									{category.stats.questionCount} questions
+								</span>
+							)}
+						</div>
+
+						{/* Question Count Badge */}
+						<div
+							className={cn(
+								"flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full text-xs font-medium transition-all duration-200",
+								isParentActive
+									? "bg-green-200 text-green-800 dark:bg-green-800 dark:text-green-200"
+									: "bg-gray-100 text-gray-600 group-hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:group-hover:bg-gray-700"
+							)}>
 							{category.stats.questionCount}
-						</span>
+						</div>
+
+						{/* Active indicator line */}
+						{isParentActive && (
+							<div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-green-500 to-emerald-500 rounded-r-full"></div>
+						)}
 					</div>
 
-					{/* Child categories */}
-					{isExpanded && category.children && category.children.length > 0 && (
-						<div className="mt-1 ml-6 border-l border-gray-200 pl-2">
-							{category.children.map((child) => {
-								const isChildActive = activeChild === child.name;
+					{/* Enhanced Child categories dropdown */}
+					{isExpanded && hasChildren && (
+						<div className="mt-2 ml-4 relative">
+							{/* Connection line */}
+							<div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-green-200 via-gray-200 to-transparent dark:from-green-800 dark:via-gray-700"></div>
 
-								return (
-									<div key={child._id} className="py-1">
-										{child.children && child.children.length > 0 ? (
-											// Child has its own children - render recursively
-											renderCategoryTree([child], level + 1)
-										) : (
-											// Child is a leaf node - render as button
-											<Button
-												variant="ghost"
-												size="sm"
-												onClick={() => {
-													handleNavigate(`/questions?category=${child.slug}`);
-													setActiveChild(child.name);
-													setActiveParent(category.name);
-												}}
-												className={cn(
-													"w-full justify-start text-left text-sm px-2 py-1 rounded-md transition-colors duration-200 cursor-pointer",
-													isChildActive
-														? "bg-green-200 text-green-900 font-semibold dark:bg-green-800 dark:text-green-100"
-														: "hover:bg-gray-100 dark:hover:bg-gray-700"
-												)}>
-												{child.name}
-												<span className="ml-auto text-xs text-gray-500">
-													{child.stats.questionCount}
-												</span>
-											</Button>
-										)}
-									</div>
-								);
-							})}
+							<div className="space-y-1 pl-4">
+								{category.children!.map((child, index) => {
+									const isChildActive = activeChild === child.name;
+									const isLastChild = index === category.children!.length - 1;
+
+									return (
+										<div key={child._id} className="relative">
+											{/* Connection dot */}
+											<div className="absolute -left-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 border-2 border-white dark:border-gray-900"></div>
+
+											{child.children && child.children.length > 0 ? (
+												// Child has its own children - render recursively
+												renderCategoryTree([child], level + 1)
+											) : (
+												// Enhanced leaf node styling
+												<div
+													onClick={() => {
+														handleNavigate(`/questions?category=${child.slug}`);
+														setActiveChild(child.name);
+														setActiveParent(category.name);
+													}}
+													className={cn(
+														"group flex items-center gap-3 p-2.5 rounded-lg cursor-pointer transition-all duration-200 relative",
+														isChildActive
+															? "bg-gradient-to-r from-green-50 to-emerald-50 text-green-800 shadow-sm border border-green-200 dark:from-green-900/30 dark:to-emerald-900/20 dark:text-green-300 dark:border-green-700"
+															: "hover:bg-gradient-to-r hover:from-gray-50 hover:to-blue-50 dark:hover:from-gray-800/30 dark:hover:to-blue-900/20 border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
+													)}>
+													{/* Child icon */}
+													<div
+														className={cn(
+															"flex items-center justify-center w-6 h-6 rounded-md transition-all duration-200",
+															isChildActive
+																? "bg-green-200 text-green-700 dark:bg-green-800 dark:text-green-300"
+																: "bg-gray-100 text-gray-500 group-hover:bg-blue-100 group-hover:text-blue-600 dark:bg-gray-800 dark:text-gray-400 dark:group-hover:bg-blue-900/50 dark:group-hover:text-blue-400"
+														)}>
+														{getCategoryIcon(child.name, child.icon)}
+													</div>
+
+													{/* Child name */}
+													<span
+														className={cn(
+															"text-sm font-medium flex-1 transition-colors duration-200",
+															isChildActive
+																? "text-green-800 dark:text-green-300"
+																: "text-gray-600 group-hover:text-gray-800 dark:text-gray-400 dark:group-hover:text-gray-200"
+														)}>
+														{child.name}
+													</span>
+
+													{/* Child question count */}
+													<div
+														className={cn(
+															"flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-medium transition-all duration-200",
+															isChildActive
+																? "bg-green-200 text-green-700 dark:bg-green-800 dark:text-green-200"
+																: "bg-gray-100 text-gray-500 group-hover:bg-blue-100 group-hover:text-blue-600 dark:bg-gray-800 dark:text-gray-400 dark:group-hover:bg-blue-900/50 dark:group-hover:text-blue-400"
+														)}>
+														{child.stats.questionCount}
+													</div>
+
+													{/* Active indicator */}
+													{isChildActive && (
+														<div className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-gradient-to-b from-green-500 to-emerald-500 rounded-r-full"></div>
+													)}
+												</div>
+											)}
+										</div>
+									);
+								})}
+							</div>
 						</div>
 					)}
 				</div>
@@ -427,7 +522,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 						: "w-14 px-2" // Small width on desktop when minimized
 					: "w-72 px-4 translate-x-0" // Full width when expanded
 			)}>
-			<div ref={headerRef} className="py-2 flex items-center ">
+			<div ref={headerRef} className="pt-4 lg:pt-2 flex items-center ">
 				<Image
 					src={logo}
 					alt="Logo"
@@ -472,31 +567,46 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 							: renderCategoryTree(categoryTree)}
 					</div>
 				) : (
-					<div className="flex flex-col gap-3 items-center">
+					<div className="flex flex-col gap-2 items-center py-2">
 						{categoryLoading
 							? Array.from({ length: 5 }).map((_, index) => (
 									<div
 										key={index}
-										className="h-10 w-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+										className="h-8 w-8 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-md animate-pulse shadow-sm"></div>
 							  ))
-							: categoryTree.map((item) => (
-									<Button
-										key={item._id}
-										variant="ghost"
-										size="icon"
-										className={cn(
-											activeParent === item.name &&
-												"bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-										)}
-										onClick={() => {
-											handleNavigate(`/questions?category=${item.slug}`);
-											setActiveParent(item.name);
-											setActiveChild(null);
-											setMinimized(false);
-										}}>
-										{getCategoryIcon(item.name, item.icon)}
-									</Button>
-							  ))}
+							: categoryTree.map((item) => {
+									const isActive = activeParent === item.name;
+									return (
+										<div
+											key={item._id}
+											className={cn(
+												"flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md",
+												isActive
+													? "bg-gradient-to-br from-green-100 to-emerald-100 text-green-700 shadow-md border border-green-200 dark:from-green-900/50 dark:to-emerald-900/30 dark:text-green-300 dark:border-green-700"
+													: "bg-gradient-to-br from-gray-50 to-gray-100 text-gray-600 hover:from-gray-100 hover:to-gray-200 dark:from-gray-800 dark:to-gray-700 dark:text-gray-400 dark:hover:from-gray-700 dark:hover:to-gray-600 border border-gray-200 dark:border-gray-700"
+											)}
+											onClick={() => {
+												handleNavigate(`/questions?category=${item.slug}`);
+												setActiveParent(item.name);
+												setActiveChild(null);
+
+												// Dispatch custom event BEFORE state change for instant response
+												window.dispatchEvent(
+													new CustomEvent("sidebarToggle", {
+														detail: { minimized: false, width: 288 },
+													})
+												);
+
+												setMinimized(false);
+												sessionStorage.setItem(
+													"minimized",
+													JSON.stringify(false)
+												);
+											}}>
+											{getCategoryIcon(item.name, item.icon)}
+										</div>
+									);
+							  })}
 					</div>
 				)}
 			</div>

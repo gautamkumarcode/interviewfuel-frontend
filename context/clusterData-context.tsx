@@ -7,6 +7,7 @@ import {
 	AxiosResponseTypeWithPagination,
 } from "@/types/axios-response";
 import { GetCategoriesResponseType } from "@/types/interfaces/category/category-type";
+import { User } from "@/types/user";
 import { useSession } from "next-auth/react";
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 import { useQuery } from "react-query";
@@ -14,7 +15,7 @@ import { useQuery } from "react-query";
 type ClusterDataContextType = {
 	categoryData: GetCategoriesResponseType[] | null;
 	categoryLoading: boolean;
-	userData: any | null;
+	userData: User | null;
 	userLoading: boolean;
 	userError: any;
 	refetchUser: () => void;
@@ -24,15 +25,18 @@ const ClusterDataContext = createContext<ClusterDataContextType | undefined>(
 	undefined
 );
 
-export const ClusterDataProvider = ({ children }: { children: ReactNode }) => {
+export const ClusterDataProvider = ({
+	children,
+	initialUserData,
+}: {
+	children: ReactNode;
+	initialUserData?: User | null;
+}) => {
 	const { data: session, status } = useSession();
-
-
 
 	const { data: categoryData, isLoading: categoryLoading } = useQuery<
 		AxiosResponseTypeWithPagination<GetCategoriesResponseType[]>
 	>(["allcategories"], categoryService.getAllCategories);
-
 
 	const {
 		data: userData,
@@ -43,19 +47,28 @@ export const ClusterDataProvider = ({ children }: { children: ReactNode }) => {
 		["userProfile"],
 		() => userServices.getUserProfile(),
 		{
-			enabled: status === "authenticated" && !!session?.accessToken,
+			enabled:
+				status === "authenticated" &&
+				!!session?.accessToken &&
+				!initialUserData,
 			staleTime: 1000 * 60 * 5, // 5 minutes
 			cacheTime: 1000 * 60 * 10, // 10 minutes
+			initialData: initialUserData
+				? {
+						success: true,
+						message: "Initial data",
+						data: { user: initialUserData },
+				  }
+				: undefined,
 		}
 	);
-
 
 	const value = useMemo<ClusterDataContextType>(
 		() => ({
 			categoryData: categoryData?.data?.results || null,
 			categoryLoading,
-			userData: userData?.data?.user || null,
-			userLoading: userIsLoading,
+			userData: userData?.data?.user || initialUserData || null,
+			userLoading: userIsLoading && !initialUserData,
 			userError,
 			refetchUser,
 		}),
@@ -66,6 +79,7 @@ export const ClusterDataProvider = ({ children }: { children: ReactNode }) => {
 			userIsLoading,
 			userError,
 			refetchUser,
+			initialUserData,
 		]
 	);
 
