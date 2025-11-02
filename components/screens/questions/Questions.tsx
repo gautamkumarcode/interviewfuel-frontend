@@ -62,7 +62,6 @@ export default function Questions() {
 		return null;
 	}, [decodedCategory, categoryList]);
 
-	const categoryId = matchedCategoryOrSubcategory?._id;
 	const categoryName =
 		matchedCategoryOrSubcategory?.name ??
 		(category ? "Unknown Category" : "All Questions");
@@ -72,8 +71,8 @@ export default function Questions() {
 		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>,
 		AxiosError<AxiosErrorResponseType>
 	>(
-		["allquestions", categoryId || "all"],
-		() => questionService.getAllQuestions(categoryId),
+		["allquestions", category || "all"],
+		() => questionService.getAllQuestions(category ?? undefined),
 		{
 			staleTime: 1000 * 60 * 5,
 			cacheTime: 1000 * 60 * 10,

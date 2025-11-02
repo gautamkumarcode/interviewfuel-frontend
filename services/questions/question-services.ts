@@ -4,19 +4,22 @@ import {
 	AxiosResponseTypeWithPagination,
 } from "@/types/axios-response";
 import {
+	CommentType,
 	GetAllQuestionsResponseType,
 	GetSingleQuestionResponseType,
 } from "@/types/interfaces/questions/getQuestion-type";
 import { authenticatedInstance, unauthenticatedInstance } from "@/utils/axios";
 
 class QuestionService {
-	public getAllQuestions = async (category?:string): Promise<
+	public getAllQuestions = async (
+		category?: string
+	): Promise<
 		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
 	> => {
 		const { data } = await unauthenticatedInstance.get<
 			AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
 		>(`${apiEndPoint.getAllQuestions}`, {
-			params: {	
+			params: {
 				category: category,
 			},
 		});
@@ -51,7 +54,7 @@ class QuestionService {
 			AxiosResponseTypeWithoutPagination<{ bookmarks: number }>
 		>(`${apiEndPoint.getAllQuestions}/${id}/bookmark`);
 		return data;
-	}
+	};
 
 	public likeQuestion = async (
 		id: string
@@ -60,54 +63,79 @@ class QuestionService {
 			AxiosResponseTypeWithoutPagination<{ likes: number }>
 		>(`${apiEndPoint.getAllQuestions}/${id}/like`);
 		return data;
-	}
-	
+	};
 
-	// 	 public getMyLeave = async (): Promise<
-	//     AxiosResponseTypeWithoutPagination<GetLeaveListResponseType[]>
-	//   > => {
-	//     const { data } = await authenticatedInstance.get<
-	//       AxiosResponseTypeWithoutPagination<GetLeaveListResponseType[]>
-	//     >(availableApiRoutes.getMyLeaves);
-	//     return data;
-	//   };
-	//   public getAllLeaveTypeList = async (): Promise<
-	//     AxiosResponseTypeWithoutPagination<GetAllLeaveTypeListResponseType[]>
-	//   > => {
-	//     const { data } = await authenticatedInstance.get<
-	//       AxiosResponseTypeWithoutPagination<GetAllLeaveTypeListResponseType[]>
-	//     >(availableApiRoutes.getAllLeaveTypeList);
-	//     return data;
-	//   };
+	public addCommentToQuestions = async (data: {
+		questionId: string;
+		content: string;
+		parentComment?: string | null;
+	}): Promise<AxiosResponseTypeWithoutPagination<CommentType>> => {
+		const response = await authenticatedInstance.post<
+			AxiosResponseTypeWithoutPagination<CommentType>
+		>(`${apiEndPoint.getAllQuestions}/${data.questionId}/comments/add`, data);
+		return response.data;
+	};
+	public getCommentsOfQuestion = async (
+		questionId: string
+	): Promise<AxiosResponseTypeWithPagination<CommentType[]>> => {
+		const response = await unauthenticatedInstance.get<
+			AxiosResponseTypeWithPagination<CommentType[]>
+		>(`${apiEndPoint.getAllQuestions}/${questionId}/comments`);
+		return response.data;
+	};
 
-	//   public getAllLeaveTypeWithPolicy = async (): Promise<
-	//     AxiosResponseTypeWithoutPagination<GetAllLeaveTypeWithPolicyResponseType[]>
-	//   > => {
-	//     const { data } = await authenticatedInstance.get<
-	//       AxiosResponseTypeWithoutPagination<
-	//         GetAllLeaveTypeWithPolicyResponseType[]
-	//       >
-	//     >(availableApiRoutes.getAllLeaveTypeWithPolicy);
-	//     return data;
-	//   };
-	//   public createLeaveType = async (
-	//     payload: CreateLeaveTypePayloadType,
-	//   ): Promise<
-	//     AxiosResponseTypeWithoutPagination<CreateLeaveTypeResponseType>
-	//   > => {
-	//     const { data } = await authenticatedInstance.put<
-	//       AxiosResponseTypeWithoutPagination<CreateLeaveTypeResponseType>
-	//     >(availableApiRoutes.createLeaveType, payload);
-	//     return data;
-	//   };
-	//   public createLeavePolicy = async (
-	//     payload: CreatePolicyPayloadType,
-	//   ): Promise<AxiosResponseTypeWithoutPagination<CreatePolicyResponseType>> => {
-	//     const { data } = await authenticatedInstance.put<
-	//       AxiosResponseTypeWithoutPagination<CreatePolicyResponseType>
-	//     >(availableApiRoutes.createPolicy, payload);
-	//     return data;
-	//   };
+	public likeComment = async (
+		questionId: string,
+		commentId: string
+	): Promise<AxiosResponseTypeWithoutPagination<{ likes: number }>> => {
+		const response = await authenticatedInstance.post<
+			AxiosResponseTypeWithoutPagination<{ likes: number }>
+		>(
+			`${apiEndPoint.getAllQuestions}/${questionId}/comments/${commentId}/like`
+		);
+		return response.data;
+	};
+
+	public deleteComment = async (
+		questionId: string,
+		commentId: string
+	): Promise<AxiosResponseTypeWithoutPagination<any>> => {
+		const response = await authenticatedInstance.delete<
+			AxiosResponseTypeWithoutPagination<any>
+		>(`${apiEndPoint.getAllQuestions}/${questionId}/comments/${commentId}`);
+		return response.data;
+	};
+
+	public editComment = async (
+		questionId: string,
+		commentId: string,
+		content: string
+	): Promise<AxiosResponseTypeWithoutPagination<CommentType>> => {
+		const response = await authenticatedInstance.put<
+			AxiosResponseTypeWithoutPagination<CommentType>
+		>(`${apiEndPoint.getAllQuestions}/${questionId}/comments/${commentId}`, {
+			content,
+		});
+		return response.data;
+	};
+
+	public getRelatedQuestions = async (
+		questionId: string,
+		limit: number = 5
+	): Promise<
+		AxiosResponseTypeWithoutPagination<{
+			results: GetAllQuestionsResponseType[];
+			total: number;
+		}>
+	> => {
+		const response = await unauthenticatedInstance.get<
+			AxiosResponseTypeWithoutPagination<{
+				results: GetAllQuestionsResponseType[];
+				total: number;
+			}>
+		>(`${apiEndPoint.getAllQuestions}/${questionId}/related?limit=${limit}`);
+		return response.data;
+	};
 }
 
 export const questionService = new QuestionService();

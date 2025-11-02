@@ -144,3 +144,23 @@ export interface Stats {
 	attempts: number;
 	successRate: number;
 }
+
+
+export type CommentType = {
+	_id: string;
+	question: string;
+	author: {
+		_id: string;
+		name: string;
+		avatar: string | null;
+		profileUrl?: string;
+		id?: string;
+	} | null;
+	content: string;
+	parentComment: string | null;
+	likes: string[];
+	isEdited: boolean;
+	isDeleted: boolean;
+	createdAt: string;
+	updatedAt: string;
+};
