@@ -1,48 +1,74 @@
-"use client";
-
-import { ActivityPatterns } from "@/components/custom/analytics/ActivityParttern";
-import { AIInsights } from "@/components/custom/analytics/AiInsights";
-import { CategoryAnalysis } from "@/components/custom/analytics/CategoryAnalysis";
-import { GoalsAchievements } from "@/components/custom/analytics/GoalAchivement";
-import { PerformanceTrends } from "@/components/custom/analytics/PerformenceTrends";
-import { Button } from "@/components/ui/button";
+import { ActivityPatternServer } from "@/components/custom/analytics/ActivityPatternServer";
+import { AIInsightsServer } from "@/components/custom/analytics/AiInsightsServer";
+import { CategoryAnalysisServer } from "@/components/custom/analytics/CategoryAnalysisServer";
+import { GoalsAchievementsServer } from "@/components/custom/analytics/GoalsAchievementsServer";
+import { PerformanceTrendsServer } from "@/components/custom/analytics/PerformanceTrendsServer";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Award, Clock, Target, TrendingUp } from "lucide-react";
-import * as React from "react";
+import {
+	ActivityPatterns,
+	AIInsightsData,
+	DashboardAnalytics,
+} from "@/services/analytics/analytics-services";
+import { Award, Clock, Target, TrendingUp } from "lucide-react";
 
-interface AnalyticsDashboardProps {
-	onExit: () => void;
+interface AnalyticsDashboardServerCompleteProps {
+	dashboardData: DashboardAnalytics | null;
+	activityData: ActivityPatterns | null;
+	insightsData: AIInsightsData | null;
+	timeRange: number;
 }
 
-export const AnalyticsDashboard = ({ onExit }: AnalyticsDashboardProps) => {
-	const [timeRange, setTimeRange] = React.useState("3months");
-
+export function AnalyticsDashboardServerComplete({
+	dashboardData,
+	activityData,
+	insightsData,
+	timeRange,
+}: AnalyticsDashboardServerCompleteProps) {
 	const getCurrentStats = () => ({
-		completionRate: { current: 89, change: 5 },
-		avgTime: { current: 4.4, change: 0.6 },
-		totalQuestions: { current: 43, change: 3 },
+		completionRate: {
+			current: dashboardData?.overview.accuracy || 0,
+			change: dashboardData?.overview.weeklyGrowth || 0,
+		},
+		avgTime: {
+			current: dashboardData?.overview.totalPracticeTime
+				? (
+						dashboardData.overview.totalPracticeTime /
+						dashboardData.overview.totalQuestions
+				  ).toFixed(1)
+				: 0,
+			change: 0.6,
+		},
+		totalQuestions: {
+			current: dashboardData?.overview.totalQuestions || 0,
+			change: dashboardData?.overview.weeklyGrowth || 0,
+		},
 		avgDifficulty: { current: 3.4, change: 0.1 },
 	});
 
 	const stats = getCurrentStats();
+
+	if (!dashboardData) {
+		return (
+			<div className="max-w-7xl mx-auto p-6">
+				<Card>
+					<CardContent className="p-8 text-center">
+						<p className="text-red-500 mb-4">Failed to load analytics data</p>
+						<p className="text-gray-600">
+							Please try refreshing the page or contact support if the issue
+							persists.
+						</p>
+					</CardContent>
+				</Card>
+			</div>
+		);
+	}
 
 	return (
 		<div className="max-w-7xl mx-auto">
 			{/* Header */}
 			<div className="flex items-center justify-between mb-8">
 				<div className="flex items-center gap-4">
-					<Button variant="ghost" onClick={onExit} className="gap-2">
-						<ArrowLeft className="h-4 w-4" />
-						Back to Questions
-					</Button>
 					<div>
 						<h1 className="text-3xl font-bold text-gray-900">
 							Performance Analytics
@@ -52,18 +78,7 @@ export const AnalyticsDashboard = ({ onExit }: AnalyticsDashboardProps) => {
 						</p>
 					</div>
 				</div>
-
-				<Select value={timeRange} onValueChange={setTimeRange}>
-					<SelectTrigger className="w-40">
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="1month">Last Month</SelectItem>
-						<SelectItem value="3months">Last 3 Months</SelectItem>
-						<SelectItem value="6months">Last 6 Months</SelectItem>
-						<SelectItem value="1year">Last Year</SelectItem>
-					</SelectContent>
-				</Select>
+				<div className="text-sm text-gray-500">Last {timeRange} days</div>
 			</div>
 
 			{/* Key Metrics */}
@@ -138,14 +153,13 @@ export const AnalyticsDashboard = ({ onExit }: AnalyticsDashboardProps) => {
 					<CardContent className="p-6">
 						<div className="flex items-center justify-between">
 							<div>
-								<p className="text-sm text-gray-600 mb-1">Avg Difficulty</p>
+								<p className="text-sm text-gray-600 mb-1">Current Streak</p>
 								<p className="text-2xl font-bold text-gray-900">
-									{stats.avgDifficulty.current}
+									{dashboardData.overview.currentStreak}
 								</p>
 								<div className="flex items-center gap-1 mt-1">
-									<TrendingUp className="h-3 w-3 text-green-600" />
-									<span className="text-xs text-green-600">
-										+{stats.avgDifficulty.change} harder
+									<span className="text-xs text-gray-600">
+										Best: {dashboardData.overview.longestStreak} days
 									</span>
 								</div>
 							</div>
@@ -157,6 +171,7 @@ export const AnalyticsDashboard = ({ onExit }: AnalyticsDashboardProps) => {
 				</Card>
 			</div>
 
+			{/* Tabs for different analytics views */}
 			<Tabs defaultValue="trends" className="space-y-6">
 				<TabsList className="grid w-full grid-cols-5">
 					<TabsTrigger value="trends">Performance Trends</TabsTrigger>
@@ -167,25 +182,28 @@ export const AnalyticsDashboard = ({ onExit }: AnalyticsDashboardProps) => {
 				</TabsList>
 
 				<TabsContent value="trends">
-					<PerformanceTrends />
+					<PerformanceTrendsServer />
 				</TabsContent>
 
 				<TabsContent value="categories">
-					<CategoryAnalysis />
+					<CategoryAnalysisServer analyticsData={dashboardData} />
 				</TabsContent>
 
 				<TabsContent value="activity">
-					<ActivityPatterns />
+					<ActivityPatternServer
+						activityData={activityData}
+						timeRange={timeRange}
+					/>
 				</TabsContent>
 
 				<TabsContent value="goals">
-					<GoalsAchievements />
+					<GoalsAchievementsServer analyticsData={dashboardData} />
 				</TabsContent>
 
 				<TabsContent value="insights">
-					<AIInsights />
+					<AIInsightsServer insightsData={insightsData} />
 				</TabsContent>
 			</Tabs>
 		</div>
 	);
-};
+}

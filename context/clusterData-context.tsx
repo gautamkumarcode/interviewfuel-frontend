@@ -1,19 +1,18 @@
 "use client";
 
-import { categoryService } from "@/services/category/categories-services";
-import { userServices } from "@/services/userservices/user-services";
 import {
-	AxiosResponseTypeWithoutPagination,
-	AxiosResponseTypeWithPagination,
-} from "@/types/axios-response";
-import { GetCategoriesResponseType } from "@/types/interfaces/category/category-type";
+	categoryService,
+	CategoryType,
+} from "@/services/categories/category-services";
+import { userServices } from "@/services/userservices/user-services";
+import { AxiosResponseTypeWithoutPagination } from "@/types/axios-response";
 import { User } from "@/types/user";
 import { useSession } from "next-auth/react";
 import { createContext, useContext, useMemo, type ReactNode } from "react";
 import { useQuery } from "react-query";
 
 type ClusterDataContextType = {
-	categoryData: GetCategoriesResponseType[] | null;
+	categoryData: CategoryType[] | null;
 	categoryLoading: boolean;
 	userData: User | null;
 	userLoading: boolean;
@@ -35,7 +34,10 @@ export const ClusterDataProvider = ({
 	const { data: session, status } = useSession();
 
 	const { data: categoryData, isLoading: categoryLoading } = useQuery<
-		AxiosResponseTypeWithPagination<GetCategoriesResponseType[]>
+		AxiosResponseTypeWithoutPagination<{
+			results: CategoryType[];
+			total: number;
+		}>
 	>(["allcategories"], categoryService.getAllCategories);
 
 	const {
@@ -43,7 +45,7 @@ export const ClusterDataProvider = ({
 		isLoading: userIsLoading,
 		error: userError,
 		refetch: refetchUser,
-	} = useQuery<AxiosResponseTypeWithoutPagination<any>>(
+	} = useQuery<AxiosResponseTypeWithoutPagination<User>>(
 		["userProfile"],
 		() => userServices.getUserProfile(),
 		{
@@ -57,7 +59,7 @@ export const ClusterDataProvider = ({
 				? {
 						success: true,
 						message: "Initial data",
-						data: { user: initialUserData },
+						data: initialUserData,
 				  }
 				: undefined,
 		}
@@ -67,7 +69,7 @@ export const ClusterDataProvider = ({
 		() => ({
 			categoryData: categoryData?.data?.results || null,
 			categoryLoading,
-			userData: userData?.data?.user || initialUserData || null,
+			userData: userData?.data || initialUserData || null,
 			userLoading: userIsLoading && !initialUserData,
 			userError,
 			refetchUser,

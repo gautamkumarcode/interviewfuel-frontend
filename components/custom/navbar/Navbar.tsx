@@ -1,4 +1,5 @@
 "use client";
+import { AdminOnly } from "@/components/common";
 // import { userLogout } from "@/app/[locale]/(auth)/get-user-profile";
 // import { NotificationIcon } from "@/components/screens/notification/components/NotificationIcon";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -34,7 +35,18 @@ import { handleSignOutAPI } from "@/services/authservices";
 //   NotificationSingleResponseType,
 // } from "@/types/interfaces/notifications";
 // import { formatDateTime } from "@/utils/formatDate";
-import { Mail, Menu } from "lucide-react";
+import {
+	BarChart3,
+	Bookmark,
+	FileText,
+	FolderPlus,
+	Heart,
+	LogOut,
+	Mail,
+	Menu,
+	Play,
+	Settings2,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 // import { useTranslations } from "next-intl";
@@ -99,6 +111,11 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 			name: "Questions",
 			path: "/questions",
 		},
+		{
+			id: 4,
+			name: "Categories",
+			path: "/categories",
+		},
 	];
 
 	return (
@@ -154,14 +171,29 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 				{/* Mail icon - hide on small mobile screens */}
 				<Mail className="h-5 w-5 text-primary hidden sm:block" />
 
-				{/* Add Question Button - responsive */}
+				{/* Action Buttons - responsive */}
 				{session && (
-					<Button
-						onClick={() => router.push("/questions/create")}
-						className="bg-green-500 hover:bg-green-600 text-white text-xs md:text-sm font-semibold px-4 md:px-4 py-2 shrink-0">
-						<span className="hidden sm:inline">Add Question</span>
-						<span className="sm:hidden">Add</span>
-					</Button>
+					<div className="flex items-center gap-2">
+						{/* Create Category Button - Admin Only */}
+						<AdminOnly>
+							<Button
+								onClick={() => router.push("/categories/create")}
+								variant="outline"
+								className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-950 text-xs md:text-sm font-semibold px-3 md:px-4 py-2 shrink-0">
+								<FolderPlus className="h-4 w-4 mr-1 md:mr-2" />
+								<span className="hidden sm:inline">Create Category</span>
+								<span className="sm:hidden">Category</span>
+							</Button>
+						</AdminOnly>
+
+						{/* Add Question Button */}
+						<Button
+							onClick={() => router.push("/questions/create")}
+							className="bg-green-500 hover:bg-green-600 text-white text-xs md:text-sm font-semibold px-4 md:px-4 py-2 shrink-0">
+							<span className="hidden sm:inline">Add Question</span>
+							<span className="sm:hidden">Add</span>
+						</Button>
+					</div>
 				)}
 				{/* <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
@@ -315,17 +347,61 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 									)}
 								</DropdownMenuLabel>
 								<DropdownMenuSeparator />
+
+								{/* Common menu items for all users */}
 								<DropdownMenuItem onClick={() => router.push("/analytics")}>
+									<BarChart3 className="h-4 w-4 mr-2" />
 									Analytics
 								</DropdownMenuItem>
 								<DropdownMenuItem onClick={() => router.push("/practice")}>
+									<Play className="h-4 w-4 mr-2" />
 									Practice
 								</DropdownMenuItem>
 								<DropdownMenuItem onClick={() => router.push("/questions")}>
+									<FileText className="h-4 w-4 mr-2" />
 									Questions
 								</DropdownMenuItem>
+
+								{/* Role-specific menu items */}
+								<AdminOnly
+									fallback={
+										<>
+											{/* Regular user menu items */}
+											<DropdownMenuSeparator />
+											<DropdownMenuItem
+												onClick={() => router.push("/my-questions")}>
+												<FileText className="h-4 w-4 mr-2" />
+												My Questions
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												onClick={() => router.push("/bookmarks")}>
+												<Bookmark className="h-4 w-4 mr-2" />
+												Bookmarked Questions
+											</DropdownMenuItem>
+											<DropdownMenuItem
+												onClick={() => router.push("/liked-questions")}>
+												<Heart className="h-4 w-4 mr-2" />
+												Liked Questions
+											</DropdownMenuItem>
+										</>
+									}>
+									{/* Admin menu items */}
+
+									<DropdownMenuSeparator />
+									<DropdownMenuItem
+										onClick={() => router.push("/categories/create")}>
+										<FolderPlus className="h-4 w-4 mr-2" />
+										Create Category
+									</DropdownMenuItem>
+									<DropdownMenuItem onClick={() => router.push("/categories")}>
+										<Settings2 className="h-4 w-4 mr-2" />
+										Category Management
+									</DropdownMenuItem>
+								</AdminOnly>
+
 								<DropdownMenuSeparator />
 								<DropdownMenuItem onClick={handleSignout}>
+									<LogOut className="h-4 w-4 mr-2" />
 									Log out
 								</DropdownMenuItem>
 							</DropdownMenuContent>

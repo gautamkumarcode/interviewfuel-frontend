@@ -1,6 +1,6 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { categoryService } from "@/services/category/categories-services";
+import { categoryService } from "@/services/categories/category-services";
 import {
 	AlertCircle,
 	Badge,

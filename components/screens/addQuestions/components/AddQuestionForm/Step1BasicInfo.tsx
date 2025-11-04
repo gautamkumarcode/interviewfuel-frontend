@@ -1,4 +1,11 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
 	FormControl,
 	FormDescription,
@@ -8,16 +15,9 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { categoryService } from "@/services/category/categories-services";
-import { FileText } from "lucide-react";
+import { categoryService } from "@/services/categories/category-services";
+import { ChevronDown, FileText } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { useQuery } from "react-query";
 import { z } from "zod";
@@ -144,45 +144,55 @@ export function Step1BasicInfo({ onFormDataChange }: Step1BasicInfoProps) {
 								Category
 								<span className="text-red-500">*</span>
 							</FormLabel>
-							<Select
-								onValueChange={(value) => {
-									field.onChange(value);
-									onFormDataChange({ category: value });
-								}}
-								value={field.value}
-								disabled={categoriesLoading}>
-								<FormControl>
-									<SelectTrigger className="h-12 text-base bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-purple-500 transition-all duration-200 shadow-sm">
-										<SelectValue placeholder="Choose the most relevant category" />
-									</SelectTrigger>
-								</FormControl>
-								<SelectContent className="max-h-60">
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<FormControl>
+										<Button
+											variant="outline"
+											disabled={categoriesLoading}
+											className="h-12 text-base bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-purple-500 transition-all duration-200 shadow-sm w-full justify-between">
+											<span>
+												{field.value
+													? allCategories.find((cat) => cat._id === field.value)
+															?.name || "Unknown Category"
+													: "Choose the most relevant category"}
+											</span>
+											<ChevronDown className="h-4 w-4" />
+										</Button>
+									</FormControl>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent className="max-h-60 w-full overflow-y-auto">
 									{categoriesLoading ? (
-										<SelectItem value="loading" disabled>
+										<DropdownMenuItem disabled>
 											<div className="flex items-center gap-2">
 												<div className="w-4 h-4 border-2 border-purple-500 border-t-transparent rounded-full animate-spin"></div>
 												Loading categories...
 											</div>
-										</SelectItem>
+										</DropdownMenuItem>
 									) : allCategories.length > 0 ? (
 										allCategories.map((category) => (
-											<SelectItem key={category._id} value={category._id}>
+											<DropdownMenuItem
+												key={category._id}
+												onClick={() => {
+													field.onChange(category._id);
+													onFormDataChange({ category: category._id });
+												}}>
 												<div className="flex items-center gap-2">
 													<div className="w-3 h-3 bg-purple-500 rounded-full"></div>
 													{category.name}
 												</div>
-											</SelectItem>
+											</DropdownMenuItem>
 										))
 									) : (
-										<SelectItem value="disabled" disabled>
+										<DropdownMenuItem disabled>
 											<div className="flex items-center gap-2 text-gray-500">
 												<div className="w-3 h-3 bg-gray-300 rounded-full"></div>
 												No categories available
 											</div>
-										</SelectItem>
+										</DropdownMenuItem>
 									)}
-								</SelectContent>
-							</Select>
+								</DropdownMenuContent>
+							</DropdownMenu>
 							<FormDescription className="text-sm text-gray-600 flex items-start gap-2">
 								<div className="w-1 h-1 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
 								Select the primary topic area that best describes this question

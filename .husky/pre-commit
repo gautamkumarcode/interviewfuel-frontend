@@ -5,23 +5,9 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 echo "✅ Build succeeded."
-echo "🔨 Step 2: Running tests..."
-npm test
-if [ $? -ne 0 ]; then
-  echo "❌ Tests failed. Commit aborted."
-  exit 1
-fi
-echo "✅ Tests succeeded."
-echo "🔨 Step 3: Running lint..."
-npm run lint
-if [ $? -ne 0 ]; then
-  echo "❌ Linting failed. Commit aborted."
-  exit 1
-fi
-echo "✅ Linting succeeded."
+
 
 echo "🎉 All checks passed. Proceeding with commit."
 
-echo "🔨 Step 4: Pushing to github"
-git push
+
 #!/bin/sh

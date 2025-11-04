@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useClusterData } from "@/context/clusterData-context";
+import { CategoryType } from "@/services/categories/category-services";
 import { questionService } from "@/services/questions/question-services";
 import {
 	AxiosErrorResponseType,
@@ -51,7 +52,7 @@ export default function Questions() {
 		for (const cat of categoryList) {
 			if (cat.subcategories && cat.subcategories.length > 0) {
 				const subMatch = cat.subcategories.find(
-					(sub) => sub.slug.toLowerCase() === decodedCategory
+					(sub: CategoryType) => sub.slug.toLowerCase() === decodedCategory
 				);
 				if (subMatch) {
 					return subMatch;

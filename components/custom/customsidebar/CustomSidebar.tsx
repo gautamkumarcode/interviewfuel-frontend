@@ -5,6 +5,7 @@ import { useClusterData } from "@/context/clusterData-context";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import logo from "@/public/logo.png";
+import { CategoryType } from "@/services/categories/category-services";
 import {
 	BookOpen,
 	Brain,
@@ -32,28 +33,8 @@ import {
 } from "react";
 
 // Define types based on your data structure
-interface Category {
-	_id: string;
-	name: string;
-	slug: string;
-	description: string;
-	icon: string;
-	color: string;
-	parentCategory: string | null;
-	tags: string[];
-	stats: {
-		questionCount: number;
-		totalViews: number;
-		averageDifficulty: number;
-	};
-	isActive: boolean;
-	order: number;
-	createdAt: string;
-	updatedAt: string;
-	__v: number;
-}
 
-interface CategoryNode extends Category {
+interface CategoryNode extends CategoryType {
 	children?: CategoryNode[];
 }
 
@@ -94,7 +75,7 @@ const getCategoryIcon = (categoryName: string, iconName?: string) => {
 };
 
 // Function to build hierarchical category tree
-const buildCategoryTree = (categories: Category[]): CategoryNode[] => {
+const buildCategoryTree = (categories: CategoryType[]): CategoryNode[] => {
 	const categoryMap = new Map<string, CategoryNode>();
 	const roots: CategoryNode[] = [];
 
@@ -154,6 +135,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 							...cat,
 							createdAt: cat.createdAt,
 							updatedAt: cat.updatedAt,
+							__v: (cat as any).__v ?? 0,
 						}))
 				  )
 				: [],

@@ -1,11 +1,11 @@
 "use client";
-import { Subcategory } from "@/types/interfaces/category/category-type";
+import { CategoryType } from "@/services/categories/category-services";
 import { ArrowRight, BarChart3, FileText, Users } from "lucide-react";
 import { useRouter } from "nextjs-toploader/app";
 import React from "react";
 
 type FrontedCardProps = {
-	frontedTopics: Subcategory[];
+	frontedTopics: CategoryType[];
 };
 
 const FrontedCard: React.FC<FrontedCardProps> = ({ frontedTopics }) => {
