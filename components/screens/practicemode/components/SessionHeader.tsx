@@ -53,6 +53,8 @@ export function SessionHeader({
 		return "bg-gray-50 border-gray-200";
 	};
 
+	const currentQuestion = session.questions[session.currentQuestionIndex];
+
 	return (
 		<div className="bg-gradient-to-r from-white/95 to-blue-50/95 backdrop-blur-sm border-b border-white/20 sticky top-0 z-20 shadow-lg">
 			<div className="max-w-7xl mx-auto px-6 py-4">
@@ -118,8 +120,20 @@ export function SessionHeader({
 							<div className="flex items-center gap-1">
 								<Target className="h-4 w-4" />
 								<span>
-									{session.settings?.source === "ai" ? "AI" : "Database"}
+									{session.settings?.source === "ai"
+										? "🧠 AI Smart Time"
+										: "📚 Database"}
 								</span>
+								{currentQuestion && currentQuestion.timeLimit && (
+									<div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded-full">
+										<Clock className="h-3 w-3 text-blue-600" />
+										<span className="text-blue-700 font-medium text-xs">
+											{Math.floor(currentQuestion.timeLimit / 60)}:
+											{String(currentQuestion.timeLimit % 60).padStart(2, "0")}
+											<span className="ml-1 opacity-75">this Q</span>
+										</span>
+									</div>
+								)}
 							</div>
 						</div>
 

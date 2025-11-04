@@ -164,9 +164,14 @@ export function usePracticeSession({
 
 			const payload = {
 				settings: {
-					...settings,
-					categories:
-						settings.categories.length > 0 ? settings.categories : ["Mixed"],
+					duration: settings.duration,
+					questionCount: settings.questionCount,
+					difficulty: settings.difficulty,
+					categories: settings.categories.length > 0 ? settings.categories : [],
+					source: settings.source,
+					customTopic: settings.customTopic?.trim() || undefined,
+					includeTimer: true,
+					randomOrder: true,
 				},
 			};
 
@@ -185,34 +190,38 @@ export function usePracticeSession({
 				isActive: true,
 				currentQuestionIndex: 0,
 				questions: sessionData.questions.map((q: any) => ({
-					_id: q._id,
+					_id: q._id || `temp_${Date.now()}_${Math.random()}`,
 					title: q.title,
 					content: q.content,
 					difficulty: q.difficulty,
-					timeLimit: q.timeLimit,
-					aiGenerated: q.aiGenerated,
-					source: q.source,
-					startedAt: q.startedAt,
+					timeLimit: q.timeLimit || 120,
+					aiGenerated: q.aiGenerated || false,
+					source: q.source || sessionData.settings?.source || "ai",
+					startedAt: q.startedAt || new Date().toISOString(),
 				})),
 				answers: {},
 				startTime: now,
 				endTime: null,
-				timeRemaining: duration * 60, // assuming duration is in minutes, convert to seconds
-				totalTime: duration * 60, // assuming duration is in minutes, convert to seconds
+				timeRemaining:
+					(sessionData.settings?.duration || settings.duration) * 60,
+				totalTime: (sessionData.settings?.duration || settings.duration) * 60,
 				settings: {
-					duration: sessionData.settings.duration,
-					questionCount: sessionData.settings.questionCount,
-					difficulty: sessionData.settings.difficulty,
-					categories: sessionData.settings.categories || [],
-					source: sessionData.settings.source || "ai",
+					duration: sessionData.settings?.duration || settings.duration,
+					questionCount:
+						sessionData.settings?.questionCount || settings.questionCount,
+					difficulty: sessionData.settings?.difficulty || settings.difficulty,
+					categories: sessionData.settings?.categories || settings.categories,
+					source: sessionData.settings?.source || settings.source,
 				},
 			};
 
 			setSession(newSession);
 			setSessionState("active");
-		} catch (error) {
+		} catch (error: any) {
 			console.error("Failed to create practice session:", error);
-			alert("Failed to create practice session. Please try again.");
+			const errorMessage =
+				error.message || "Failed to create practice session. Please try again.";
+			alert(errorMessage);
 			setSessionState("setup"); // Stay on setup screen on error
 		} finally {
 			setIsLoading(false);
@@ -297,6 +306,34 @@ export function usePracticeSession({
 		}
 	};
 
+	// Resume an incomplete session
+	const resumeSession = () => {
+		if (session) {
+			// Find the first unanswered question
+			const firstUnansweredIndex = session.questions.findIndex(
+				(question) =>
+					!session.answers[question._id] ||
+					session.answers[question._id].trim() === ""
+			);
+
+			if (firstUnansweredIndex !== -1) {
+				// Update session to go to the first unanswered question
+				const updatedSession = {
+					...session,
+					currentQuestionIndex: firstUnansweredIndex,
+					isActive: true,
+					isPaused: false,
+				};
+				setSession(updatedSession);
+				setSessionState("active");
+
+				// Load the answer for this question if it exists
+				const questionId = session.questions[firstUnansweredIndex]._id;
+				setCurrentAnswer(session.answers[questionId] || "");
+			}
+		}
+	};
+
 	// Resets the entire flow back to the setup screen
 	const resetToSetup = () => {
 		// Clear persisted session data
@@ -322,6 +359,7 @@ export function usePracticeSession({
 		nextQuestion,
 		previousQuestion,
 		pauseSession,
+		resumeSession,
 		resetToSetup,
 	};
 }

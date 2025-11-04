@@ -64,7 +64,10 @@ export function QuestionPanel({ question }: QuestionPanelProps) {
 					<div className="flex flex-col items-end gap-2">
 						<div className="flex items-center gap-1.5 text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-full">
 							<Clock className="h-4 w-4" />
-							<span className="font-medium">{question.timeLimit} min</span>
+							<span className="font-medium">
+								{Math.floor((question.timeLimit || 180) / 60)}:
+								{String((question.timeLimit || 180) % 60).padStart(2, "0")}
+							</span>
 						</div>
 					</div>
 				</div>

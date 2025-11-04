@@ -31,11 +31,12 @@ export interface PracticeSession {
 }
 
 export interface PracticeSettings {
-	duration: number; // minutes
+	duration: number; // minutes - total session duration
 	questionCount: number;
 	difficulty: string;
-	categories: string[]; // Changed from category to categories array
-	source: string; // Added source field
+	categories: string[]; // Array of category IDs for database questions
+	source: string; // "ai" or "db"
+	customTopic?: string; // Custom topic for AI questions when no category matches
 }
 
 export interface CreatePracticeSessionPayload {

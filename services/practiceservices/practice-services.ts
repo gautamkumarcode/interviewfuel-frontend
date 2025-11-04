@@ -32,10 +32,18 @@ class PracticeServices {
 	): Promise<
 		AxiosResponseTypeWithoutPagination<CreatePracticeSessionResponseType>
 	> {
-		const { data } = await authenticatedInstance.post<
-			AxiosResponseTypeWithoutPagination<CreatePracticeSessionResponseType>
-		>(apiEndPoint.createPracticeSession, payload);
-		return data;
+		try {
+			const { data } = await authenticatedInstance.post<
+				AxiosResponseTypeWithoutPagination<CreatePracticeSessionResponseType>
+			>(apiEndPoint.createPracticeSession, payload);
+			return data;
+		} catch (error: any) {
+			console.error("Create practice session error:", error);
+			throw new Error(
+				error.response?.data?.message ||
+					"Failed to create practice session. Please try again."
+			);
+		}
 	}
 
 	/**
