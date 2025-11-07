@@ -136,6 +136,139 @@ class QuestionService {
 		>(`${apiEndPoint.getAllQuestions}/${questionId}/related?limit=${limit}`);
 		return response.data;
 	};
-}
+	public getBookmarkedQuestions = async (): Promise<
+		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
+	> => {
+		const { data } = await authenticatedInstance.get<
+			AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
+		>(`${apiEndPoint.getAllQuestions}/my-bookmarks`);
+		return data;
+	};
+	public getLikedQuestions = async (): Promise<
+		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
+	> => {
+		const { data } = await authenticatedInstance.get<
+			AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
+		>(`${apiEndPoint.getAllQuestions}/my-likes`);
+		return data;
+	};
+	public getAdminQuestions = async (): Promise<
+		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
+	> => {
+		const { data } = await authenticatedInstance.get<
+			AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
+		>(`${apiEndPoint.getAllQuestions}/admin`);
+		return data;
+	};
+	public getMyQuestions = async (): Promise<
+		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
+	> => {
+		const { data } = await authenticatedInstance.get<
+			AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
+		>(`${apiEndPoint.getAllQuestions}/my-questions`);
+		return data;
+	};
 
+	// Admin Review APIs
+	public getPendingQuestions = async (params?: {
+		page?: number;
+		limit?: number;
+		reviewStatus?: string;
+		difficulty?: string;
+		category?: string;
+	}): Promise<
+		AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
+	> => {
+		const { data } = await authenticatedInstance.get<
+			AxiosResponseTypeWithPagination<GetAllQuestionsResponseType[]>
+		>(apiEndPoint.adminPendingQuestions, { params });
+		return data;
+	};
+
+	public getReviewStatistics = async (): Promise<
+		AxiosResponseTypeWithoutPagination<{
+			statistics: {
+				pending: number;
+				inReview: number;
+				approved: number;
+				rejected: number;
+				total: number;
+				approvalRate: string;
+			};
+			recentReviews: GetAllQuestionsResponseType[];
+		}>
+	> => {
+		const { data } = await authenticatedInstance.get<
+			AxiosResponseTypeWithoutPagination<{
+				statistics: {
+					pending: number;
+					inReview: number;
+					approved: number;
+					rejected: number;
+					total: number;
+					approvalRate: string;
+				};
+				recentReviews: GetAllQuestionsResponseType[];
+			}>
+		>(apiEndPoint.adminReviewStats);
+		return data;
+	};
+
+	public getQuestionForReview = async (
+		id: string
+	): Promise<
+		AxiosResponseTypeWithoutPagination<GetSingleQuestionResponseType>
+	> => {
+		const { data } = await authenticatedInstance.get<
+			AxiosResponseTypeWithoutPagination<GetSingleQuestionResponseType>
+		>(`${apiEndPoint.adminReviewQuestion}/${id}`);
+		return data;
+	};
+
+	public updateQuestionReviewStatus = async (
+		id: string,
+		reviewStatus: string,
+		comment?: string
+	): Promise<
+		AxiosResponseTypeWithoutPagination<{
+			question: GetSingleQuestionResponseType;
+		}>
+	> => {
+		const { data } = await authenticatedInstance.put<
+			AxiosResponseTypeWithoutPagination<{
+				question: GetSingleQuestionResponseType;
+			}>
+		>(`${apiEndPoint.adminUpdateReviewStatus}/${id}/status`, {
+			reviewStatus,
+			comment,
+		});
+		return data;
+	};
+
+	public addReviewComment = async (
+		id: string,
+		comment: string
+	): Promise<
+		AxiosResponseTypeWithoutPagination<{
+			reviewComments: Array<{
+				reviewer: string;
+				comment: string;
+				date: string;
+			}>;
+			reviewStatus: string;
+		}>
+	> => {
+		const { data } = await authenticatedInstance.post<
+			AxiosResponseTypeWithoutPagination<{
+				reviewComments: Array<{
+					reviewer: string;
+					comment: string;
+					date: string;
+				}>;
+				reviewStatus: string;
+			}>
+		>(`${apiEndPoint.adminAddReviewComment}/${id}/comment`, { comment });
+		return data;
+	};
+}
 export const questionService = new QuestionService();

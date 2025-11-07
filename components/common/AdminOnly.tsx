@@ -20,10 +20,29 @@ export const AdminOnly: React.FC<AdminOnlyProps> = ({
 	showMessage = false,
 	allowModerator = false,
 }) => {
-	const { userData } = useClusterData();
+	const { userData, userLoading } = useClusterData();
 	const isAdmin = userData?.role === "admin";
 	const isModerator = userData?.role === "moderator";
 	const hasAccess = isAdmin || (allowModerator && isModerator);
+
+	console.log("AdminOnly check: ", {
+		isAdmin,
+		isModerator,
+		hasAccess,
+		userLoading,
+		userData: userData
+			? {
+					id: userData._id,
+					role: userData.role,
+					name: userData.name,
+			  }
+			: null,
+	});
+
+	// Show loading state while user data is being fetched
+	if (userLoading) {
+		return <>{fallback}</>;
+	}
 
 	if (!hasAccess) {
 		if (showMessage) {

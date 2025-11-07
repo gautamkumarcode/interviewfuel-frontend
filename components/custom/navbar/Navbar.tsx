@@ -46,6 +46,7 @@ import {
 	Menu,
 	Play,
 	Settings2,
+	ShieldCheck,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -388,6 +389,11 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 									{/* Admin menu items */}
 
 									<DropdownMenuSeparator />
+									<DropdownMenuItem
+										onClick={() => router.push("/admin-review")}>
+										<ShieldCheck className="h-4 w-4 mr-2" />
+										Review Questions
+									</DropdownMenuItem>
 									<DropdownMenuItem
 										onClick={() => router.push("/categories/create")}>
 										<FolderPlus className="h-4 w-4 mr-2" />

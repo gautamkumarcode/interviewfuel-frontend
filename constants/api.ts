@@ -12,4 +12,9 @@ export const apiEndPoint = {
 	submitAnswer: "/practice/sessions", // PUT /practice/sessions/:id/answer
 	completeSession: "/practice/sessions", // PUT /practice/sessions/:id/complete
 	getUserSessions: "/practice/sessions", // GET /practice/sessions
+	adminPendingQuestions: "/questions/admin/pending", // GET pending questions for review
+	adminReviewStats: "/questions/admin/review-stats", // GET review statistics
+	adminReviewQuestion: "/questions/admin/review", // GET /questions/admin/review/:id
+	adminUpdateReviewStatus: "/questions/admin/review", // PUT /questions/admin/review/:id/status
+	adminAddReviewComment: "/questions/admin/review", // POST /questions/admin/review/:id/comment
 };

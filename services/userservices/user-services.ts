@@ -5,10 +5,10 @@ import { authenticatedInstance } from "@/utils/axios";
 
 class UserServices {
 	public getUserProfile = async (): Promise<
-		AxiosResponseTypeWithoutPagination<User>
+		AxiosResponseTypeWithoutPagination<{ user: User }>
 	> => {
 		const { data } = await authenticatedInstance.get<
-			AxiosResponseTypeWithoutPagination<User>
+			AxiosResponseTypeWithoutPagination<{ user: User }>
 		>(apiEndPoint.getUserProfile);
 
 		return data;
