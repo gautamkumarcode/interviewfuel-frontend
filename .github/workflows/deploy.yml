@@ -1,52 +1,39 @@
-name: 🚀 Deploy Next.js Frontend to EC2
+name: 🚀 Deploy Frontend to EC2 (SSR)
 
 on:
   push:
     branches:
-      - develop
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout code
         uses: actions/checkout@v4
-
-      # Caching node_modules
-      - name: Cache Node Modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18
+          cache: 'npm'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build Next.js App
+      - name: Build Next.js
         run: npm run build
 
-      - name: Export Static Files
-        run: npm run export
-
-      # Upload build to EC2
-      - name: Upload frontend to EC2
+      - name: Copy build files to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: "out/*"
-          target: "${{ secrets.WEB_DIR }}/out"
+          source: ".next,public,package.json,package-lock.json"
+          target: ${{ secrets.FRONTEND_DIR }}
 
-      # Restart frontend using PM2
       - name: Restart frontend on EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -54,7 +41,8 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd ${{ secrets.WEB_DIR }}
+            cd ${{ secrets.FRONTEND_DIR }}
+            npm install --production
             pm2 delete frontend || true
-            pm2 serve out 3000 --spa --name frontend
+            pm2 start "npm start" --name frontend
             pm2 save
