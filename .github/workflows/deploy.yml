@@ -3,7 +3,7 @@ name: 🚀 Deploy Next.js Frontend to EC2
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   deploy:
