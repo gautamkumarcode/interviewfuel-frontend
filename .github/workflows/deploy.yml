@@ -1,0 +1,54 @@
+name: 🚀 Deploy Next.js Frontend to EC2
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout source code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Cache node_modules
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      # Install dependencies
+      - name: Install dependencies
+        run: npm ci
+
+      # Build Next.js
+      - name: Build Next.js project
+        run: npm run build
+
+      # Copy build to EC2
+      - name: Upload build to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          source: ".next,public,package.json,package-lock.json"
+          target: ${{ secrets.FRONTEND_DIR }}
+
+      # Restart frontend on EC2 with PM2
+      - name: Restart frontend
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            cd ${{ secrets.FRONTEND_DIR }}
+            npm install --production
+            pm2 stop frontend || true
+            pm2 start npm --name frontend -- start
+            pm2 save
