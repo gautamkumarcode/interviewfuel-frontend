@@ -1,4 +1,4 @@
-name: 🚀 Deploy Frontend to EC2 (SSR)
+name: Deploy Frontend
 
 on:
   push:
@@ -6,18 +6,28 @@ on:
       - develop
 
 jobs:
-  deploy:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: 'npm'
+
+      - name: Create .env file
+        run: |
+          echo "NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" >> .env
+          echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+          echo "GITHUB_CLIENT_ID=${{ secrets.GITHUB_CLIENT_ID }}" >> .env
+          echo "GITHUB_CLIENT_SECRET=${{ secrets.GITHUB_CLIENT_SECRET }}" >> .env
 
       - name: Install dependencies
         run: npm install
@@ -25,24 +35,23 @@ jobs:
       - name: Build Next.js
         run: npm run build
 
-      - name: Copy build files to EC2
+      - name: Copy build to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: ".next,public,package.json,package-lock.json"
-          target: ${{ secrets.FRONTEND_DIR }}
+          source: ".next,out,package.json,package-lock.json"
+          target: "/home/ec2-user/interviewfuel-frontend"
 
-      - name: Restart frontend on EC2
+      - name: Restart frontend
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd ${{ secrets.FRONTEND_DIR }}
+            cd interviewfuel-frontend
             npm install --production
-            pm2 delete frontend || true
-            pm2 start "npm start" --name frontend
+            pm2 restart frontend || pm2 start "npm start" --name frontend
             pm2 save
