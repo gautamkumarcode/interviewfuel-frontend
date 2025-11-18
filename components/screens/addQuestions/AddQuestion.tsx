@@ -186,14 +186,12 @@ const AddQuestion = () => {
 
 	const onSubmit = async (data: QuestionFormData) => {
 		try {
-
 			// Add author field from session
 			const questionData = {
 				...data,
 				author: session?.user?.id || "anonymous",
 				status: "published",
 			};
-
 
 			// Use the mutation to submit data
 			createQuestionMutation.mutate(questionData);
@@ -225,22 +223,23 @@ const AddQuestion = () => {
 	};
 
 	return (
-		<div className="min-h-screen  p-4">
-			<div className="max-w-7xl mx-auto">
+		<div className="min-h-screen sm:p-4 md:p-6">
+			<div className=" mx-auto">
 				{/* Navigation Header */}
-				<div className="flex  justify-between mb-8">
+				<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
 					<Button
 						variant="ghost"
 						onClick={onCancel}
-						className="gap-2 hover:bg-white/60 backdrop-blur-sm">
-						<ArrowLeft className="h-4 w-4" />
-						Back to Questions
+						className="gap-2 hover:bg-white/60 backdrop-blur-sm text-sm sm:text-base h-9 sm:h-10 px-3 sm:px-4">
+						<ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+						<span className="hidden xs:inline">Back to Questions</span>
+						<span className="xs:hidden">Back</span>
 					</Button>
-					<div className="text-center mb-12">
-						<h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-purple-800 to-green-800 bg-clip-text text-transparent mb-4">
+					<div className="text-center w-full sm:w-auto order-3 sm:order-2">
+						<h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 via-purple-800 to-green-800 bg-clip-text text-transparent mb-2 sm:mb-4">
 							Create New Question
 						</h1>
-						<p className="text-lg text-gray-600 max-w-2xl mx-auto">
+						<p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">
 							Build comprehensive interview questions with detailed solutions
 							and examples
 						</p>
@@ -249,24 +248,27 @@ const AddQuestion = () => {
 						variant="outline"
 						onClick={saveDraft}
 						disabled={isDraft}
-						className="gap-2 bg-white/60 backdrop-blur-sm border-white/20 hover:bg-white/80">
-						<Save className="h-4 w-4" />
-						{isDraft ? "Saving..." : "Save Draft"}
+						className="gap-2 bg-white/60 backdrop-blur-sm border-white/20 hover:bg-white/80 text-sm sm:text-base h-9 sm:h-10 px-3 sm:px-4 order-2 sm:order-3">
+						<Save className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+						<span className="hidden sm:inline">
+							{isDraft ? "Saving..." : "Save Draft"}
+						</span>
+						<span className="sm:hidden">Save</span>
 					</Button>
 				</div>
 
 				{/* Hero Section */}
 
 				{/* Main Content */}
-				<div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+				<div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
 					{/* Form Content */}
-					<div className="lg:col-span-3">
+					<div className="lg:col-span-3 order-2 lg:order-1">
 						<Card className="bg-white/70 backdrop-blur-sm border-white/20 shadow-xl">
-							<CardContent>
+							<CardContent className="p-4 sm:p-6">
 								<Form {...form}>
 									<form
 										onSubmit={form.handleSubmit(onSubmit)}
-										className="space-y-6">
+										className="space-y-4 sm:space-y-6">
 										<AddQuestionForm
 											form={form}
 											currentStep={currentStep}
@@ -279,34 +281,34 @@ const AddQuestion = () => {
 					</div>
 
 					{/* Sidebar */}
-					<div className="space-y-6">
+					<div className="space-y-4 sm:space-y-6 order-1 lg:order-2">
 						{/* Quick Actions */}
-						<Card className="bg-white/70 backdrop-blur-sm border-white/20 shadow-xl sticky top-4 z-50">
-							<CardHeader>
-								<CardTitle className="flex items-center gap-2 text-lg">
-									<Plus className="h-5 w-5 text-blue-600" />
+						<Card className="bg-white/70 backdrop-blur-sm border-white/20 shadow-xl lg:sticky lg:top-4 z-50">
+							<CardHeader className="p-4 sm:p-6">
+								<CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+									<Plus className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
 									Quick Actions
 								</CardTitle>
 							</CardHeader>
-							<CardContent className="space-y-4">
-								<div className="space-y-3">
-									<div className="flex justify-between items-center p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
-										<span className="text-sm font-medium text-gray-700">
+							<CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
+								<div className="space-y-2 sm:space-y-3">
+									<div className="flex justify-between items-center p-2 sm:p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+										<span className="text-xs sm:text-sm font-medium text-gray-700">
 											Current Step
 										</span>
 										<Badge
 											variant="secondary"
-											className="bg-blue-100 text-blue-700">
+											className="bg-blue-100 text-blue-700 text-xs">
 											{STEPS[currentStep - 1].title}
 										</Badge>
 									</div>
-									<div className="flex justify-between items-center p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
-										<span className="text-sm font-medium text-gray-700">
+									<div className="flex justify-between items-center p-2 sm:p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
+										<span className="text-xs sm:text-sm font-medium text-gray-700">
 											Progress
 										</span>
 										<Badge
 											variant="secondary"
-											className="bg-green-100 text-green-700">
+											className="bg-green-100 text-green-700 text-xs">
 											{Math.round(progress)}%
 										</Badge>
 									</div>
@@ -315,23 +317,25 @@ const AddQuestion = () => {
 								<Separator />
 
 								{/* Navigation Buttons */}
-								<div className="space-y-3">
+								<div className="space-y-2 sm:space-y-3">
 									{currentStep > 1 && (
 										<Button
 											variant="outline"
 											onClick={prevStep}
-											className="w-full gap-2 bg-white/60 hover:bg-white/80">
-											<ChevronLeft className="h-4 w-4" />
-											Previous Step
+											className="w-full gap-2 bg-white/60 hover:bg-white/80 text-sm sm:text-base h-9 sm:h-10">
+											<ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+											<span className="hidden xs:inline">Previous Step</span>
+											<span className="xs:hidden">Previous</span>
 										</Button>
 									)}
 
 									{currentStep < STEPS.length ? (
 										<Button
 											onClick={nextStep}
-											className="w-full gap-2 bg-gradient-to-r from-green-200 to-green-600 hover:from-green-700 hover:to-indigo-700">
-											Next Step
-											<ChevronRight className="h-4 w-4" />
+											className="w-full gap-2 bg-gradient-to-r from-green-200 to-green-600 hover:from-green-700 hover:to-indigo-700 text-sm sm:text-base h-9 sm:h-10">
+											<span className="hidden xs:inline">Next Step</span>
+											<span className="xs:hidden">Next</span>
+											<ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
 										</Button>
 									) : (
 										<Button
@@ -340,8 +344,8 @@ const AddQuestion = () => {
 												form.formState.isSubmitting ||
 												createQuestionMutation.isLoading
 											}
-											className="w-full gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
-											<Send className="h-4 w-4" />
+											className="w-full gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-sm sm:text-base h-9 sm:h-10">
+											<Send className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
 											{form.formState.isSubmitting ||
 											createQuestionMutation.isLoading
 												? "Publishing..."
@@ -354,20 +358,24 @@ const AddQuestion = () => {
 
 						{/* Tips */}
 						<Card className="bg-white/70 backdrop-blur-sm border-white/20 shadow-xl">
-							<CardHeader>
-								<CardTitle className="flex items-center gap-2 text-lg">
-									<Lightbulb className="h-5 w-5 text-yellow-600" />
+							<CardHeader className="p-4 sm:p-6">
+								<CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+									<Lightbulb className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600" />
 									Writing Tips
 								</CardTitle>
 							</CardHeader>
-							<CardContent>
-								<div className="bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-4">
-									<ul className="text-sm text-yellow-800 space-y-2">
+							<CardContent className="p-4 sm:p-6 pt-0">
+								<div className="bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg sm:rounded-xl p-3 sm:p-4">
+									<ul className="text-xs sm:text-sm text-yellow-800 space-y-1.5 sm:space-y-2">
 										<li>• Write clear, concise question titles</li>
 										<li>• Include detailed problem descriptions</li>
-										<li>• Provide comprehensive solutions</li>
+										<li className="hidden sm:list-item">
+											• Provide comprehensive solutions
+										</li>
 										<li>• Add relevant tags and categories</li>
-										<li>• Include time complexity analysis</li>
+										<li className="hidden sm:list-item">
+											• Include time complexity analysis
+										</li>
 										<li>• Test your code examples</li>
 									</ul>
 								</div>

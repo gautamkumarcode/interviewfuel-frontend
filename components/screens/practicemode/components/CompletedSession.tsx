@@ -170,22 +170,22 @@ export function CompletedSession({
 	}, [session._id]); // Only depend on session ID
 
 	return (
-		<div className="max-w-4xl mx-auto">
-			<div className="text-center mb-8">
+		<div className="max-w-4xl mx-auto px-4 sm:px-6">
+			<div className="text-center mb-6 sm:mb-8">
 				<div
-					className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-4 ${
+					className={`inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full mb-3 sm:mb-4 ${
 						isIncomplete ? "bg-orange-100" : "bg-green-100"
 					}`}>
 					{isIncomplete ? (
-						<Clock className="h-8 w-8 text-orange-600" />
+						<Clock className="h-6 w-6 sm:h-8 sm:w-8 text-orange-600" />
 					) : (
-						<Trophy className="h-8 w-8 text-green-600" />
+						<Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" />
 					)}
 				</div>
-				<h1 className="text-3xl font-bold text-gray-900 mb-2">
+				<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 px-4">
 					{isIncomplete ? "Session Ended" : "Practice Session Complete!"}
 				</h1>
-				<p className="text-gray-600">
+				<p className="text-sm sm:text-base text-gray-600 px-4">
 					{isSubmitting
 						? "Evaluating your answers with AI..."
 						: isIncomplete
@@ -194,12 +194,12 @@ export function CompletedSession({
 				</p>
 
 				{isIncomplete && (
-					<div className="mt-4 p-4 bg-orange-50 border border-orange-200 rounded-lg">
-						<p className="text-orange-800 font-medium">
+					<div className="mt-4 p-3 sm:p-4 bg-orange-50 border border-orange-200 rounded-lg mx-4">
+						<p className="text-sm sm:text-base text-orange-800 font-medium">
 							⏰ Session ended with {unansweredCount} unanswered question
 							{unansweredCount !== 1 ? "s" : ""}
 						</p>
-						<p className="text-orange-700 text-sm mt-1">
+						<p className="text-xs sm:text-sm text-orange-700 mt-1">
 							You can resume this session to answer the remaining questions
 						</p>
 					</div>
@@ -207,10 +207,10 @@ export function CompletedSession({
 
 				{/* Submission Status */}
 				{isSubmitting && (
-					<div className="mt-4 p-4 bg-blue-50 rounded-lg">
+					<div className="mt-4 p-3 sm:p-4 bg-blue-50 rounded-lg mx-4">
 						<div className="flex items-center justify-center gap-2">
 							<div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-							<span className="text-blue-700">
+							<span className="text-xs sm:text-sm text-blue-700">
 								Submitting answers for AI evaluation...
 							</span>
 						</div>
@@ -218,14 +218,14 @@ export function CompletedSession({
 				)}
 
 				{submitError && (
-					<div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-						<p className="text-yellow-800">{submitError}</p>
+					<div className="mt-4 p-3 sm:p-4 bg-yellow-50 border border-yellow-200 rounded-lg mx-4">
+						<p className="text-xs sm:text-sm text-yellow-800">{submitError}</p>
 					</div>
 				)}
 
 				{aiEvaluations.length > 0 && (
-					<div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-						<p className="text-green-800">
+					<div className="mt-4 p-3 sm:p-4 bg-green-50 border border-green-200 rounded-lg mx-4">
+						<p className="text-xs sm:text-sm text-green-800">
 							✅ Your answers have been evaluated by AI!
 						</p>
 					</div>
@@ -234,15 +234,29 @@ export function CompletedSession({
 
 			<ResultsCards results={results} />
 
-			<Tabs defaultValue="summary" className="mb-8">
-				<TabsList className="grid w-full grid-cols-2">
-					<TabsTrigger value="summary">
-						{isIncomplete ? "Progress Summary" : "Session Summary"}
+			<Tabs defaultValue="summary" className="mb-6 sm:mb-8">
+				<TabsList className="grid w-full grid-cols-2 h-auto">
+					<TabsTrigger
+						value="summary"
+						className="text-xs sm:text-sm py-2 sm:py-2.5">
+						<span className="hidden sm:inline">
+							{isIncomplete ? "Progress Summary" : "Session Summary"}
+						</span>
+						<span className="sm:hidden">Summary</span>
 					</TabsTrigger>
-					<TabsTrigger value="answers">
-						Your Answers {aiEvaluations.length > 0 && "& AI Feedback"}
-						{isIncomplete &&
-							` (${results.answeredQuestions}/${results.totalQuestions})`}
+					<TabsTrigger
+						value="answers"
+						className="text-xs sm:text-sm py-2 sm:py-2.5">
+						<span className="hidden sm:inline">
+							Your Answers {aiEvaluations.length > 0 && "& AI Feedback"}
+							{isIncomplete &&
+								` (${results.answeredQuestions}/${results.totalQuestions})`}
+						</span>
+						<span className="sm:hidden">
+							Answers
+							{isIncomplete &&
+								` (${results.answeredQuestions}/${results.totalQuestions})`}
+						</span>
 					</TabsTrigger>
 				</TabsList>
 
@@ -264,42 +278,62 @@ export function CompletedSession({
 				</TabsContent>
 			</Tabs>
 
-			<div className="flex flex-wrap justify-center gap-4">
+			<div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-4 px-4">
 				{/* Resume Session Button - Only show for incomplete sessions */}
 				{isIncomplete && onResumeSession && (
 					<Button
 						onClick={onResumeSession}
-						className="gap-2 bg-orange-600 hover:bg-orange-700">
-						<Play className="h-4 w-4" />
-						Resume Session ({unansweredCount} left)
+						className="gap-2 bg-orange-600 hover:bg-orange-700 w-full sm:w-auto text-sm sm:text-base h-10 sm:h-10">
+						<Play className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+						<span className="hidden xs:inline">
+							Resume Session ({unansweredCount} left)
+						</span>
+						<span className="xs:hidden">Resume ({unansweredCount} left)</span>
 					</Button>
 				)}
 
 				{/* Back to Questions - Only show for incomplete sessions without resume function */}
 				{isIncomplete && !onResumeSession && (
-					<Button onClick={previousQuestion} className="gap-2">
-						<ArrowLeft className="h-4 w-4" />
+					<Button
+						onClick={previousQuestion}
+						className="gap-2 w-full sm:w-auto text-sm sm:text-base h-10 sm:h-10">
+						<ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
 						Back to Questions
 					</Button>
 				)}
 
-				<Button onClick={onNewSession} variant="outline" className="gap-2">
-					<RotateCcw className="h-4 w-4" />
-					Start New Session
+				<Button
+					onClick={onNewSession}
+					variant="outline"
+					className="gap-2 w-full sm:w-auto text-sm sm:text-base h-10 sm:h-10">
+					<RotateCcw className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+					<span className="hidden xs:inline">Start New Session</span>
+					<span className="xs:hidden">New Session</span>
 				</Button>
 
 				{/* Only show share for complete sessions */}
 				{!isIncomplete && (
 					<>
-						<Button onClick={handleShare} variant="outline" className="gap-2">
-							<Share2 className="h-4 w-4" />
-							Share Results
+						<Button
+							onClick={handleShare}
+							variant="outline"
+							className="gap-2 w-full sm:w-auto text-sm sm:text-base h-10 sm:h-10">
+							<Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+							<span className="hidden xs:inline">Share Results</span>
+							<span className="xs:hidden">Share</span>
 						</Button>
 						{shareUrl && (
-							<a href={shareUrl} target="_blank" rel="noopener noreferrer">
-								<Button variant="outline" className="gap-2">
-									<ExternalLink className="h-4 w-4" />
-									View Shared
+							<a
+								href={shareUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="w-full sm:w-auto">
+								<Button
+									variant="outline"
+									className="gap-2 w-full text-sm sm:text-base h-10 sm:h-10">
+									<ExternalLink className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+									<span className="hidden xs:inline">View Shared</span>
+									<span className="xs:hidden">View</span>
 								</Button>
 							</a>
 						)}

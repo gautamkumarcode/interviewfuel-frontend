@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
+import { useAuthModal } from "@/context/AuthModalContext";
 import { useClusterData } from "@/context/clusterData-context";
 import {
 	BookOpen,
@@ -47,7 +48,8 @@ export function PracticeSetup({
 	onStartSession,
 }: PracticeSetupProps) {
 	const [creating, setCreating] = useState(false);
-	const { categoryData, categoryLoading } = useClusterData();
+	const { categoryData, categoryLoading, userData } = useClusterData();
+	const { openLogin } = useAuthModal();
 
 	const updateSettings = (updates: Partial<PracticeSettings>) => {
 		onSettingsChange({ ...settings, ...updates });
@@ -68,6 +70,10 @@ export function PracticeSetup({
 			alert(
 				"Please select a category or enter a custom topic for AI questions"
 			);
+			return;
+		}
+		if (!userData) {
+			openLogin();
 			return;
 		}
 
@@ -93,10 +99,10 @@ export function PracticeSetup({
 			  (settings.customTopic?.trim()?.length ?? 0) > 0;
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+		<div className="min-h-screen">
 			{/* Navigation Header */}
-			<div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+			<div className="">
+				<div className=" mx-auto sm:px-6 lg:px-8 py-4">
 					<div className="flex items-center justify-between">
 						<Button
 							variant="ghost"
@@ -129,7 +135,7 @@ export function PracticeSetup({
 			</div>
 
 			{/* Main Content */}
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+			<div className=" mx-auto  lg:px-8 py-6 sm:py-8">
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 animate-in fade-in duration-500">
 					{/* Settings Panel */}
 					<div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
@@ -260,7 +266,7 @@ export function PracticeSetup({
 													questionCount: Number.parseInt(value),
 												})
 											}>
-											<SelectTrigger className="h-12 bg-white border-gray-300 hover:border-blue-400 transition-colors">
+											<SelectTrigger className="h-12 w-full bg-white border-gray-300 hover:border-blue-400 transition-colors">
 												<SelectValue placeholder="Select questions" />
 											</SelectTrigger>
 											<SelectContent>
@@ -283,7 +289,7 @@ export function PracticeSetup({
 											onValueChange={(value) =>
 												updateSettings({ difficulty: value })
 											}>
-											<SelectTrigger className="h-12 bg-white border-gray-300 hover:border-purple-400 transition-colors">
+											<SelectTrigger className="h-12 w-full bg-white border-gray-300 hover:border-purple-400 transition-colors">
 												<SelectValue placeholder="Select difficulty" />
 											</SelectTrigger>
 											<SelectContent>
@@ -317,7 +323,7 @@ export function PracticeSetup({
 								</div>
 
 								{/* Topic Selection */}
-								<div className="space-y-4">
+								<div className="space-y-4 ">
 									<Label className="text-base font-semibold text-gray-800 flex items-center gap-2">
 										<BookOpen className="h-4 w-4 text-indigo-600" />
 										Topic Selection
@@ -355,7 +361,7 @@ export function PracticeSetup({
 												});
 											}
 										}}>
-										<SelectTrigger className="h-12 bg-white border-gray-300 hover:border-indigo-400 transition-colors">
+										<SelectTrigger className="h-12 w-full bg-white border-gray-300 hover:border-indigo-400 transition-colors">
 											<SelectValue
 												placeholder={
 													categoryLoading

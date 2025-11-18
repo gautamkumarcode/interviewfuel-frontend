@@ -416,7 +416,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 				) : (
 					// Show Login button if not logged in - responsive
 					<Button
-						onClick={openLogin}
+						onClick={() => openLogin()}
 						className="text-xs md:text-sm font-semibold px-2 md:px-4 shrink-0">
 						Login
 					</Button>

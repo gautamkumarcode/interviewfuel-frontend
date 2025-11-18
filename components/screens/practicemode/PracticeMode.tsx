@@ -33,7 +33,7 @@ export function PracticeMode() {
 	} = usePracticeSession({ initialSettings });
 
 	// Show loading state during restoration or session creation
-	if (isRestoring || isLoading) {
+	if (isRestoring) {
 		return (
 			<div className="flex items-center justify-center min-h-[400px]">
 				<div className="text-center">

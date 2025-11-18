@@ -15,7 +15,11 @@
 }
 
 .animate-blob {
-	animation: blob 7s infinite;
+	animation: blob 7s infinite ease-in-out;
+}
+
+.animation-delay-1000 {
+	animation-delay: 1s;
 }
 
 .animation-delay-2000 {
@@ -24,10 +28,6 @@
 
 .animation-delay-4000 {
 	animation-delay: 4s;
-}
-
-.animation-delay-1000 {
-	animation-delay: 1s;
 }
 
 /* Gradient text animation */
@@ -92,4 +92,56 @@
 
 .animate-float {
 	animation: float 3s ease-in-out infinite;
+}
+
+/* Smooth scale on hover */
+@keyframes scaleIn {
+	from {
+		opacity: 0;
+		transform: scale(0.9);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.animate-scale-in {
+	animation: scaleIn 0.5s ease-out;
+}
+
+/* Shimmer effect */
+@keyframes shimmer {
+	0% {
+		background-position: -1000px 0;
+	}
+	100% {
+		background-position: 1000px 0;
+	}
+}
+
+.animate-shimmer {
+	background: linear-gradient(
+		to right,
+		transparent 0%,
+		rgba(255, 255, 255, 0.3) 50%,
+		transparent 100%
+	);
+	background-size: 1000px 100%;
+	animation: shimmer 2s infinite;
+}
+
+/* Bounce subtle */
+@keyframes bounceSubtle {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-5px);
+	}
+}
+
+.animate-bounce-subtle {
+	animation: bounceSubtle 2s ease-in-out infinite;
 }

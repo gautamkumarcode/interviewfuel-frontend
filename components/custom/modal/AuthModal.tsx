@@ -8,18 +8,33 @@ import {
 	useAuthModalFromUrl,
 	usePostLoginRedirect,
 } from "@/hooks/useAuthModalFromUrl";
+import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useRef } from "react";
 
 const AuthModalContent = () => {
-	const { isOpen, closeModal, view } = useAuthModal();
+	const { isOpen, closeModal, view, callbackUrl } = useAuthModal();
 	const { handlePostLoginRedirect } = usePostLoginRedirect();
 	const { error, isFromProtectedRoute } = useAuthModalFromUrl();
 	const { toast } = useTheme();
+	const router = useRouter();
 	const hasShownToast = useRef<string>("");
 
 	const handleSuccess = () => {
 		closeModal();
-		handlePostLoginRedirect();
+
+		// If there's a callback URL from the modal context, use it
+		if (callbackUrl) {
+			// If it's the same page, just close the modal (refresh the page)
+			if (callbackUrl === window.location.pathname) {
+				router.refresh();
+			} else {
+				// Navigate to the callback URL
+				router.push(callbackUrl);
+			}
+		} else {
+			// Otherwise use the URL-based redirect logic
+			handlePostLoginRedirect();
+		}
 	};
 
 	// Handle toast messages when modal opens

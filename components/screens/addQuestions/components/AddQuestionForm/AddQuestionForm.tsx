@@ -165,42 +165,49 @@ export function AddQuestionForm({
 	const isStepValid = getStepValidationStatus();
 
 	return (
-		<div className="">
+		<div>
 			{/* Step Header */}
 			<Card className="border-none shadow-none">
-				<CardHeader className="">
-					<div className="flex items-center justify-between">
-						<div className="flex items-center gap-4">
+				<CardHeader className="p-4 sm:p-6">
+					<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+						<div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
 							<div
-								className={`p-3 bg-gradient-to-br ${currentStepConfig.color} rounded-xl shadow-lg`}>
+								className={`p-2 sm:p-3 bg-gradient-to-br ${currentStepConfig.color} rounded-lg sm:rounded-xl shadow-lg flex-shrink-0`}>
 								{(() => {
 									const Icon = currentStepConfig.icon;
-									return <Icon className="h-6 w-6 text-white" />;
+									return <Icon className="h-4 w-4 sm:h-6 sm:w-6 text-white" />;
 								})()}
 							</div>
-							<div>
-								<CardTitle className="text-xl font-bold text-gray-900">
+							<div className="min-w-0 flex-1">
+								<CardTitle className="text-base sm:text-xl font-bold text-gray-900 truncate">
 									{currentStepConfig.title}
 								</CardTitle>
-								<p className="text-gray-600 mt-1">
+								<p className="text-xs sm:text-sm text-gray-600 mt-0.5 sm:mt-1 hidden sm:block">
 									{currentStepConfig.description}
 								</p>
 							</div>
 						</div>
-						<div className="flex items-center gap-3">
-							<div className="flex items-center gap-2 text-sm text-gray-500">
-								<Clock className="h-4 w-4" />
-								{currentStepConfig.estimatedTime}
+						<div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto justify-between sm:justify-end">
+							<div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-500">
+								<Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+								<span className="hidden xs:inline">
+									{currentStepConfig.estimatedTime}
+								</span>
+								<span className="xs:hidden">
+									{currentStepConfig.estimatedTime.split("-")[0]}m
+								</span>
 							</div>
 							{isStepValid ? (
-								<Badge className="bg-green-100 text-green-700 border-green-300">
-									<CheckCircle2 className="h-3 w-3 mr-1" />
-									Valid
+								<Badge className="bg-green-100 text-green-700 border-green-300 text-xs px-2 py-0.5">
+									<CheckCircle2 className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
+									<span className="hidden xs:inline">Valid</span>
+									<span className="xs:hidden">✓</span>
 								</Badge>
 							) : (
-								<Badge className="bg-yellow-100 text-yellow-700 border-yellow-300">
-									<AlertCircle className="h-3 w-3 mr-1" />
-									Incomplete
+								<Badge className="bg-yellow-100 text-yellow-700 border-yellow-300 text-xs px-2 py-0.5">
+									<AlertCircle className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1" />
+									<span className="hidden xs:inline">Incomplete</span>
+									<span className="xs:hidden">!</span>
 								</Badge>
 							)}
 						</div>
