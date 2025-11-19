@@ -1,15 +1,16 @@
-name: 🚀 Deploy Frontend
+name: Deploy Frontend
 
 on:
   push:
-    branches: [ develop ]
+    branches:
+      - develop
 
 jobs:
-  deploy-frontend:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
+      - name: Checkout repo
         uses: actions/checkout@v4
 
       - name: Setup Node
@@ -18,23 +19,23 @@ jobs:
           node-version: 20
           cache: 'npm'
 
-      - name: Install Dependencies
+      - name: Create .env file
+        run: |
+          echo "NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" >> .env
+          echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
+          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+          echo "GITHUB_CLIENT_ID=${{ secrets.GITHUB_CLIENT_ID }}" >> .env
+          echo "GITHUB_CLIENT_SECRET=${{ secrets.GITHUB_CLIENT_SECRET }}" >> .env
+
+      - name: Install dependencies
         run: npm install
 
-      # 🧪 BUILD NEXT.JS WITH ENV VARIABLES
-      - name: Build Next.js App
-        run: |
-          NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }} \
-          NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }} \
-          NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }} \
-          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} \
-          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} \
-          GITHUB_CLIENT_ID=${{ secrets.GITHUB_CLIENT_ID }} \
-          GITHUB_CLIENT_SECRET=${{ secrets.GITHUB_CLIENT_SECRET }} \
-          npm run build
+      - name: Build Next.js
+        run: npm run build
 
-      # 📤 Upload ONLY required build files
-      - name: Upload Build to EC2
+      - name: Copy build to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -43,16 +44,14 @@ jobs:
           source: ".next,out,package.json,package-lock.json"
           target: "/home/ec2-user/interviewfuel-frontend"
 
-      # 🚀 Restart PM2 Frontend
-      - name: Restart Frontend
+      - name: Restart frontend
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd /home/ec2-user/interviewfuel-frontend
+            cd interviewfuel-frontend
             npm install --production
-
             pm2 restart frontend || pm2 start "npm start" --name frontend
             pm2 save
