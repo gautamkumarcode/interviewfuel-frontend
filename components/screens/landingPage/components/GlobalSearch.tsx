@@ -80,9 +80,7 @@ export function GlobalSearch() {
 
 		try {
 			setLoading(true);
-			console.log("Searching for:", query);
 			const response = await searchService.getSuggestions(query);
-			console.log("Search response:", response);
 			setSuggestions(response.data);
 		} catch (error) {
 			console.error("Search error:", error);
