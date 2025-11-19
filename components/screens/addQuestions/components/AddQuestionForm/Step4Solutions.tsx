@@ -10,6 +10,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
 	Select,
 	SelectContent,
@@ -196,25 +197,86 @@ export function Step4Solutions({ onFormDataChange }: Step4SolutionsProps) {
 										Explanation <span className="text-red-500">*</span>
 									</FormLabel>
 									<FormControl>
-										<Textarea
-											placeholder="Explain how this solution works, the algorithm used, and why it's effective..."
-											{...field}
-											className="min-h-[180px] border-2 border-gray-300 focus:border-blue-500 transition-all duration-200"
-											onChange={(e) => {
-												field.onChange(e);
+										<RichTextEditor
+											content={field.value || ""}
+											onChange={(value: string) => {
+												field.onChange(value);
 												onFormDataChange({
 													solutions: form.getValues("solutions"),
 												});
 											}}
+											placeholder="Explain how this solution works, the algorithm used, and why it's effective..."
+											minHeight="180px"
 										/>
 									</FormControl>
 									<FormDescription>
-										A detailed explanation of the solution logic and approach.
+										Use the rich text editor to format your explanation with
+										code snippets, lists, and more.
 									</FormDescription>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
+
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+							<FormField
+								control={form.control}
+								name={`solutions.${index}.timeComplexity`}
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="text-lg font-bold">
+											Time Complexity
+										</FormLabel>
+										<FormControl>
+											<Input
+												placeholder="e.g., O(n), O(log n), O(n²)"
+												{...field}
+												onChange={(e) => {
+													field.onChange(e);
+													onFormDataChange({
+														solutions: form.getValues("solutions"),
+													});
+												}}
+												className="border-2 border-gray-300 focus:border-blue-500 transition-all duration-200 font-mono"
+											/>
+										</FormControl>
+										<FormDescription>
+											Big O notation for time complexity (optional)
+										</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name={`solutions.${index}.spaceComplexity`}
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel className="text-lg font-bold">
+											Space Complexity
+										</FormLabel>
+										<FormControl>
+											<Input
+												placeholder="e.g., O(1), O(n), O(log n)"
+												{...field}
+												onChange={(e) => {
+													field.onChange(e);
+													onFormDataChange({
+														solutions: form.getValues("solutions"),
+													});
+												}}
+												className="border-2 border-gray-300 focus:border-blue-500 transition-all duration-200 font-mono"
+											/>
+										</FormControl>
+										<FormDescription>
+											Big O notation for space complexity (optional)
+										</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
 					</div>
 				</Card>
 			))}

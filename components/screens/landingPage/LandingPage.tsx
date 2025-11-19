@@ -1,7 +1,6 @@
 "use client";
 
 import HashLoader from "@/components/custom/loader/Loader";
-import LandingInput from "@/components/custom/searchBox/Search";
 import { useClusterData } from "@/context/clusterData-context";
 import {
 	ArrowRight,
@@ -16,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import FrontedCard from "./components/fronted/FrontedCard";
+import { GlobalSearch } from "./components/GlobalSearch";
 
 interface StatItem {
 	total: number;
@@ -84,7 +84,7 @@ const LandingPage = ({ initialStats }: LandingPageProps) => {
 
 						{/* Search Box */}
 						<div className="w-full max-w-2xl mb-10">
-							<LandingInput />
+							<GlobalSearch />
 						</div>
 
 						{/* CTA Buttons */}

@@ -6,20 +6,26 @@ import {
 	Calendar,
 	Check,
 	ChevronLeft,
+	Clock,
 	Code2,
 	Copy,
+	Edit,
 	Eye,
+	GitPullRequest,
+	MessageSquare,
 	Share2,
 	Star,
 	ThumbsUp,
 	Zap,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import { ApiStateLoader } from "@/components/custom/loader/PageLoader";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
+import { HtmlContent } from "@/components/ui/html-content";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useClusterData } from "@/context/clusterData-context";
 import { questionService } from "@/services/questions/question-services";
@@ -29,8 +35,10 @@ import {
 } from "@/types/axios-response";
 import { GetSingleQuestionResponseType } from "@/types/interfaces/questions/getQuestion-type";
 import { AxiosError } from "axios";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { CommentSection } from "./CommentSection";
+import { ContributionModal } from "./ContributionModal";
+import { ContributorsList } from "./ContributorsList";
 import { QuestionDetailsSkeleton } from "./QuestionDetailsSkeleton";
 import { RelatedQuestions } from "./RelatedQuestions";
 
@@ -43,8 +51,11 @@ export const QuestionDetailView = ({
 	questionId,
 	onBack,
 }: QuestionDetailViewProps) => {
+	const router = useRouter();
 	const { userData } = useClusterData();
 	const [isBookmarked, setIsBookmarked] = React.useState(false);
+	const [contributionModalOpen, setContributionModalOpen] =
+		React.useState(false);
 	const [copiedCode, setCopiedCode] = React.useState<string | null>(null);
 
 	const { data, isLoading, error, isFetching } = useQuery<
@@ -71,6 +82,8 @@ export const QuestionDetailView = ({
 		{
 			onSuccess: () => {
 				setIsBookmarked(true);
+				// Invalidate and refetch question data
+				queryClient.invalidateQueries(["question", questionId]);
 			},
 			onError: (error) => {
 				console.error("Error bookmarking question:", error);
@@ -78,6 +91,9 @@ export const QuestionDetailView = ({
 			},
 		}
 	);
+
+	const queryClient = useQueryClient();
+
 	const { mutate: likeMutate } = useMutation<
 		AxiosResponseTypeWithoutPagination<{ likes: number }>,
 		AxiosError<AxiosErrorResponseType>
@@ -85,6 +101,10 @@ export const QuestionDetailView = ({
 		["likeStatus", question?.id],
 		() => questionService.likeQuestion(question?._id as string),
 		{
+			onSuccess: () => {
+				// Invalidate and refetch question data
+				queryClient.invalidateQueries(["question", questionId]);
+			},
 			onError: (error) => {
 				console.error("Error liking question:", error);
 			},
@@ -102,13 +122,13 @@ export const QuestionDetailView = ({
 	const getDifficultyColor = (difficulty: string) => {
 		switch (difficulty) {
 			case "Easy":
-				return "bg-green-100 text-green-800 border-green-200";
+				return "bg-emerald-100 text-emerald-700 border-emerald-200";
 			case "Medium":
-				return "bg-yellow-100 text-yellow-800 border-yellow-200";
+				return "bg-amber-100 text-amber-700 border-amber-200";
 			case "Hard":
-				return "bg-red-100 text-red-800 border-red-200";
+				return "bg-rose-100 text-rose-700 border-rose-200";
 			default:
-				return "bg-gray-100 text-gray-800 border-gray-200";
+				return "bg-gray-100 text-gray-700 border-gray-200";
 		}
 	};
 
@@ -126,204 +146,253 @@ export const QuestionDetailView = ({
 		return question?.likedBy.includes(userData?._id as string);
 	};
 
+	const canEditQuestion = () => {
+		if (!userData || !question || !question.author) return false;
+		const authorId =
+			(question.author as any)._id || (question.author as any).id;
+		const isAuthor = authorId === userData._id;
+		const isAdmin = userData.role === "admin";
+		return isAuthor || isAdmin;
+	};
+
+	const handleEditQuestion = () => {
+		// Use question._id (MongoDB ObjectId) not questionId (slug)
+		if (question?._id) {
+			router.push(`/questions/edit/${question._id}`);
+		}
+	};
+
 	return (
 		<ApiStateLoader
 			isLoading={isLoading}
 			isFetching={isFetching}
 			error={error}
-			loadingText="Loading question details..."
+			loadingText="Loading question..."
 			renderSkeleton={() => <QuestionDetailsSkeleton />}>
 			{!question ? (
-				<div className="flex justify-center p-8">
-					<p className="text-gray-500">Question not found</p>
+				<div className="flex items-center justify-center min-h-[400px]">
+					<div className="text-center">
+						<p className="text-gray-500 text-lg">Question not found</p>
+						<Button onClick={onBack} variant="outline" className="mt-4">
+							Go Back
+						</Button>
+					</div>
 				</div>
 			) : (
-				<div className="min-h-screen bg-gray-50">
-					{/* Header with Back Button */}
-					<div className="bg-white border-b sticky -top-5 z-10">
-						<div className="flex items-center gap-4 py-4">
-							<Button
-								variant="ghost"
-								size="sm"
-								onClick={onBack}
-								className="gap-2 text-gray-600 hover:text-gray-900">
-								<ChevronLeft className="h-4 w-4" />
-								<span className="hidden sm:inline">Back to Questions</span>
-							</Button>
-							<div className="h-6 w-px bg-gray-300" />
-							<div className="flex items-center gap-2">
-								<Badge className={getDifficultyColor(question.difficulty)}>
-									{question.difficulty}
-								</Badge>
-								<span className="text-sm text-gray-500">
-									{question.category?.name || question.subcategory}
-								</span>
+				<div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+					{/* Header */}
+					<div className="bg-white border-b shadow-sm sticky top-0 z-10">
+						<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+							<div className="flex items-center justify-between py-4">
+								<Button
+									variant="ghost"
+									size="sm"
+									onClick={onBack}
+									className="gap-2 hover:bg-gray-100">
+									<ChevronLeft className="h-4 w-4" />
+									Back
+								</Button>
+								<div className="flex items-center gap-3">
+									{canEditQuestion() && (
+										<Button
+											variant="outline"
+											size="sm"
+											onClick={handleEditQuestion}
+											className="gap-2 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100">
+											<Edit className="h-4 w-4" />
+											<span className="hidden sm:inline">Edit</span>
+										</Button>
+									)}
+									<Button
+										variant="outline"
+										size="sm"
+										onClick={() => setContributionModalOpen(true)}
+										className="gap-2 bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100">
+										<GitPullRequest className="h-4 w-4" />
+										<span className="hidden sm:inline">Contribute</span>
+									</Button>
+									<Button
+										variant={checkIsLiked() ? "default" : "outline"}
+										size="sm"
+										onClick={handleLikes}
+										className="gap-2">
+										<ThumbsUp className="h-4 w-4" />
+										<span className="hidden sm:inline">
+											{question.stats?.likes || 0}
+										</span>
+									</Button>
+									<Button
+										variant={isBookmarked ? "default" : "outline"}
+										size="sm"
+										onClick={handleBookmarks}
+										className="gap-2">
+										<Bookmark className="h-4 w-4" />
+										<span className="hidden sm:inline">Save</span>
+									</Button>
+									<Button variant="outline" size="sm" className="gap-2">
+										<Share2 className="h-4 w-4" />
+										<span className="hidden sm:inline">Share</span>
+									</Button>
+								</div>
 							</div>
 						</div>
 					</div>
 
-					<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-						{/* Question Header Card */}
-						<Card className="mb-8 shadow-sm border-0 bg-white">
-							<CardContent className="p-6 sm:p-8">
-								{/* Title */}
-								<h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-6">
+					<div className=" mx-auto px-4 sm:px-6 lg:px-8 py-8">
+						{/* Question Header */}
+						<Card className="mb-6 overflow-hidden border-0 shadow-lg p-0">
+							<div className="bg-gradient-to-r from-green-100 to-purple-100 p-6">
+								<div className="flex flex-wrap items-center gap-3 mb-4">
+									<Badge
+										className={`${getDifficultyColor(
+											question.difficulty
+										)} font-semibold px-3 py-1`}>
+										{question.difficulty}
+									</Badge>
+									<Badge variant="secondary" className="bg-white/20 border-0">
+										{question.category?.name || question.subcategory}
+									</Badge>
+									{question.timeLimit && (
+										<Badge
+											variant="secondary"
+											className="bg-white/20  border-0 gap-1">
+											<Clock className="h-3 w-3" />
+											{question.timeLimit} min
+										</Badge>
+									)}
+								</div>
+								<h1 className="text-3xl sm:text-4xl font-bold leading-tight">
 									{question.title}
 								</h1>
+							</div>
+
+							<div className="p-6">
+								{/* Stats */}
+								<div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 mb-6 pb-6 border-b">
+									<div className="flex items-center gap-2">
+										<Eye className="h-4 w-4 text-gray-400" />
+										<span>{question.stats?.views || 0} views</span>
+									</div>
+									<div className="flex items-center gap-2">
+										<ThumbsUp className="h-4 w-4 text-gray-400" />
+										<span>{question.stats?.likes || 0} likes</span>
+									</div>
+									<div className="flex items-center gap-2">
+										<Bookmark className="h-4 w-4 text-gray-400" />
+										<span>{question.stats?.bookmarks || 0} saved</span>
+									</div>
+									<div className="flex items-center gap-2">
+										<Calendar className="h-4 w-4 text-gray-400" />
+										<span>
+											{new Date(question.createdAt).toLocaleDateString()}
+										</span>
+									</div>
+								</div>
 
 								{/* Tags */}
 								{question.tags && question.tags.length > 0 && (
 									<div className="flex flex-wrap gap-2 mb-6">
-										{question.tags.slice(0, 8).map((tag) => (
+										{question.tags.map((tag) => (
 											<Badge
 												key={tag}
-												variant="secondary"
-												className="text-xs px-3 py-1">
-												{tag}
+												variant="outline"
+												className="text-xs px-3 py-1 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100">
+												#{tag}
 											</Badge>
 										))}
-										{question.tags.length > 8 && (
-											<Badge variant="secondary" className="text-xs px-3 py-1">
-												+{question.tags.length - 8} more
-											</Badge>
-										)}
 									</div>
 								)}
 
-								{/* Stats and Actions */}
-								<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-									<div className="flex items-center gap-6 text-sm text-gray-500">
-										<div className="flex items-center gap-2">
-											<Eye className="h-4 w-4" />
-											<span>{question.stats?.views || 0} views</span>
-										</div>
-										<div className="flex items-center gap-2">
-											<ThumbsUp className="h-4 w-4" />
-											<span>{question.stats?.likes || 0} likes</span>
-										</div>
-										<div className="flex items-center gap-2">
-											<Bookmark className="h-4 w-4" />
-											<span>{question.stats?.bookmarks || 0} saved</span>
-										</div>
-										<div className="flex items-center gap-2">
-											<Calendar className="h-4 w-4" />
-											<span>
-												{new Date(question.createdAt).toLocaleDateString()}
-											</span>
-										</div>
-									</div>
-
-									<div className="flex items-center gap-2">
-										<Button
-											variant={checkIsLiked() ? "default" : "outline"}
-											size="sm"
-											onClick={() => handleLikes()}
-											className="gap-2">
-											<ThumbsUp className="h-4 w-4" />
-											Like
-										</Button>
-										<Button
-											variant={isBookmarked ? "default" : "outline"}
-											size="sm"
-											onClick={() => handleBookmarks()}
-											className="gap-2">
-											<Bookmark className="h-4 w-4" />
-											Save
-										</Button>
-										<Button variant="outline" size="sm" className="gap-2">
-											<Share2 className="h-4 w-4" />
-											Share
-										</Button>
-									</div>
-								</div>
-
 								{/* Question Content */}
-								<div className="prose prose-gray max-w-none">
-									<p className="text-gray-700 leading-relaxed text-base">
-										{question.content}
-									</p>
+								<div className="prose-custom">
+									<HtmlContent content={question.content} />
 								</div>
-							</CardContent>
+							</div>
 						</Card>
+
+						{/* Contributors */}
+						{question.contributors && question.contributors.length > 0 && (
+							<ContributorsList
+								contributors={question.contributors}
+								author={{
+									_id:
+										(question.author as any)._id || (question.author as any).id,
+									name: question.author.name,
+									username: question.author.username,
+									avatar: question.author.avatar || undefined,
+								}}
+							/>
+						)}
 
 						{/* Companies */}
 						{question.companies && question.companies.length > 0 && (
-							<Card className="mb-8 shadow-sm border-0 bg-white">
-								<CardHeader className="pb-4">
-									<CardTitle className="text-lg flex items-center gap-2 text-gray-900">
+							<Card className="mb-6 border-0 shadow-md">
+								<div className="p-6">
+									<div className="flex items-center gap-2 mb-4">
 										<Building className="h-5 w-5 text-blue-600" />
-										Asked by Companies
-									</CardTitle>
-								</CardHeader>
-								<CardContent className="pt-0">
+										<h3 className="text-lg font-semibold text-gray-900">
+											Asked by Companies
+										</h3>
+									</div>
 									<div className="flex flex-wrap gap-2">
-										{question.companies.slice(0, 12).map((company) => (
+										{question.companies.map((company) => (
 											<Badge
 												key={company._id}
 												variant="outline"
-												className="px-3 py-1.5 text-sm font-medium border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-colors">
+												className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
 												{company.name}
 											</Badge>
 										))}
-										{question.companies.length > 12 && (
-											<Badge
-												variant="outline"
-												className="px-3 py-1.5 text-sm font-medium border-gray-200">
-												+{question.companies.length - 12} more
-											</Badge>
-										)}
 									</div>
-								</CardContent>
+								</div>
 							</Card>
 						)}
 
-						{/* Main Content Tabs */}
-						<Card className="shadow-sm border-0 bg-white">
+						{/* Contribution Modal */}
+						<ContributionModal
+							open={contributionModalOpen}
+							onClose={() => setContributionModalOpen(false)}
+							questionId={question._id}
+						/>
+
+						{/* Tabs */}
+						<Card className="border-0 shadow-lg">
 							<Tabs defaultValue="solution" className="w-full">
-								<div className="border-b border-gray-200">
+								<div className="border-b bg-gray-50">
 									<TabsList className="grid w-full grid-cols-3 h-auto bg-transparent p-0 rounded-none">
 										<TabsTrigger
 											value="solution"
-											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none border-b-2 border-transparent py-4 px-6 text-sm font-medium transition-all">
+											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none py-4 px-6 font-medium">
 											<Code2 className="h-4 w-4 mr-2" />
-											<span className="hidden sm:inline">
-												Solution & Explanation
-											</span>
-											<span className="sm:hidden">Solution</span>
+											Solution
 										</TabsTrigger>
 										<TabsTrigger
 											value="discussion"
-											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none border-b-2 border-transparent py-4 px-6 text-sm font-medium transition-all">
-											<Building className="h-4 w-4 mr-2" />
+											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none py-4 px-6 font-medium">
+											<MessageSquare className="h-4 w-4 mr-2" />
 											Discussion
 										</TabsTrigger>
 										<TabsTrigger
 											value="related"
-											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none border-b-2 border-transparent py-4 px-6 text-sm font-medium transition-all">
+											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none py-4 px-6 font-medium">
 											<Star className="h-4 w-4 mr-2" />
-											<span className="hidden sm:inline">
-												Related Questions
-											</span>
-											<span className="sm:hidden">Related</span>
+											Related
 										</TabsTrigger>
 									</TabsList>
 								</div>
 
 								<TabsContent value="solution" className="p-6 space-y-8">
-									{/* Rich Answer Content */}
+									{/* Rich Answer */}
 									{question.richAnswer && (
 										<div className="space-y-4">
-											<h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+											<div className="flex items-center gap-2">
 												<Zap className="h-5 w-5 text-yellow-500" />
-												Explanation
-											</h3>
-											<div className="bg-gray-50 rounded-lg p-6">
-												<div
-													className="prose prose-gray max-w-none"
-													dangerouslySetInnerHTML={{
-														__html: question.richAnswer,
-													}}
-												/>
+												<h3 className="text-xl font-semibold text-gray-900">
+													Explanation
+												</h3>
+											</div>
+											<div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6 border border-yellow-100">
+												<HtmlContent content={question.richAnswer} />
 											</div>
 										</div>
 									)}
@@ -331,19 +400,38 @@ export const QuestionDetailView = ({
 									{/* Solutions */}
 									{question.solutions && question.solutions.length > 0 && (
 										<div className="space-y-6">
-											<h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+											<div className="flex items-center gap-2">
 												<Code2 className="h-5 w-5 text-blue-600" />
-												Solutions
-											</h3>
+												<h3 className="text-xl font-semibold text-gray-900">
+													Code Solutions
+												</h3>
+											</div>
 											{question.solutions.map((solution, index) => (
-												<div
+												<Card
 													key={index}
-													className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-													<div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+													className="overflow-hidden border-2 border-gray-200 hover:border-blue-300 transition-colors">
+													<div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b">
 														<div className="flex items-center justify-between">
-															<h4 className="text-lg font-medium text-gray-900">
-																{solution.title || `Solution ${index + 1}`}
-															</h4>
+															<div>
+																<h4 className="text-lg font-semibold text-gray-900">
+																	{solution.title || `Solution ${index + 1}`}
+																</h4>
+																{(solution.timeComplexity ||
+																	solution.spaceComplexity) && (
+																	<div className="flex items-center gap-4 mt-2 text-sm">
+																		{solution.timeComplexity && (
+																			<span className="text-gray-600">
+																				⏱️ Time: {solution.timeComplexity}
+																			</span>
+																		)}
+																		{solution.spaceComplexity && (
+																			<span className="text-gray-600">
+																				💾 Space: {solution.spaceComplexity}
+																			</span>
+																		)}
+																	</div>
+																)}
+															</div>
 															<Button
 																variant="outline"
 																size="sm"
@@ -356,46 +444,66 @@ export const QuestionDetailView = ({
 																className="gap-2">
 																{copiedCode ===
 																(solution.title || `Solution ${index + 1}`) ? (
-																	<Check className="h-4 w-4" />
+																	<>
+																		<Check className="h-4 w-4 text-green-600" />
+																		Copied!
+																	</>
 																) : (
-																	<Copy className="h-4 w-4" />
+																	<>
+																		<Copy className="h-4 w-4" />
+																		Copy
+																	</>
 																)}
-																{copiedCode ===
-																(solution.title || `Solution ${index + 1}`)
-																	? "Copied!"
-																	: "Copy Code"}
 															</Button>
 														</div>
-														{(solution.timeComplexity ||
-															solution.spaceComplexity) && (
-															<div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
-																{solution.timeComplexity && (
-																	<span>Time: {solution.timeComplexity}</span>
-																)}
-																{solution.spaceComplexity && (
-																	<span>Space: {solution.spaceComplexity}</span>
-																)}
-															</div>
-														)}
 													</div>
-													<div className="p-6">
+													<div className="p-6 space-y-4">
 														{solution.code && (
-															<div className="bg-gray-900 rounded-lg p-4 mb-4 overflow-x-auto">
-																<pre className="text-sm text-gray-100">
-																	<code>{solution.code}</code>
-																</pre>
+															<div className="relative group">
+																<div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+																	<Badge className="bg-gray-800 text-white text-xs">
+																		{solution.language}
+																	</Badge>
+																</div>
+																<div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+																	<pre className="text-sm text-gray-100 font-mono">
+																		<code>{solution.code}</code>
+																	</pre>
+																</div>
 															</div>
 														)}
 														{solution.explanation && (
-															<div className="prose prose-gray max-w-none">
-																<p className="text-gray-700 leading-relaxed">
-																	{solution.explanation}
-																</p>
+															<div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+																<HtmlContent content={solution.explanation} />
 															</div>
 														)}
 													</div>
-												</div>
+												</Card>
 											))}
+										</div>
+									)}
+
+									{/* Hints */}
+									{question.hints && question.hints.length > 0 && (
+										<div className="space-y-4">
+											<div className="flex items-center gap-2">
+												<Zap className="h-5 w-5 text-purple-600" />
+												<h3 className="text-xl font-semibold text-gray-900">
+													Hints
+												</h3>
+											</div>
+											<div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border border-purple-100 space-y-3">
+												{question.hints.map((hint, index) => (
+													<div key={index} className="flex items-start gap-3">
+														<div className="flex-shrink-0 w-7 h-7 rounded-full bg-purple-600 text-white text-sm font-bold flex items-center justify-center">
+															{hint.order || index + 1}
+														</div>
+														<p className="text-gray-700 leading-relaxed pt-0.5">
+															{hint.content}
+														</p>
+													</div>
+												))}
+											</div>
 										</div>
 									)}
 
@@ -403,50 +511,24 @@ export const QuestionDetailView = ({
 									{question.bestPractices &&
 										question.bestPractices.length > 0 && (
 											<div className="space-y-4">
-												<h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+												<div className="flex items-center gap-2">
 													<Star className="h-5 w-5 text-green-600" />
-													Best Practices
-												</h3>
-												<div className="bg-green-50 border border-green-200 rounded-lg p-6">
-													<ul className="space-y-3">
-														{question.bestPractices.map((practice, index) => (
-															<li
-																key={index}
-																className="flex items-start gap-3">
-																<div className="h-2 w-2 rounded-full bg-green-500 mt-2 flex-shrink-0" />
-																<span className="text-gray-700 leading-relaxed">
-																	{practice}
-																</span>
-															</li>
-														))}
-													</ul>
+													<h3 className="text-xl font-semibold text-gray-900">
+														Best Practices
+													</h3>
+												</div>
+												<div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-6 border border-green-100 space-y-3">
+													{question.bestPractices.map((practice, index) => (
+														<div key={index} className="flex items-start gap-3">
+															<div className="flex-shrink-0 w-2 h-2 rounded-full bg-green-500 mt-2" />
+															<p className="text-gray-700 leading-relaxed">
+																{practice}
+															</p>
+														</div>
+													))}
 												</div>
 											</div>
 										)}
-
-									{/* Hints */}
-									{question.hints && question.hints.length > 0 && (
-										<div className="space-y-4">
-											<h3 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-												<Zap className="h-5 w-5 text-yellow-600" />
-												Hints
-											</h3>
-											<div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-												<ul className="space-y-3">
-													{question.hints.map((hint, index) => (
-														<li key={index} className="flex items-start gap-3">
-															<div className="h-6 w-6 rounded-full bg-yellow-500 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
-																{hint.order || index + 1}
-															</div>
-															<span className="text-gray-700 leading-relaxed">
-																{hint.content}
-															</span>
-														</li>
-													))}
-												</ul>
-											</div>
-										</div>
-									)}
 								</TabsContent>
 
 								<TabsContent value="discussion" className="p-6">
@@ -457,7 +539,6 @@ export const QuestionDetailView = ({
 									<RelatedQuestions
 										questionId={question._id}
 										onQuestionClick={(slug: string) => {
-											// Navigate to the related question
 											window.location.href = `/questions/${slug}`;
 										}}
 									/>

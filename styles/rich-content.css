@@ -1,0 +1,242 @@
+/* Rich Content Styles - For displaying HTML content from Tiptap editor */
+
+.rich-content {
+	@apply text-gray-700 leading-relaxed;
+}
+
+/* Remove any default Tiptap selection/highlight styles */
+.rich-content .ProseMirror {
+	@apply outline-none;
+}
+
+.rich-content .ProseMirror-focused {
+	@apply outline-none;
+}
+
+/* Paragraphs */
+.rich-content p {
+	@apply mb-4 text-gray-700 leading-relaxed;
+}
+
+.rich-content p:last-child {
+	@apply mb-0;
+}
+
+/* Headings */
+.rich-content h1 {
+	@apply text-3xl font-bold text-gray-900 mb-4 mt-6;
+}
+
+.rich-content h2 {
+	@apply text-2xl font-bold text-gray-900 mb-3 mt-5;
+}
+
+.rich-content h3 {
+	@apply text-xl font-bold text-gray-900 mb-3 mt-4;
+}
+
+.rich-content h4 {
+	@apply text-lg font-semibold text-gray-900 mb-2 mt-3;
+}
+
+/* Lists - CRITICAL: Force list display */
+.rich-content ul,
+.rich-content ol {
+	display: block !important;
+	margin-top: 0.5rem !important;
+	margin-bottom: 1rem !important;
+}
+
+.rich-content ul {
+	list-style-type: disc !important;
+	list-style-position: outside !important;
+	padding-left: 2rem !important;
+}
+
+.rich-content ol {
+	list-style-type: decimal !important;
+	list-style-position: outside !important;
+	padding-left: 2rem !important;
+}
+
+.rich-content li {
+	display: list-item !important;
+	color: rgb(55, 65, 81) !important;
+	line-height: 1.625 !important;
+	margin-bottom: 0.5rem !important;
+	margin-left: 0 !important;
+}
+
+.rich-content li > p {
+	margin-bottom: 0.25rem !important;
+	display: inline !important;
+	margin-top: 0 !important;
+}
+
+/* Ensure nested lists work */
+.rich-content ul ul,
+.rich-content ol ol,
+.rich-content ul ol,
+.rich-content ol ul {
+	margin-top: 0.5rem !important;
+	margin-bottom: 0.5rem !important;
+}
+
+/* Nested lists */
+.rich-content ul ul,
+.rich-content ol ol,
+.rich-content ul ol,
+.rich-content ol ul {
+	@apply mt-2 mb-2;
+}
+
+/* Code */
+.rich-content code {
+	@apply bg-gray-100 text-gray-800 px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+/* Code blocks */
+.rich-content pre {
+	@apply bg-gray-900 text-gray-100 rounded-lg p-4 mb-4 overflow-x-auto;
+}
+
+.rich-content pre code {
+	@apply bg-transparent text-gray-100 p-0;
+}
+
+/* Blockquotes */
+.rich-content blockquote {
+	@apply border-l-4 border-gray-300 pl-4 italic text-gray-600 my-4;
+}
+
+/* Links */
+.rich-content a {
+	@apply text-blue-600 hover:text-blue-800
+ underline;
+}
+
+/* Strong/Bold */
+.rich-content strong {
+	@apply font-bold text-gray-900;
+}
+
+/* Emphasis/Italic */
+.rich-content em {
+	@apply italic;
+}
+
+/* Horizontal rules */
+.rich-content hr {
+	@apply border-gray-300 my-6;
+}
+
+/* Tables */
+.rich-content table {
+	@apply w-full border-collapse mb-4;
+}
+
+.rich-content th {
+	@apply bg-gray-100 border border-gray-300 px-4 py-2 text-left font-semibold;
+}
+
+.rich-content td {
+	@apply border border-gray-300 px-4 py-2;
+}
+
+/* Tiptap Editor Specific Styles */
+.ProseMirror {
+	@apply outline-none min-h-full;
+}
+
+.ProseMirror:focus {
+	@apply outline-none;
+}
+
+/* Selection color */
+.ProseMirror ::selection {
+	background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+/* Placeholder */
+.ProseMirror p.is-editor-empty:first-child::before {
+	color: #adb5bd;
+	content: attr(data-placeholder);
+	float: left;
+	height: 0;
+	pointer-events: none;
+}
+
+/* Ensure lists display properly in editor */
+.ProseMirror ul,
+.ProseMirror ol {
+	padding-left: 1.5rem !important;
+	margin-bottom: 1rem !important;
+}
+
+.ProseMirror ul {
+	list-style-type: disc !important;
+}
+
+.ProseMirror ol {
+	list-style-type: decimal !important;
+}
+
+.ProseMirror li {
+	display: list-item !important;
+	margin-bottom: 0.5rem !important;
+	color: rgb(55, 65, 81) !important;
+}
+
+/* Headings in editor */
+.ProseMirror h2 {
+	font-size: 1.5rem !important;
+	font-weight: 700 !important;
+	margin-bottom: 0.75rem !important;
+	margin-top: 1.25rem !important;
+	color: rgb(17, 24, 39) !important;
+}
+
+/* Code in editor */
+.ProseMirror code {
+	background-color: rgb(243, 244, 246) !important;
+	padding: 0.125rem 0.375rem !important;
+	border-radius: 0.25rem !important;
+	font-size: 0.875rem !important;
+	font-family: ui-monospace, monospace !important;
+}
+
+/* Code blocks in editor */
+.ProseMirror pre {
+	background-color: rgb(17, 24, 39) !important;
+	color: rgb(243, 244, 246) !important;
+	padding: 1rem !important;
+	border-radius: 0.5rem !important;
+	margin-bottom: 1rem !important;
+	overflow-x: auto !important;
+}
+
+.ProseMirror pre code {
+	background-color: transparent !important;
+	color: rgb(243, 244, 246) !important;
+	padding: 0 !important;
+}
+
+/* Blockquotes in editor */
+.ProseMirror blockquote {
+	border-left: 4px solid rgb(209, 213, 219) !important;
+	padding-left: 1rem !important;
+	font-style: italic !important;
+	color: rgb(75, 85, 99) !important;
+	margin: 1rem 0 !important;
+}
+
+/* Paragraphs in editor */
+.ProseMirror p {
+	margin-bottom: 1rem !important;
+	color: rgb(55, 65, 81) !important;
+	line-height: 1.625 !important;
+}
+
+.ProseMirror p:last-child {
+	margin-bottom: 0 !important;
+}

@@ -42,7 +42,6 @@ import {
 	FolderPlus,
 	Heart,
 	LogOut,
-	Mail,
 	Menu,
 	Play,
 	Settings2,
@@ -55,6 +54,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "nextjs-toploader/app";
 import { forwardRef, useEffect, useState } from "react";
+import { NavbarSearch } from "./NavbarSearch";
 
 // import { CommandSearch } from "../GlobalSearch";
 
@@ -67,6 +67,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 	const { toast } = useTheme();
 	const [pathname, setPathname] = useState<string | null>(null);
 	const isMobile = useIsMobile();
+	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 	useEffect(() => {
 		const parts = urlPaths.split("/");
@@ -125,7 +126,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 			className="dark:bg-primaryGreyBg bg-[#FFFFFF] flex items-center justify-between h-16 dark:text-white text-black shadow-sm px-4 md:px-8">
 			{/* Mobile hamburger menu */}
 			{isMobile && (
-				<div className="flex items-center ">
+				<div className="flex items-center gap-2">
 					<Image src={"/logo.png"} alt="Logo" width={40} height={40} />
 
 					<Button
@@ -157,20 +158,17 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 								</li>
 							))}
 						</ul>
-						{/* <Input
-							placeholder="Search..."
-							className="h-10 w-64 bg-white dark:bg-gray-800 text-black dark:text-white"
-							// onChange={(e) => setSearchQuery(e.target.value)}
-						/> */}
-						{/* <CommandSearch userRole={user?.user?.role} t={t} /> */}
 					</div>
 				)}
 			</div>
-
+			{/* Desktop search - hidden on mobile */}
+			<div className="hidden lg:block mx-auto justify-center items-center w-full ml-10">
+				<NavbarSearch />
+			</div>
 			{/* Right section - responsive */}
 			<div className="flex items-center gap-2 md:gap-6">
 				{/* Mail icon - hide on small mobile screens */}
-				<Mail className="h-5 w-5 text-primary hidden sm:block" />
+				{/* <Mail className="h-5 w-5 text-primary hidden sm:block" /> */}
 
 				{/* Action Buttons - responsive */}
 				{session && (
@@ -364,30 +362,24 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 								</DropdownMenuItem>
 
 								{/* Role-specific menu items */}
-								<AdminOnly
-									fallback={
-										<>
-											{/* Regular user menu items */}
-											<DropdownMenuSeparator />
-											<DropdownMenuItem
-												onClick={() => router.push("/my-questions")}>
-												<FileText className="h-4 w-4 mr-2" />
-												My Questions
-											</DropdownMenuItem>
-											<DropdownMenuItem
-												onClick={() => router.push("/bookmarks")}>
-												<Bookmark className="h-4 w-4 mr-2" />
-												Bookmarked Questions
-											</DropdownMenuItem>
-											<DropdownMenuItem
-												onClick={() => router.push("/liked-questions")}>
-												<Heart className="h-4 w-4 mr-2" />
-												Liked Questions
-											</DropdownMenuItem>
-										</>
-									}>
-									{/* Admin menu items */}
+								{/* Regular user menu items - shown to all logged in users */}
+								<DropdownMenuSeparator />
+								<DropdownMenuItem onClick={() => router.push("/my-questions")}>
+									<FileText className="h-4 w-4 mr-2" />
+									My Questions
+								</DropdownMenuItem>
+								<DropdownMenuItem onClick={() => router.push("/bookmarks")}>
+									<Bookmark className="h-4 w-4 mr-2" />
+									Bookmarked Questions
+								</DropdownMenuItem>
+								<DropdownMenuItem
+									onClick={() => router.push("/liked-questions")}>
+									<Heart className="h-4 w-4 mr-2" />
+									Liked Questions
+								</DropdownMenuItem>
 
+								{/* Admin-only menu items */}
+								<AdminOnly>
 									<DropdownMenuSeparator />
 									<DropdownMenuItem
 										onClick={() => router.push("/admin-review")}>

@@ -7,7 +7,7 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
+import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { useFormContext } from "react-hook-form";
 import { z } from "zod";
 import { questionSchema } from "../validation/StepsFormSchema";
@@ -32,19 +32,19 @@ export function Step3Answer({ onFormDataChange }: Step3AnswerProps) {
 							Detailed Answer <span className="text-red-500">*</span>
 						</FormLabel>
 						<FormControl>
-							<Textarea
-								placeholder="Provide a comprehensive answer with step-by-step explanation, key concepts, and examples"
-								{...field}
-								className="min-h-[350px] border-2 border-gray-300 focus:border-blue-500 transition-all duration-200"
-								onChange={(e) => {
-									field.onChange(e);
-									onFormDataChange({ richAnswer: e.target.value });
+							<RichTextEditor
+								content={field.value || ""}
+								onChange={(value: string) => {
+									field.onChange(value);
+									onFormDataChange({ richAnswer: value });
 								}}
+								placeholder="Provide a comprehensive answer with step-by-step explanation, key concepts, and examples..."
+								minHeight="350px"
 							/>
 						</FormControl>
 						<FormDescription>
-							Craft a comprehensive explanation including the solution approach,
-							key concepts, and detailed reasoning.
+							Use the rich text editor to format your answer with code blocks,
+							lists, headings, and more.
 						</FormDescription>
 						<FormMessage />
 					</FormItem>

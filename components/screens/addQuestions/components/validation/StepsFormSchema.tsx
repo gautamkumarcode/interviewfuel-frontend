@@ -38,7 +38,8 @@ export const questionSchema = z.object({
 				language: z.string().min(1, "Language is required"),
 				code: z.string().min(1, "Code is required"),
 				explanation: z.string().min(1, "Explanation is required"),
-			
+				timeComplexity: z.string().optional(),
+				spaceComplexity: z.string().optional(),
 			})
 		)
 		.min(1, "At least one solution is required"),

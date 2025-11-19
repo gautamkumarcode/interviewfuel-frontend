@@ -67,19 +67,6 @@ export function AnalyticsDashboardServerComplete({
 	return (
 		<div className="max-w-7xl mx-auto">
 			{/* Header */}
-			<div className="flex items-center justify-between mb-8">
-				<div className="flex items-center gap-4">
-					<div>
-						<h1 className="text-3xl font-bold text-gray-900">
-							Performance Analytics
-						</h1>
-						<p className="text-gray-600">
-							Track your progress and identify areas for improvement
-						</p>
-					</div>
-				</div>
-				<div className="text-sm text-gray-500">Last {timeRange} days</div>
-			</div>
 
 			{/* Key Metrics */}
 			<div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">

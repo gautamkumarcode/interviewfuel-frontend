@@ -142,8 +142,7 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 									))}
 								</SelectContent>
 							</Select>
-							<FormDescription className="text-sm text-gray-600 flex items-start gap-2">
-								<div className="w-1 h-1 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
+							<FormDescription className="text-sm text-gray-600">
 								Select the appropriate challenge level for this question
 							</FormDescription>
 							<FormMessage />

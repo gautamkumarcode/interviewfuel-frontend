@@ -47,6 +47,16 @@ class QuestionService {
 		return data;
 	};
 
+	public updateQuestion = async (
+		id: string,
+		payload: any
+	): Promise<AxiosResponseTypeWithoutPagination<any>> => {
+		const { data } = await authenticatedInstance.put<
+			AxiosResponseTypeWithoutPagination<any>
+		>(`${apiEndPoint.getAllQuestions}/${id}`, payload);
+		return data;
+	};
+
 	public bookmarkQuestion = async (
 		id: string
 	): Promise<AxiosResponseTypeWithoutPagination<{ bookmarks: number }>> => {

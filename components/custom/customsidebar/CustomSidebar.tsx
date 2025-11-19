@@ -15,7 +15,7 @@ import {
 	Code2,
 	Database,
 	Globe,
-	MessageCircleQuestion,
+	Search,
 	Settings,
 	Smartphone,
 	TrendingUp,
@@ -31,6 +31,7 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { NavbarSearch } from "../navbar/NavbarSearch";
 
 // Define types based on your data structure
 
@@ -504,32 +505,56 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 						: "w-14 px-2" // Small width on desktop when minimized
 					: "w-72 px-4 translate-x-0" // Full width when expanded
 			)}>
-			<div ref={headerRef} className="pt-4 lg:pt-2 flex items-center ">
-				<Image
-					src={logo}
-					alt="Logo"
-					width={60}
-					height={60}
-					onClick={isMobile ? undefined : () => handleResize()}
-					className={isMobile ? "cursor-default" : "cursor-pointer"}
-				/>
-				{!isContentCollapsed && (
-					<h2 className="text-xl font-bold  text-yellow-600 cursor-pointer">
-						Interview<span className="text-green-600">Fuel</span>
-					</h2>
-				)}
-				<Button
-					size="icon"
-					variant="ghost"
-					onClick={handleResize}
-					className="ml-auto hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full p-2">
-					<ChevronLeft
-						className={cn(
-							"h-4 w-4 transition-transform text-gray-600 dark:text-gray-400",
-							isContentCollapsed && "rotate-180"
-						)}
+			<div ref={headerRef} className="pt-4 lg:pt-2">
+				{/* Logo and Title */}
+				<div className="flex items-center mb-4">
+					<Image
+						src={logo}
+						alt="Logo"
+						width={60}
+						height={60}
+						onClick={isMobile ? undefined : () => handleResize()}
+						className={isMobile ? "cursor-default" : "cursor-pointer"}
 					/>
-				</Button>
+					{!isContentCollapsed && (
+						<h2 className="text-xl font-bold  text-yellow-600 cursor-pointer">
+							Interview<span className="text-green-600">Fuel</span>
+						</h2>
+					)}
+					<Button
+						size="icon"
+						variant="ghost"
+						onClick={handleResize}
+						className="ml-auto hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full p-2">
+						<ChevronLeft
+							className={cn(
+								"h-4 w-4 transition-transform text-gray-600 dark:text-gray-400",
+								isContentCollapsed && "rotate-180"
+							)}
+						/>
+					</Button>
+				</div>
+
+				{/* Search Box - Only show when sidebar is expanded */}
+				{!isContentCollapsed && (
+					<div className="mb-4 lg:hidden">
+						<NavbarSearch />
+					</div>
+				)}
+
+				{/* Search Icon - Only show when sidebar is collapsed */}
+				{isContentCollapsed && (
+					<div className="mb-4 flex justify-center lg:hidden">
+						<Button
+							size="icon"
+							variant="ghost"
+							onClick={handleResize}
+							className="hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full p-2"
+							title="Expand to search">
+							<Search className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+						</Button>
+					</div>
+				)}
 			</div>
 
 			<div
@@ -594,7 +619,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 			</div>
 
 			<div ref={footerRef} className="py-4 space-y-3">
-				<div
+				{/* <div
 					className={cn(
 						"flex items-center gap-2 cursor-pointer",
 						isContentCollapsed && "justify-center"
@@ -611,7 +636,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 					onClick={() => handleNavigate("/settings")}>
 					<Settings className="h-4 w-4" />
 					{!isContentCollapsed && <span className="text-xs">Settings</span>}
-				</div>
+				</div> */}
 			</div>
 		</aside>
 	);

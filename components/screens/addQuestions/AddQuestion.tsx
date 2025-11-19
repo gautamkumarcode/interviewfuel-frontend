@@ -1,12 +1,10 @@
 "use client";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { useTheme } from "@/context/theme.context";
 import { questionService } from "@/services/questions/question-services";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Separator } from "@radix-ui/react-select";
 import {
 	ArrowLeft,
 	ChevronLeft,
@@ -14,7 +12,6 @@ import {
 	Code,
 	FileText,
 	Lightbulb,
-	Plus,
 	Save,
 	Send,
 	Settings2,
@@ -22,7 +19,7 @@ import {
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { z } from "zod";
@@ -69,32 +66,46 @@ const STEPS = [
 	},
 ];
 
-const AddQuestion = () => {
+interface AddQuestionProps {
+	questionId?: string;
+}
+
+const AddQuestion = ({ questionId }: AddQuestionProps) => {
 	const [currentStep, setCurrentStep] = useState(1);
 	const [isDraft, setIsDraft] = useState(false);
+	const [isLoadingQuestion, setIsLoadingQuestion] = useState(false);
 	const router = useRouter();
 	const { toast } = useTheme();
 
+	const isEditMode = !!questionId;
 	const totalSteps = STEPS.length;
 	const progress = (currentStep / totalSteps) * 100;
 
 	const { data: session } = useSession();
 
-	// Create question mutation
+	// Create/Update question mutation
 	const createQuestionMutation = useMutation(
 		(data: QuestionFormData) => {
+			if (isEditMode && questionId) {
+				return questionService.updateQuestion(questionId, data);
+			}
 			return questionService.createQuestion(data);
 		},
 		{
 			onSuccess: (response) => {
 				console.log("Mutation success:", response);
-				toast.success("Question created successfully!");
+				toast.success(
+					isEditMode
+						? "Question updated successfully!"
+						: "Question created successfully!"
+				);
 				router.push("/questions");
 			},
 			onError: (error: any) => {
 				console.error("Mutation error:", error);
 				toast.error(
-					error?.response?.data?.message || "Failed to create question"
+					error?.response?.data?.message ||
+						`Failed to ${isEditMode ? "update" : "create"} question`
 				);
 			},
 		}
@@ -126,6 +137,64 @@ const AddQuestion = () => {
 			timeLimit: 30,
 		},
 	});
+
+	// Load question data on mount if in edit mode
+	React.useEffect(() => {
+		if (isEditMode && questionId) {
+			setIsLoadingQuestion(true);
+			questionService
+				.getSingleQuestion(questionId)
+				.then((response) => {
+					const question = response.data;
+					// Get category ID - handle both object and string formats
+					const categoryId =
+						typeof question.category === "object" && question.category !== null
+							? (question.category as any)._id || (question.category as any).id
+							: question.category;
+
+					// Ensure difficulty is one of the valid values
+					const validDifficulty =
+						question.difficulty === "Easy" ||
+						question.difficulty === "Medium" ||
+						question.difficulty === "Hard"
+							? question.difficulty
+							: "Medium";
+
+					form.reset({
+						title: question.title || "",
+						content: question.content || "",
+						category: categoryId || "",
+						difficulty: validDifficulty,
+						tags: question.tags || [],
+						companies: question.companies || [],
+						richAnswer: question.richAnswer || "",
+						media: question.media || [],
+						solutions:
+							question.solutions && question.solutions.length > 0
+								? question.solutions
+								: [
+										{
+											title: "",
+											language: "javascript",
+											code: "",
+											explanation: "",
+										},
+								  ],
+						hints: question.hints || [],
+						bestPractices: question.bestPractices || [],
+						relatedQuestions: question.relatedQuestions || [],
+						timeLimit: question.timeLimit || 30,
+					});
+					setIsLoadingQuestion(false);
+				})
+				.catch((error) => {
+					console.error("Error fetching question:", error);
+					toast.error("Failed to load question data");
+					setIsLoadingQuestion(false);
+					router.push("/questions");
+				});
+		}
+	}, [isEditMode, questionId]);
 
 	const handleFormDataChange = (data: Partial<QuestionFormData>) => {
 		// Auto-save functionality could be implemented here
@@ -186,12 +255,19 @@ const AddQuestion = () => {
 
 	const onSubmit = async (data: QuestionFormData) => {
 		try {
-			// Add author field from session
-			const questionData = {
-				...data,
-				author: session?.user?.id || "anonymous",
-				status: "published",
-			};
+			let questionData: any;
+
+			if (isEditMode) {
+				// For edit mode, don't send author or status fields
+				questionData = { ...data };
+			} else {
+				// For create mode, add author and status
+				questionData = {
+					...data,
+					author: session?.user?.id || "anonymous",
+					status: "published",
+				};
+			}
 
 			// Use the mutation to submit data
 			createQuestionMutation.mutate(questionData);
@@ -222,53 +298,50 @@ const AddQuestion = () => {
 		setIsDraft(false);
 	};
 
+	// Show loading state while fetching question data
+	if (isLoadingQuestion) {
+		return (
+			<div className="min-h-screen p-4 md:p-6 flex items-center justify-center">
+				<div className="text-center">
+					<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+					<p className="text-gray-600">Loading question data...</p>
+				</div>
+			</div>
+		);
+	}
+
 	return (
-		<div className="min-h-screen sm:p-4 md:p-6">
-			<div className=" mx-auto">
-				{/* Navigation Header */}
-				<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-6 sm:mb-8">
-					<Button
-						variant="ghost"
-						onClick={onCancel}
-						className="gap-2 hover:bg-white/60 backdrop-blur-sm text-sm sm:text-base h-9 sm:h-10 px-3 sm:px-4">
-						<ArrowLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-						<span className="hidden xs:inline">Back to Questions</span>
-						<span className="xs:hidden">Back</span>
+		<div className="min-h-screen p-4 md:p-6">
+			<div className="max-w-5xl mx-auto">
+				{/* Simple Header */}
+				<div className="flex items-center justify-between mb-6">
+					<Button variant="ghost" onClick={onCancel} className="gap-2">
+						<ArrowLeft className="h-4 w-4" />
+						Back
 					</Button>
-					<div className="text-center w-full sm:w-auto order-3 sm:order-2">
-						<h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-gray-900 via-purple-800 to-green-800 bg-clip-text text-transparent mb-2 sm:mb-4">
-							Create New Question
-						</h1>
-						<p className="text-sm sm:text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">
-							Build comprehensive interview questions with detailed solutions
-							and examples
-						</p>
-					</div>
+					<h1 className="text-2xl font-bold text-gray-900">
+						{isEditMode ? "Edit Question" : "Add Question"}
+					</h1>
 					<Button
 						variant="outline"
 						onClick={saveDraft}
 						disabled={isDraft}
-						className="gap-2 bg-white/60 backdrop-blur-sm border-white/20 hover:bg-white/80 text-sm sm:text-base h-9 sm:h-10 px-3 sm:px-4 order-2 sm:order-3">
-						<Save className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-						<span className="hidden sm:inline">
-							{isDraft ? "Saving..." : "Save Draft"}
-						</span>
-						<span className="sm:hidden">Save</span>
+						className="gap-2">
+						<Save className="h-4 w-4" />
+						{isDraft ? "Saving..." : "Save Draft"}
 					</Button>
 				</div>
 
-				{/* Hero Section */}
-
 				{/* Main Content */}
-				<div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+				<div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
 					{/* Form Content */}
-					<div className="lg:col-span-3 order-2 lg:order-1">
-						<Card className="bg-white/70 backdrop-blur-sm border-white/20 shadow-xl">
-							<CardContent className="p-4 sm:p-6">
+					<div className="lg:col-span-3">
+						<Card>
+							<CardContent className="p-6">
 								<Form {...form}>
 									<form
 										onSubmit={form.handleSubmit(onSubmit)}
-										className="space-y-4 sm:space-y-6">
+										className="space-y-6">
 										<AddQuestionForm
 											form={form}
 											currentStep={currentStep}
@@ -281,61 +354,44 @@ const AddQuestion = () => {
 					</div>
 
 					{/* Sidebar */}
-					<div className="space-y-4 sm:space-y-6 order-1 lg:order-2">
-						{/* Quick Actions */}
-						<Card className="bg-white/70 backdrop-blur-sm border-white/20 shadow-xl lg:sticky lg:top-4 z-50">
-							<CardHeader className="p-4 sm:p-6">
-								<CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-									<Plus className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
-									Quick Actions
-								</CardTitle>
+					<div className="space-y-4">
+						{/* Progress */}
+						<Card className="lg:sticky lg:top-4">
+							<CardHeader className="pb-3">
+								<CardTitle className="text-sm font-medium">Progress</CardTitle>
 							</CardHeader>
-							<CardContent className="space-y-3 sm:space-y-4 p-4 sm:p-6 pt-0">
-								<div className="space-y-2 sm:space-y-3">
-									<div className="flex justify-between items-center p-2 sm:p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
-										<span className="text-xs sm:text-sm font-medium text-gray-700">
-											Current Step
+							<CardContent className="space-y-4">
+								<div className="space-y-2">
+									<div className="flex justify-between text-sm">
+										<span className="text-gray-600">
+											Step {currentStep} of {STEPS.length}
 										</span>
-										<Badge
-											variant="secondary"
-											className="bg-blue-100 text-blue-700 text-xs">
-											{STEPS[currentStep - 1].title}
-										</Badge>
+										<span className="font-medium">{Math.round(progress)}%</span>
 									</div>
-									<div className="flex justify-between items-center p-2 sm:p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
-										<span className="text-xs sm:text-sm font-medium text-gray-700">
-											Progress
-										</span>
-										<Badge
-											variant="secondary"
-											className="bg-green-100 text-green-700 text-xs">
-											{Math.round(progress)}%
-										</Badge>
+									<div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+										<div
+											className="h-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-300"
+											style={{ width: `${progress}%` }}
+										/>
 									</div>
 								</div>
 
-								<Separator />
-
 								{/* Navigation Buttons */}
-								<div className="space-y-2 sm:space-y-3">
+								<div className="space-y-2">
 									{currentStep > 1 && (
 										<Button
 											variant="outline"
 											onClick={prevStep}
-											className="w-full gap-2 bg-white/60 hover:bg-white/80 text-sm sm:text-base h-9 sm:h-10">
-											<ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-											<span className="hidden xs:inline">Previous Step</span>
-											<span className="xs:hidden">Previous</span>
+											className="w-full gap-2">
+											<ChevronLeft className="h-4 w-4" />
+											Previous
 										</Button>
 									)}
 
 									{currentStep < STEPS.length ? (
-										<Button
-											onClick={nextStep}
-											className="w-full gap-2 bg-gradient-to-r from-green-200 to-green-600 hover:from-green-700 hover:to-indigo-700 text-sm sm:text-base h-9 sm:h-10">
-											<span className="hidden xs:inline">Next Step</span>
-											<span className="xs:hidden">Next</span>
-											<ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+										<Button onClick={nextStep} className="w-full gap-2">
+											Next
+											<ChevronRight className="h-4 w-4" />
 										</Button>
 									) : (
 										<Button
@@ -344,40 +400,18 @@ const AddQuestion = () => {
 												form.formState.isSubmitting ||
 												createQuestionMutation.isLoading
 											}
-											className="w-full gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-sm sm:text-base h-9 sm:h-10">
-											<Send className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+											className="w-full gap-2 bg-green-600 hover:bg-green-700">
+											<Send className="h-4 w-4" />
 											{form.formState.isSubmitting ||
 											createQuestionMutation.isLoading
-												? "Publishing..."
-												: "Publish Question"}
+												? isEditMode
+													? "Updating..."
+													: "Publishing..."
+												: isEditMode
+												? "Update"
+												: "Publish"}
 										</Button>
 									)}
-								</div>
-							</CardContent>
-						</Card>
-
-						{/* Tips */}
-						<Card className="bg-white/70 backdrop-blur-sm border-white/20 shadow-xl">
-							<CardHeader className="p-4 sm:p-6">
-								<CardTitle className="flex items-center gap-2 text-base sm:text-lg">
-									<Lightbulb className="h-4 w-4 sm:h-5 sm:w-5 text-yellow-600" />
-									Writing Tips
-								</CardTitle>
-							</CardHeader>
-							<CardContent className="p-4 sm:p-6 pt-0">
-								<div className="bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg sm:rounded-xl p-3 sm:p-4">
-									<ul className="text-xs sm:text-sm text-yellow-800 space-y-1.5 sm:space-y-2">
-										<li>• Write clear, concise question titles</li>
-										<li>• Include detailed problem descriptions</li>
-										<li className="hidden sm:list-item">
-											• Provide comprehensive solutions
-										</li>
-										<li>• Add relevant tags and categories</li>
-										<li className="hidden sm:list-item">
-											• Include time complexity analysis
-										</li>
-										<li>• Test your code examples</li>
-									</ul>
 								</div>
 							</CardContent>
 						</Card>
