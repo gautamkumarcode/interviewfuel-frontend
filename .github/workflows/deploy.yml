@@ -31,7 +31,7 @@ jobs:
         run: npm install
 
       - name: Build Next.js
-        run: npm run build -- --webpack
+        run: npm run build
 
       - name: Copy build & required files to EC2
         uses: appleboy/scp-action@v0.1.7
