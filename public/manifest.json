@@ -1,0 +1,16 @@
+{
+	"name": "interviewfuel",
+	"short_name": "interviewfuel",
+	"start_url": "/",
+	"display": "standalone",
+	"icons": [
+		{
+			"src": "/logo2.png",
+			"sizes": "192x192"
+		},
+		{
+			"src": "/logo.png",
+			"sizes": "512x512"
+		}
+	]
+}

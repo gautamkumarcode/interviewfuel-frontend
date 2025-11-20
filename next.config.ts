@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
 		// Enable TypeScript during production build
 		ignoreBuildErrors: false,
 	},
+	turbopack: {},
 };
 
 export default nextConfig;
