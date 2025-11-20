@@ -39,7 +39,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
-          source: ".next,public,package.json,package-lock.json,.env,next.config.*"
+          source: ".next,public,package.json,package-lock.json,next.config.*,node_modules"
           target: "/home/ec2-user/interviewfuel-frontend"
           rm: true        # 🔥 Clears folder before upload (IMPORTANT)
 
