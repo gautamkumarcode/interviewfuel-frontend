@@ -93,7 +93,6 @@ const AddQuestion = ({ questionId }: AddQuestionProps) => {
 		},
 		{
 			onSuccess: (response) => {
-				console.log("Mutation success:", response);
 				toast.success(
 					isEditMode
 						? "Question updated successfully!"
@@ -102,7 +101,6 @@ const AddQuestion = ({ questionId }: AddQuestionProps) => {
 				router.push("/questions");
 			},
 			onError: (error: any) => {
-				console.error("Mutation error:", error);
 				toast.error(
 					error?.response?.data?.message ||
 						`Failed to ${isEditMode ? "update" : "create"} question`

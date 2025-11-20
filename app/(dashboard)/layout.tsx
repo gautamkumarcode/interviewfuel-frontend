@@ -106,7 +106,6 @@ export default function DashboardLayout({
 		<div className="w-screen h-screen overflow-hidden dark:bg-darkBg bg-[#FAFAFA]">
 			<Sidebar ref={sidebarRef} />
 
-			{/* Mobile backdrop overlay - only show when sidebar is open on mobile */}
 			{isMobile && !isMinimized && (
 				<div
 					className="fixed inset-0 bg-black/50 z-30"

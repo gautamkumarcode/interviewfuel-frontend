@@ -83,7 +83,7 @@ export const ApiStateLoader = ({
 		return (
 			<div className="flex items-center justify-center py-8">
 				<div className="text-center">
-					<HashLoader size={32} color="#3b82f6" />
+					<HashLoader size={32} color="#19c862" />
 					<p className="mt-3 text-gray-600 text-sm">{loadingText}</p>
 				</div>
 			</div>

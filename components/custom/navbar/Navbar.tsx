@@ -127,15 +127,9 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 			{/* Mobile hamburger menu */}
 			{isMobile && (
 				<div className="flex items-center gap-2">
-					<Image src={"/logo.png"} alt="Logo" width={40} height={40} />
+					<Image src={"/logo.png"} alt="Logo" width={45} height={45} />
 
-					<Button
-						variant="ghost"
-						size="sm"
-						onClick={toggleSidebar}
-						className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 shrink-0">
-						<Menu className="h-5 w-5" />
-					</Button>
+					<Menu className="h-6 w-6 text-gray-600" onClick={toggleSidebar} />
 				</div>
 			)}
 
@@ -165,15 +159,9 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 			<div className="hidden lg:block mx-auto justify-center items-center w-full ml-10">
 				<NavbarSearch />
 			</div>
-			{/* Right section - responsive */}
 			<div className="flex items-center gap-2 md:gap-6">
-				{/* Mail icon - hide on small mobile screens */}
-				{/* <Mail className="h-5 w-5 text-primary hidden sm:block" /> */}
-
-				{/* Action Buttons - responsive */}
 				{session && (
 					<div className="flex items-center gap-2">
-						{/* Create Category Button - Admin Only */}
 						<AdminOnly>
 							<Button
 								onClick={() => router.push("/categories/create")}
@@ -305,7 +293,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 					<div className="relative">
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
-								<Avatar className="cursor-pointer h-8 w-8 md:h-10 md:w-10 shrink-0">
+								<Avatar className="cursor-pointer h-9 w-9 md:h-10 md:w-10 shrink-0">
 									{profileLoading ? (
 										<AvatarFallback>
 											<div className="w-3 h-3 md:w-4 md:h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -327,7 +315,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 									)}
 								</Avatar>
 							</DropdownMenuTrigger>
-							<DropdownMenuContent className="w-48 md:w-56" align="end">
+							<DropdownMenuContent className="w-56 md:w-60" align="end">
 								<DropdownMenuLabel onClick={() => router.push("/profile")}>
 									{profileLoading ? (
 										<div className="flex items-center gap-2">

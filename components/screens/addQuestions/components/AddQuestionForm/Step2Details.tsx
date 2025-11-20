@@ -121,7 +121,7 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 								}}
 								value={field.value}>
 								<FormControl>
-									<SelectTrigger className="h-12 text-base bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-purple-500 transition-all duration-200 shadow-sm">
+									<SelectTrigger className="h-14 text-base bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-purple-500 transition-all duration-200 shadow-sm">
 										<SelectValue placeholder="Choose difficulty level" />
 									</SelectTrigger>
 								</FormControl>

@@ -138,7 +138,7 @@ export function PracticeSetup({
 			</div>
 
 			{/* Main Content */}
-			<div className="mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+			<div className="mx-auto py-4 sm:py-6 lg:py-8">
 				<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 animate-in fade-in duration-500">
 					{/* Settings Panel */}
 					<div className="lg:col-span-2 space-y-4 sm:space-y-6">

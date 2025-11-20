@@ -65,7 +65,7 @@ export default function Questions() {
 
 	const categoryName =
 		matchedCategoryOrSubcategory?.name ??
-		(category ? "Unknown Category" : "All Questions");
+		(category ? "Unknown Category" : "All");
 
 	// Enhanced query with better loading states
 	const { data, isLoading, isFetching, error, isError } = useQuery<

@@ -97,10 +97,10 @@ const LandingPage = ({ initialStats }: LandingPageProps) => {
 							</Link>
 
 							<Link
-								href="#features"
+								href="/questions"
 								className="inline-flex items-center px-8 py-4 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-200 hover:border-[#19c862] transition-all duration-200 shadow-md hover:shadow-lg">
 								<Sparkles className="mr-2 w-5 h-5" />
-								Explore Features
+								Explore All Questions
 							</Link>
 						</div>
 

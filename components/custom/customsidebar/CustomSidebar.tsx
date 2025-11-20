@@ -415,7 +415,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 							<div className="space-y-1 pl-4">
 								{category.children!.map((child, index) => {
 									const isChildActive = activeChild === child.name;
-									const isLastChild = index === category.children!.length - 1;
+									// const isLastChild = index === category.children!.length - 1;
 
 									return (
 										<div key={child._id} className="relative">
