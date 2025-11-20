@@ -33,7 +33,7 @@ export default async function RootLayout({
 			<head>
 				<link rel="icon" href={logo.src} />
 				<link rel="apple-touch-icon" href={logo.src} />
-				<meta name="theme-color" content="#3B82F6" />
+				<meta name="theme-color" content="#13b154" />
 			</head>
 			<body>
 				<Provider>{children}</Provider>
