@@ -40,33 +40,36 @@ export function AnalyticsPageClient({
 	};
 
 	return (
-		<div className="min-h-screen bg-gray-50 p-6">
+		<div className="min-h-screen">
 			<div className="max-w-7xl mx-auto">
-				{/* Header with controls */}
-				<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-					<div className="flex items-center gap-4">
-						<Button variant="ghost" onClick={handleExit} className="gap-2">
-							<ArrowLeft className="h-4 w-4" />
-							Back
+				{/* Header with controls - Fully Responsive */}
+				<div className="flex flex-col gap-4 mb-6 sm:mb-8">
+					{/* Top row: Back button and title */}
+					<div className="flex items-start gap-2 sm:gap-4">
+						<Button
+							variant="ghost"
+							onClick={handleExit}
+							className="gap-2 shrink-0 px-2 sm:px-4">
+							<ArrowLeft className="h-6 w-6" />
+							<span className="hidden sm:inline">Back</span>
 						</Button>
-						<div>
-							<h1 className="text-3xl font-bold text-gray-900">
+						<div className="flex-1 ">
+							<h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">
 								Analytics Dashboard
 							</h1>
-							<p className="text-gray-600 mt-2">
+							<p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
 								Track your learning progress and performance
-							</p>
-							<p className="text-xs text-gray-500 mt-1 md:hidden">
-								Activity view optimized for mobile (30 days)
 							</p>
 						</div>
 					</div>
-					<div className="flex items-center gap-4">
+
+					{/* Bottom row: Time range selector */}
+					<div className="flex items-center justify-between sm:justify-end gap-3">
 						<Select
 							value={timeRange}
 							onValueChange={handleTimeRangeChange}
 							disabled={isPending}>
-							<SelectTrigger className="w-40">
+							<SelectTrigger className="w-full sm:w-40">
 								<SelectValue />
 							</SelectTrigger>
 							<SelectContent>
@@ -77,13 +80,18 @@ export function AnalyticsPageClient({
 							</SelectContent>
 						</Select>
 						{isPending && (
-							<div className="text-sm text-gray-500">Loading...</div>
+							<div className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
+								Loading...
+							</div>
 						)}
 					</div>
 				</div>
 
 				{/* Content */}
-				<div className={isPending ? "opacity-50 pointer-events-none" : ""}>
+				<div
+					className={
+						isPending ? "opacity-50 pointer-events-none transition-opacity" : ""
+					}>
 					{children}
 				</div>
 			</div>

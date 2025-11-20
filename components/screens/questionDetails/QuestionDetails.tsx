@@ -198,7 +198,7 @@ export const QuestionDetailView = ({
 											variant="outline"
 											size="sm"
 											onClick={handleEditQuestion}
-											className="gap-2 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100">
+											className="gap-2 bg-green-50 border-green-200 text-green-700 hover:bg-green-100">
 											<Edit className="h-4 w-4" />
 											<span className="hidden sm:inline">Edit</span>
 										</Button>
@@ -238,7 +238,7 @@ export const QuestionDetailView = ({
 						</div>
 					</div>
 
-					<div className=" mx-auto px-4 sm:px-6 lg:px-8 py-8">
+					<div className=" mx-auto py-8">
 						{/* Question Header */}
 						<Card className="mb-6 overflow-hidden border-0 shadow-lg p-0">
 							<div className="bg-gradient-to-r from-green-100 to-purple-100 p-6">
@@ -296,7 +296,7 @@ export const QuestionDetailView = ({
 											<Badge
 												key={tag}
 												variant="outline"
-												className="text-xs px-3 py-1 bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100">
+												className="text-xs px-3 py-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
 												#{tag}
 											</Badge>
 										))}
@@ -329,7 +329,7 @@ export const QuestionDetailView = ({
 							<Card className="mb-6 border-0 shadow-md">
 								<div className="p-6">
 									<div className="flex items-center gap-2 mb-4">
-										<Building className="h-5 w-5 text-blue-600" />
+										<Building className="h-5 w-5 text-green-600" />
 										<h3 className="text-lg font-semibold text-gray-900">
 											Asked by Companies
 										</h3>
@@ -339,7 +339,7 @@ export const QuestionDetailView = ({
 											<Badge
 												key={company._id}
 												variant="outline"
-												className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200 hover:border-blue-300 hover:shadow-sm transition-all">
+												className="px-4 py-2 text-sm font-medium bg-gradient-to-r from-gray-50 to-gray-100 border-gray-200 hover:border-green-300 hover:shadow-sm transition-all">
 												{company.name}
 											</Badge>
 										))}
@@ -362,26 +362,28 @@ export const QuestionDetailView = ({
 									<TabsList className="grid w-full grid-cols-3 h-auto bg-transparent p-0 rounded-none">
 										<TabsTrigger
 											value="solution"
-											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none py-4 px-6 font-medium">
+											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:text-green-600 rounded-sm py-4 px-6 font-medium">
 											<Code2 className="h-4 w-4 mr-2" />
 											Solution
 										</TabsTrigger>
 										<TabsTrigger
 											value="discussion"
-											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none py-4 px-6 font-medium">
+											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:text-green-600 rounded-sm py-4 px-6 font-medium">
 											<MessageSquare className="h-4 w-4 mr-2" />
 											Discussion
 										</TabsTrigger>
 										<TabsTrigger
 											value="related"
-											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 rounded-none py-4 px-6 font-medium">
+											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:text-green-600 rounded-sm py-4 px-6 font-medium">
 											<Star className="h-4 w-4 mr-2" />
 											Related
 										</TabsTrigger>
 									</TabsList>
 								</div>
 
-								<TabsContent value="solution" className="p-6 space-y-8">
+								<TabsContent
+									value="solution"
+									className="px-2 space-y-8 shadow-none">
 									{/* Rich Answer */}
 									{question.richAnswer && (
 										<div className="space-y-4">
@@ -401,7 +403,7 @@ export const QuestionDetailView = ({
 									{question.solutions && question.solutions.length > 0 && (
 										<div className="space-y-6">
 											<div className="flex items-center gap-2">
-												<Code2 className="h-5 w-5 text-blue-600" />
+												<Code2 className="h-5 w-5 text-green-600" />
 												<h3 className="text-xl font-semibold text-gray-900">
 													Code Solutions
 												</h3>
@@ -409,7 +411,7 @@ export const QuestionDetailView = ({
 											{question.solutions.map((solution, index) => (
 												<Card
 													key={index}
-													className="overflow-hidden border-2 border-gray-200 hover:border-blue-300 transition-colors">
+													className="overflow-hidden border-2 border-gray-200  hover:border-green-300 transition-colors">
 													<div className="bg-gradient-to-r from-gray-50 to-gray-100 px-6 py-4 border-b">
 														<div className="flex items-center justify-between">
 															<div>
@@ -457,7 +459,7 @@ export const QuestionDetailView = ({
 															</Button>
 														</div>
 													</div>
-													<div className="p-6 space-y-4">
+													<div className=" space-y-4">
 														{solution.code && (
 															<div className="relative group">
 																<div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -473,7 +475,7 @@ export const QuestionDetailView = ({
 															</div>
 														)}
 														{solution.explanation && (
-															<div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+															<div className="bg-green-50 rounded-lg p-4 border border-green-100">
 																<HtmlContent content={solution.explanation} />
 															</div>
 														)}
@@ -531,7 +533,7 @@ export const QuestionDetailView = ({
 										)}
 								</TabsContent>
 
-								<TabsContent value="discussion" className="p-6">
+								<TabsContent value="discussion" className="">
 									<CommentSection questionId={question._id} />
 								</TabsContent>
 
@@ -539,7 +541,7 @@ export const QuestionDetailView = ({
 									<RelatedQuestions
 										questionId={question._id}
 										onQuestionClick={(slug: string) => {
-											window.location.href = `/questions/${slug}`;
+											window.location.href = `/questions/${question.category.slug}/${slug}`;
 										}}
 									/>
 								</TabsContent>

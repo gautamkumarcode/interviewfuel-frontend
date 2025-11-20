@@ -117,9 +117,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 	};
 
 	return (
-		<div className="bg-white rounded-lg border shadow-sm">
+		<div className="bg-white rounded-lg">
 			{/* Section Header */}
-			<div className="px-6 py-4 border-b bg-gray-50 rounded-t-lg">
+			<div className="px-6 border-b bg-gray-50 rounded-t-lg">
 				<div className="flex items-center justify-between">
 					{/* Comment Stats and Sort Dropdown */}
 					{commentsData?.data?.results &&

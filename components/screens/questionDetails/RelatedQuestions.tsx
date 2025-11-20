@@ -70,7 +70,7 @@ export const RelatedQuestions: React.FC<RelatedQuestionsProps> = ({
 			onQuestionClick(question.slug);
 		} else {
 			// Default navigation behavior
-			window.location.href = `/questions/${question.slug}`;
+			window.location.href = `/questions/${question.category.slug}/${question.slug}`;
 		}
 	};
 

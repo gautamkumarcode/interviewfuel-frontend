@@ -87,7 +87,7 @@ export const CommentForm: React.FC<CommentFormProps> = ({
 						onBlur={() => setIsFocused(false)}
 						onKeyDown={handleKeyDown}
 						placeholder={placeholder}
-						className="min-h-[100px] text-sm resize-none border-gray-200 focus:border-blue-300"
+						className="min-h-[100px] text-sm resize-none border-gray-200 focus:border-green-300"
 						disabled={isSubmitting}
 					/>
 					{isFocused && (
@@ -133,16 +133,13 @@ export const CommentForm: React.FC<CommentFormProps> = ({
 	);
 
 	return showCard ? (
-		<Card
-			className={`transition-all duration-200 ${
-				isFocused ? "ring-2 ring-blue-500 ring-opacity-20" : ""
-			}`}>
+		<Card className={`transition-all duration-200 ${isFocused ? "" : ""}`}>
 			<CardContent className="pt-6">{formContent}</CardContent>
 		</Card>
 	) : (
 		<div
 			className={`transition-all duration-200 ${
-				isFocused ? "ring-2 ring-blue-500 ring-opacity-20 rounded-lg p-1" : ""
+				isFocused ? " rounded-lg p-2" : ""
 			}`}>
 			{formContent}
 		</div>

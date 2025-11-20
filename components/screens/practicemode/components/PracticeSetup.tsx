@@ -99,24 +99,25 @@ export function PracticeSetup({
 			  (settings.customTopic?.trim()?.length ?? 0) > 0;
 
 	return (
-		<div className="min-h-screen">
+		<div className="min-h-screen bg-gray-50">
 			{/* Navigation Header */}
-			<div className="">
-				<div className=" mx-auto sm:px-6 lg:px-8 py-4">
-					<div className="flex items-center justify-between">
+			<div className="bg-white border-b border-gray-200 sticky top-0 z-10">
+				<div className="mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+					<div className="flex items-center justify-between gap-2">
 						<Button
 							variant="ghost"
-							className="gap-2 hover:bg-blue-50 text-gray-700 hover:text-blue-700 transition-colors">
+							size="sm"
+							className="gap-1 sm:gap-2 hover:bg-blue-50 text-gray-700 hover:text-blue-700 transition-colors px-2 sm:px-4">
 							<ChevronLeft className="h-4 w-4" />
 							<span className="hidden sm:inline">Back to Questions</span>
-							<span className="sm:hidden">Back</span>
+							<span className="sm:hidden text-xs">Back</span>
 						</Button>
 
-						<div className="text-center">
-							<h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+						<div className="text-center flex-1 min-w-0">
+							<h1 className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent truncate">
 								Practice Setup
 							</h1>
-							<p className="text-sm text-gray-500 mt-1 hidden sm:block">
+							<p className="text-xs sm:text-sm text-gray-500 mt-0.5 hidden sm:block">
 								Configure your practice session
 							</p>
 						</div>
@@ -125,9 +126,11 @@ export function PracticeSetup({
 							<Button
 								variant="outline"
 								size="sm"
-								className="gap-2 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 transition-colors">
+								className="gap-1 sm:gap-2 border-blue-200 text-blue-700 hover:bg-blue-50 hover:border-blue-300 transition-colors px-2 sm:px-3">
 								<History className="h-4 w-4" />
-								<span className="hidden sm:inline">History</span>
+								<span className="hidden sm:inline text-xs sm:text-sm">
+									History
+								</span>
 							</Button>
 						</Link>
 					</div>
@@ -135,67 +138,67 @@ export function PracticeSetup({
 			</div>
 
 			{/* Main Content */}
-			<div className=" mx-auto  lg:px-8 py-6 sm:py-8">
-				<div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 animate-in fade-in duration-500">
+			<div className="mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 animate-in fade-in duration-500">
 					{/* Settings Panel */}
-					<div className="lg:col-span-2 space-y-6 order-2 lg:order-1">
+					<div className="lg:col-span-2 space-y-4 sm:space-y-6">
 						{/* Question Source Selection */}
 						<Card className="bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
-							<CardHeader className="pb-4">
-								<CardTitle className="flex items-center gap-3 text-xl">
-									<div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl shadow-md">
-										<Sparkles className="h-5 w-5 text-white" />
+							<CardHeader className="pb-3 sm:pb-4 px-4 sm:px-6">
+								<CardTitle className="flex items-center gap-2 sm:gap-3 text-base sm:text-lg lg:text-xl">
+									<div className="p-1.5 sm:p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg sm:rounded-xl shadow-md">
+										<Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
 									</div>
-									Question Source
+									<span className="truncate">Question Source</span>
 								</CardTitle>
-								<p className="text-gray-600 text-sm">
+								<p className="text-gray-600 text-xs sm:text-sm mt-1">
 									Choose how your questions will be generated
 								</p>
 							</CardHeader>
-							<CardContent className="pt-0">
-								<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							<CardContent className="pt-0 px-4 sm:px-6 pb-4 sm:pb-6">
+								<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
 									<div
-										className={`group p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.02] ${
+										className={`group p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 cursor-pointer transition-all duration-300 active:scale-95 sm:hover:scale-[1.02] ${
 											settings.source === "ai"
 												? "border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-lg"
 												: "border-gray-200 hover:border-blue-300 hover:bg-blue-50/50"
 										}`}
 										onClick={() => updateSettings({ source: "ai" })}>
-										<div className="flex items-center gap-3 mb-3">
-											<Brain className="h-6 w-6 text-blue-600 group-hover:scale-110 transition-transform" />
-											<div className="flex items-center gap-2">
-												<span className="font-semibold text-base">
+										<div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+											<Brain className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600 group-hover:scale-110 transition-transform flex-shrink-0" />
+											<div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+												<span className="font-semibold text-sm sm:text-base">
 													AI Generated
 												</span>
-												<Badge className="bg-blue-100 text-blue-700 text-xs px-2 py-1">
+												<Badge className="bg-blue-100 text-blue-700 text-xs px-1.5 sm:px-2 py-0.5 sm:py-1">
 													🧠 Smart
 												</Badge>
 											</div>
 										</div>
-										<p className="text-sm text-gray-600 leading-relaxed">
+										<p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
 											AI-generated questions focused on your selected category
 											and difficulty level
 										</p>
 									</div>
 									<div
-										className={`group p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 hover:scale-[1.02] ${
+										className={`group p-3 sm:p-4 rounded-xl sm:rounded-2xl border-2 cursor-pointer transition-all duration-300 active:scale-95 sm:hover:scale-[1.02] ${
 											settings.source === "db"
 												? "border-green-500 bg-gradient-to-br from-green-50 to-emerald-50 shadow-lg"
 												: "border-gray-200 hover:border-green-300 hover:bg-green-50/50"
 										}`}
 										onClick={() => updateSettings({ source: "db" })}>
-										<div className="flex items-center gap-3 mb-3">
-											<Database className="h-6 w-6 text-green-600 group-hover:scale-110 transition-transform" />
-											<div className="flex items-center gap-2">
-												<span className="font-semibold text-base">
+										<div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+											<Database className="h-5 w-5 sm:h-6 sm:w-6 text-green-600 group-hover:scale-110 transition-transform flex-shrink-0" />
+											<div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+												<span className="font-semibold text-sm sm:text-base">
 													Database
 												</span>
-												<Badge className="bg-green-100 text-green-700 text-xs px-2 py-1">
+												<Badge className="bg-green-100 text-green-700 text-xs px-1.5 sm:px-2 py-0.5 sm:py-1">
 													📚 Curated
 												</Badge>
 											</div>
 										</div>
-										<p className="text-sm text-gray-600 leading-relaxed">
+										<p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
 											Hand-picked questions from our comprehensive database
 										</p>
 									</div>

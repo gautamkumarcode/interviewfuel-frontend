@@ -319,7 +319,7 @@ export default function Questions() {
 									key={question.id || index}
 									onClick={() => handleCardClick(question)}
 									className="border-gray-200 hover:shadow-lg transition-all duration-300 hover:border-gray-300 cursor-pointer group bg-white hover:bg-gray-50">
-									<CardContent className="p-6">
+									<CardContent className="">
 										<div className="flex items-start justify-between gap-4">
 											<div className="flex-1">
 												<div className="flex items-center gap-3 mb-3">
