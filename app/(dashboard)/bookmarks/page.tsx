@@ -8,6 +8,8 @@ import { Bookmark, Search } from "lucide-react";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 // Server-side page component: fetches user's bookmarked questions on the server
 export default async function BookmarksPage() {
 	// Get server session (contains accessToken from JWT session)
