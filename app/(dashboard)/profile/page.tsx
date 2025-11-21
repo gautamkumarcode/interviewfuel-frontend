@@ -2,6 +2,8 @@ import ProfileServerWrapper from "@/components/screens/profile/ProfileServerWrap
 import { getProfileData } from "@/lib/profile-actions";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
+
 const ProfilePage = async () => {
 	const profileData = await getProfileData();
 
