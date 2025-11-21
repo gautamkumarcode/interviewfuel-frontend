@@ -61,24 +61,23 @@ export default function DashboardLayout({
 		}
 
 		return () => {
+			const currentSidebar = sidebarRef.current;
 			window.removeEventListener(
 				"sidebarToggle",
 				handleSidebarToggle as EventListener
 			);
-			if (sidebarRef.current) {
-				sidebarRef.current.removeEventListener(
+			if (currentSidebar) {
+				currentSidebar.removeEventListener(
 					"transitionstart",
 					handleTransitionStart
 				);
-				sidebarRef.current.removeEventListener(
+				currentSidebar.removeEventListener(
 					"transitionend",
 					handleTransitionEnd
 				);
 			}
 		};
-	}, []);
-
-	// Calculate widths based on minimized state and mobile
+	}, []); // Calculate widths based on minimized state and mobile
 	// On mobile, sidebar width should be 0 for layout calculations (overlay mode)
 	// On desktop, normal sidebar width logic applies
 	const sidebarWidth = isMobile ? 0 : isMinimized ? 56 : 288;
