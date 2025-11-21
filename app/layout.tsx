@@ -1,7 +1,7 @@
 import { Provider } from "@/common/provider";
 import { generateMetadata, siteConfig } from "@/lib/seo";
 import logo from "@/public/logo2.png";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "../styles/force-lists.css";
 import "../styles/rich-content.css";
 import "../styles/tiptap-editor.css";
@@ -16,11 +16,12 @@ export const metadata: Metadata = {
 		apple: logo.src,
 	},
 	manifest: "/manifest.json",
-	viewport: {
-		width: "device-width",
-		initialScale: 1,
-		maximumScale: 5,
-	},
+};
+
+export const viewport: Viewport = {
+	width: "device-width",
+	initialScale: 1,
+	maximumScale: 5,
 };
 
 export default async function RootLayout({

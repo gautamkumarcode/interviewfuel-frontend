@@ -5,26 +5,24 @@
 export interface GetAllQuestionsResponseType {
 	stats: Stats;
 	title: string;
-	content: string;
 	category: Category;
 	subcategory?: string;
 	difficulty: DifficultyEnum;
 	tags: string[];
-	companies: Company[];
-	richAnswer?: string;
-	media: any[];
-	bestPractices: any[];
-	relatedQuestions: any[];
 	timeLimit: number;
-	author: Author;
+	author?: Author | null;
 	status: Status;
 	isVerified: boolean;
-	contributors: any[];
 	createdAt: Date;
 	updatedAt: Date;
 	slug: string;
 	difficultyScore: number;
 	id: string;
+	_id: string;
+	verifiedBy?: Author;
+	reviewStatus?: string;
+	reviewedBy?: Author;
+	lastReviewedAt: Date;
 }
 
 export interface Author {

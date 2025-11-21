@@ -39,7 +39,6 @@ import {
 	BarChart3,
 	Bookmark,
 	FileText,
-	FolderPlus,
 	Heart,
 	LogOut,
 	Menu,
@@ -162,18 +161,6 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 			<div className="flex items-center gap-2 md:gap-6">
 				{session && (
 					<div className="flex items-center gap-2">
-						<AdminOnly>
-							<Button
-								onClick={() => router.push("/categories/create")}
-								variant="outline"
-								className="border-blue-500 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-950 text-xs md:text-sm font-semibold px-3 md:px-4 py-2 shrink-0">
-								<FolderPlus className="h-4 w-4 mr-1 md:mr-2" />
-								<span className="hidden sm:inline">Create Category</span>
-								<span className="sm:hidden">Category</span>
-							</Button>
-						</AdminOnly>
-
-						{/* Add Question Button */}
 						<Button
 							onClick={() => router.push("/questions/create")}
 							className="bg-green-500 hover:bg-green-600 text-white text-xs md:text-sm font-semibold px-4 md:px-4 py-2 shrink-0">
@@ -374,11 +361,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 										<ShieldCheck className="h-4 w-4 mr-2" />
 										Review Questions
 									</DropdownMenuItem>
-									<DropdownMenuItem
-										onClick={() => router.push("/categories/create")}>
-										<FolderPlus className="h-4 w-4 mr-2" />
-										Create Category
-									</DropdownMenuItem>
+
 									<DropdownMenuItem onClick={() => router.push("/categories")}>
 										<Settings2 className="h-4 w-4 mr-2" />
 										Category Management

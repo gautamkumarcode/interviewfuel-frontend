@@ -34,17 +34,19 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface QuestionReviewDetailProps {
+interface QuestionReviewDetailClientProps {
 	questionId: string;
+	initialQuestion?: GetSingleQuestionResponseType | null;
 }
 
-export function QuestionReviewDetail({
+export function QuestionReviewDetailClient({
 	questionId,
-}: QuestionReviewDetailProps) {
+	initialQuestion = null,
+}: QuestionReviewDetailClientProps) {
 	const router = useRouter();
 	const [question, setQuestion] =
-		useState<GetSingleQuestionResponseType | null>(null);
-	const [loading, setLoading] = useState(true);
+		useState<GetSingleQuestionResponseType | null>(initialQuestion);
+	const [loading, setLoading] = useState(!initialQuestion);
 	const [comment, setComment] = useState("");
 	const [submitting, setSubmitting] = useState(false);
 	const [showApproveDialog, setShowApproveDialog] = useState(false);
@@ -52,8 +54,10 @@ export function QuestionReviewDetail({
 	const { toast } = useTheme();
 
 	useEffect(() => {
-		fetchQuestion();
-	}, [questionId]);
+		if (!initialQuestion) {
+			fetchQuestion();
+		}
+	}, [questionId, initialQuestion]);
 
 	const fetchQuestion = async () => {
 		try {

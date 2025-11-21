@@ -133,9 +133,6 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 													className={`w-3 h-3 ${option.color} rounded-full`}></div>
 												<div>
 													<div className="font-medium">{option.label}</div>
-													<div className="text-xs text-gray-500">
-														{option.description}
-													</div>
 												</div>
 											</div>
 										</SelectItem>

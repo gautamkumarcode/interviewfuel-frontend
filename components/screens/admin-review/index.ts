@@ -1,2 +1,3 @@
-export { AdminReviewDashboard } from "./AdminReviewDashboard";
-export { QuestionReviewDetail } from "./QuestionReviewDetail";
+export { AdminReviewDashboardHOC } from "./AdminReviewDashboardHOC";
+export { QuestionReviewDetailClient } from "./QuestionReviewDetail";
+export { QuestionReviewDetailHOC } from "./QuestionReviewDetailHOC";

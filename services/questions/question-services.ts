@@ -280,5 +280,14 @@ class QuestionService {
 		>(`${apiEndPoint.adminAddReviewComment}/${id}/comment`, { comment });
 		return data;
 	};
+
+	public deleteQuestion = async (
+		id: string
+	): Promise<AxiosResponseTypeWithoutPagination<null>> => {
+		const { data } = await authenticatedInstance.delete<
+			AxiosResponseTypeWithoutPagination<null>
+		>(`${apiEndPoint.getAllQuestions}/${id}`);
+		return data;
+	}
 }
 export const questionService = new QuestionService();

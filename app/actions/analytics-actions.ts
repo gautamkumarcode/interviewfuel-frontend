@@ -7,7 +7,7 @@ import {
 } from "@/services/analytics/analytics-services";
 import { getServerSession } from "next-auth";
 
-async function getAuthHeaders() {
+export async function getAuthHeaders() {
 	const session = await getServerSession(authOptions);
 	if (!session?.accessToken) {
 		throw new Error("No authentication token");
@@ -19,7 +19,7 @@ async function getAuthHeaders() {
 }
 
 // Create a fetch wrapper with timeout and better error handling
-async function fetchWithTimeout(
+export async function fetchWithTimeout(
 	url: string,
 	options: RequestInit = {},
 	timeoutMs: number = 10000

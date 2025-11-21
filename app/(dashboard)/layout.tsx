@@ -97,7 +97,7 @@ export default function DashboardLayout({
 	if (!isHydrated) {
 		return (
 			<div className="w-screen h-screen flex items-center justify-center dark:bg-darkBg bg-[#FAFAFA]">
-				<HashLoader size={50} color="#3b82f6" />
+				<HashLoader size={50} color="#19c862" />
 			</div>
 		);
 	}

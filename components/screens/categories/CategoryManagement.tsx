@@ -32,16 +32,27 @@ import {
 	Search,
 	Trash2,
 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { CategoryForm } from "./CategoryForm";
 
 export const CategoryManagement: React.FC = () => {
 	const queryClient = useQueryClient();
+	const router = useRouter();
+	const searchParams = useSearchParams();
 	const [searchTerm, setSearchTerm] = React.useState("");
 	const [isFormOpen, setIsFormOpen] = React.useState(false);
 	const [editingCategory, setEditingCategory] =
 		React.useState<CategoryType | null>(null);
+
+	// Check if create param is present in URL
+	React.useEffect(() => {
+		if (searchParams.get("create") === "true") {
+			setIsFormOpen(true);
+			setEditingCategory(null);
+		}
+	}, [searchParams]);
 
 	// Fetch categories
 	const {
@@ -94,6 +105,7 @@ export const CategoryManagement: React.FC = () => {
 	};
 
 	const handleFormSuccess = () => {
+		queryClient.invalidateQueries(["categories"]);
 		setIsFormOpen(false);
 		setEditingCategory(null);
 	};
@@ -101,6 +113,17 @@ export const CategoryManagement: React.FC = () => {
 	const handleFormCancel = () => {
 		setIsFormOpen(false);
 		setEditingCategory(null);
+	};
+
+	const handleDialogOpenChange = (open: boolean) => {
+		setIsFormOpen(open);
+		if (!open) {
+			setEditingCategory(null);
+			// Remove create param from URL if present
+			if (searchParams.get("create") === "true") {
+				router.replace("/categories");
+			}
+		}
 	};
 
 	if (isLoading) {
@@ -334,18 +357,26 @@ export const CategoryManagement: React.FC = () => {
 
 			{/* Form Dialog */}
 			<AdminOnly>
-				<Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-					<DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-						<DialogHeader>
-							<DialogTitle>
+				<Dialog
+					open={isFormOpen}
+					onOpenChange={handleDialogOpenChange}>
+					<DialogContent className="max-w-3xl max-h-[95vh] overflow-hidden p-0">
+						<DialogHeader className="px-6 pt-6 pb-4 border-b">
+							<DialogTitle className="text-xl font-semibold flex items-center gap-2">
+								<Folder className="h-5 w-5" />
 								{editingCategory ? "Edit Category" : "Create New Category"}
 							</DialogTitle>
 						</DialogHeader>
-						<CategoryForm
-							category={editingCategory}
-							onSuccess={handleFormSuccess}
-							onCancel={handleFormCancel}
-						/>
+						<div
+							className="overflow-y-auto px-6 py-4"
+							style={{ maxHeight: "calc(95vh - 130px)" }}>
+							<CategoryForm
+								category={editingCategory}
+								onSuccess={handleFormSuccess}
+								onCancel={handleFormCancel}
+								isDialog={true}
+							/>
+						</div>
 					</DialogContent>
 				</Dialog>
 			</AdminOnly>

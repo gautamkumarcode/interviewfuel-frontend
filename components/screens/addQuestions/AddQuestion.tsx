@@ -92,13 +92,13 @@ const AddQuestion = ({ questionId }: AddQuestionProps) => {
 			return questionService.createQuestion(data);
 		},
 		{
-			onSuccess: (response) => {
+			onSuccess: () => {
 				toast.success(
 					isEditMode
 						? "Question updated successfully!"
 						: "Question created successfully!"
 				);
-				router.push("/questions");
+				router.push("/my-questions");
 			},
 			onError: (error: any) => {
 				toast.error(

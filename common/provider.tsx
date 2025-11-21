@@ -29,7 +29,7 @@ export const Provider: React.FC<{
 					<CustomThemeProvider>
 						<ModalProvider>
 							<AuthModalProvider>
-								<NextTopLoader showSpinner={false} color="#0CAF60" />
+								<NextTopLoader showSpinner={false} color="#19c862" />
 								{children}
 								<AuthModal />
 							</AuthModalProvider>
