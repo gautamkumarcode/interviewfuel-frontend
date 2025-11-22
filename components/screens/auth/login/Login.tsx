@@ -3,11 +3,7 @@
 import AuthTabs from "../AuthTabs";
 
 const Login = () => {
-	return (
-		<div>
-			<AuthTabs />
-		</div>
-	);
+	return <AuthTabs />;
 };
 
 export default Login;

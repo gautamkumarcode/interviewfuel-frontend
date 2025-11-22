@@ -2,6 +2,7 @@
 @import "tw-animate-css";
 @import "../styles/landing-animations.css";
 
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

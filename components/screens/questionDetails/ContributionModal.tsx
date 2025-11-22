@@ -38,37 +38,31 @@ const contributionTypes = [
 		value: "solution",
 		label: "Add Solution",
 		icon: Code2,
-		description: "Contribute an alternative solution approach",
 	},
 	{
 		value: "hint",
 		label: "Add Hint",
 		icon: Lightbulb,
-		description: "Provide a helpful hint for solving this problem",
 	},
 	{
 		value: "explanation",
 		label: "Improve Explanation",
 		icon: Sparkles,
-		description: "Enhance the answer explanation",
 	},
 	{
 		value: "bestPractice",
 		label: "Add Best Practice",
 		icon: Star,
-		description: "Suggest a best practice or tip",
 	},
 	{
 		value: "company",
 		label: "Add Company",
 		icon: Building,
-		description: "Add a company that asked this question",
 	},
 	{
 		value: "correction",
 		label: "Report Error",
 		icon: Zap,
-		description: "Report an error or suggest a correction",
 	},
 ];
 
@@ -211,11 +205,11 @@ export function ContributionModal({
 								))}
 							</SelectContent>
 						</Select>
-						{type && (
+						{/* {type && (
 							<p className="text-sm text-gray-500">
 								{contributionTypes.find((ct) => ct.value === type)?.description}
 							</p>
-						)}
+						)} */}
 					</div>
 
 					{/* Dynamic Form Based on Type */}

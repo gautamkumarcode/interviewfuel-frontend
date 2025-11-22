@@ -94,7 +94,7 @@ export function Step4Solutions({ onFormDataChange }: Step4SolutionsProps) {
 								name={`solutions.${index}.title`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className="text-lg font-bold">
+										<FormLabel className="text-sm text-gray-700 font-medium">
 											Solution Title <span className="text-red-500">*</span>
 										</FormLabel>
 										<FormControl>
@@ -110,9 +110,7 @@ export function Step4Solutions({ onFormDataChange }: Step4SolutionsProps) {
 												className="border-2 border-gray-300 focus:border-blue-500 transition-all duration-200"
 											/>
 										</FormControl>
-										<FormDescription>
-											A descriptive title for this specific solution.
-										</FormDescription>
+
 										<FormMessage />
 									</FormItem>
 								)}
@@ -123,7 +121,7 @@ export function Step4Solutions({ onFormDataChange }: Step4SolutionsProps) {
 								name={`solutions.${index}.language`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className="text-lg font-bold">
+										<FormLabel className="text-sm text-gray-700 font-medium">
 											Programming Language{" "}
 											<span className="text-red-500">*</span>
 										</FormLabel>
@@ -150,9 +148,7 @@ export function Step4Solutions({ onFormDataChange }: Step4SolutionsProps) {
 												<SelectItem value="rust">Rust</SelectItem>
 											</SelectContent>
 										</Select>
-										<FormDescription>
-											The programming language used in this solution.
-										</FormDescription>
+
 										<FormMessage />
 									</FormItem>
 								)}
@@ -164,7 +160,7 @@ export function Step4Solutions({ onFormDataChange }: Step4SolutionsProps) {
 							name={`solutions.${index}.code`}
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel className="text-lg font-bold">
+									<FormLabel className="text-sm text-gray-700 font-medium">
 										Code <span className="text-red-500">*</span>
 									</FormLabel>
 									<FormControl>
@@ -180,9 +176,7 @@ export function Step4Solutions({ onFormDataChange }: Step4SolutionsProps) {
 											}}
 										/>
 									</FormControl>
-									<FormDescription>
-										The actual code implementation for this solution.
-									</FormDescription>
+
 									<FormMessage />
 								</FormItem>
 							)}
@@ -193,7 +187,7 @@ export function Step4Solutions({ onFormDataChange }: Step4SolutionsProps) {
 							name={`solutions.${index}.explanation`}
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel className="text-lg font-bold">
+									<FormLabel className="text-sm text-gray-700 font-medium">
 										Explanation <span className="text-red-500">*</span>
 									</FormLabel>
 									<FormControl>
@@ -224,7 +218,7 @@ export function Step4Solutions({ onFormDataChange }: Step4SolutionsProps) {
 								name={`solutions.${index}.timeComplexity`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className="text-lg font-bold">
+										<FormLabel className="text-sm text-gray-700 font-medium">
 											Time Complexity
 										</FormLabel>
 										<FormControl>
@@ -240,9 +234,7 @@ export function Step4Solutions({ onFormDataChange }: Step4SolutionsProps) {
 												className="border-2 border-gray-300 focus:border-blue-500 transition-all duration-200 font-mono"
 											/>
 										</FormControl>
-										<FormDescription>
-											Big O notation for time complexity (optional)
-										</FormDescription>
+
 										<FormMessage />
 									</FormItem>
 								)}
@@ -253,7 +245,7 @@ export function Step4Solutions({ onFormDataChange }: Step4SolutionsProps) {
 								name={`solutions.${index}.spaceComplexity`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel className="text-lg font-bold">
+										<FormLabel className="text-sm text-gray-700 font-medium">
 											Space Complexity
 										</FormLabel>
 										<FormControl>
@@ -269,9 +261,7 @@ export function Step4Solutions({ onFormDataChange }: Step4SolutionsProps) {
 												className="border-2 border-gray-300 focus:border-blue-500 transition-all duration-200 font-mono"
 											/>
 										</FormControl>
-										<FormDescription>
-											Big O notation for space complexity (optional)
-										</FormDescription>
+
 										<FormMessage />
 									</FormItem>
 								)}

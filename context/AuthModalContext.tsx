@@ -1,7 +1,13 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+	createContext,
+	ReactNode,
+	useContext,
+	useEffect,
+	useState,
+} from "react";
 
 type ViewType = "login" | "signup";
 
@@ -23,6 +29,31 @@ export const AuthModalProvider = ({ children }: { children: ReactNode }) => {
 	const [view, setView] = useState<ViewType>("login");
 	const [callbackUrl, setCallbackUrl] = useState<string | null>(null);
 	const pathname = usePathname();
+
+	// Listen for custom event from axios interceptor
+	useEffect(() => {
+		const handleOpenAuthModal = (event: CustomEvent) => {
+			const { view: modalView, reason } = event.detail || {};
+
+			if (modalView === "login") {
+				openLogin(pathname);
+			} else if (modalView === "signup") {
+				openSignup(pathname);
+			}
+		};
+
+		window.addEventListener(
+			"openAuthModal",
+			handleOpenAuthModal as EventListener
+		);
+
+		return () => {
+			window.removeEventListener(
+				"openAuthModal",
+				handleOpenAuthModal as EventListener
+			);
+		};
+	}, [pathname]);
 
 	const openLogin = (callback?: string) => {
 		setView("login");

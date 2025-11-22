@@ -122,7 +122,7 @@ export function NavbarSearch() {
 					value={searchQuery}
 					onChange={handleSearchChange}
 					onFocus={() => setOpen(true)}
-					className="w-full h-10 pl-9 pr-9 text-sm bg-green-50 dark:bg-gray-800 border border-green-200 dark:border-green-700 hover:border-green-300 focus:border-green-500 focus:ring-1 focus:ring-green-100 transition-all rounded-lg"
+					className="w-full h-10 pl-9 pr-9 text-sm  dark:bg-gray-800 border border-green-200 dark:border-green-700 hover:border-green-300 focus:border-green-500 focus:ring-1 focus:ring-green-100 transition-all rounded-lg"
 				/>
 				{searchQuery && (
 					<button

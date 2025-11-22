@@ -3,7 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -107,10 +106,8 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 					name="difficulty"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel className="text-lg font-semibold flex items-center gap-2">
-								<div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+							<FormLabel className="text-sm flex items-center gap-2 font-medium text-gray-700">
 								Difficulty Level
-								<span className="text-red-500">*</span>
 							</FormLabel>
 							<Select
 								onValueChange={(value) => {
@@ -121,7 +118,7 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 								}}
 								value={field.value}>
 								<FormControl>
-									<SelectTrigger className="h-14 text-base bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-purple-500 transition-all duration-200 shadow-sm">
+									<SelectTrigger className="h-14 w-full text-gray-700  bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-purple-500 transition-all duration-200 shadow-sm">
 										<SelectValue placeholder="Choose difficulty level" />
 									</SelectTrigger>
 								</FormControl>
@@ -139,9 +136,7 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 									))}
 								</SelectContent>
 							</Select>
-							<FormDescription className="text-sm text-gray-600">
-								Select the appropriate challenge level for this question
-							</FormDescription>
+
 							<FormMessage />
 						</FormItem>
 					)}
@@ -153,10 +148,8 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 					name="timeLimit"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel className="text-lg font-semibold flex items-center gap-2">
-								<div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+							<FormLabel className="text-sm font-medium text-gray-700 flex items-center gap-2">
 								Time Limit (minutes)
-								<span className="text-red-500">*</span>
 							</FormLabel>
 							<FormControl>
 								<div className="relative">
@@ -171,17 +164,14 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 											field.onChange(value);
 											onFormDataChange({ timeLimit: value });
 										}}
-										className="h-12 text-base bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-orange-500 transition-all duration-200 shadow-sm"
+										className="h-9 text-base bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-orange-500 transition-all duration-200 shadow-sm"
 									/>
 									<div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">
 										min
 									</div>
 								</div>
 							</FormControl>
-							<FormDescription className="text-sm text-gray-600 flex items-start gap-2">
-								<div className="w-1 h-1 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
-								Recommended time for candidates to solve this question
-							</FormDescription>
+
 							<FormMessage />
 						</FormItem>
 					)}
@@ -231,20 +221,18 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 
 			{/* Tags Section */}
 			<div className="space-y-4">
-				<FormLabel className="text-lg font-semibold flex items-center gap-2">
-					<div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
+				<FormLabel className="text-sm font-medium text-gray-700 ">
 					Tags
-					<span className="text-red-500">*</span>
 				</FormLabel>
 
 				{/* Current Tags */}
 				{tags.length > 0 && (
-					<div className="flex flex-wrap gap-2 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl">
+					<div className="flex flex-wrap gap-2 p-2 bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl">
 						{tags.map((tag, index) => (
 							<Badge
 								key={index}
 								variant="secondary"
-								className="flex items-center gap-2 text-sm py-2 px-3 bg-white/80 border border-indigo-300 hover:bg-white transition-colors">
+								className="flex text-gray-700 items-center gap-2 font-medium text-xs py-1 px-3 bg-white/80 border border-indigo-300 hover:bg-white transition-colors">
 								{tag}
 								<X
 									size={14}
@@ -264,13 +252,13 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 							value={tagInput}
 							onChange={(e) => setTagInput(e.target.value)}
 							onKeyPress={handleKeyPress}
-							className="flex-grow h-12 text-base bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-indigo-500 transition-all duration-200 shadow-sm"
+							className="flex-grow h-10 text-base bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-indigo-500 transition-all duration-200 shadow-sm"
 						/>
 						<Button
 							type="button"
 							onClick={addTag}
 							disabled={!tagInput.trim()}
-							className="h-12 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-200">
+							className="h-10 px-6 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-200">
 							<Plus size={16} className="mr-2" />
 							Add Tag
 						</Button>
@@ -305,12 +293,6 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 						</div>
 					</div>
 				</div>
-
-				<FormDescription className="text-sm text-gray-600 flex items-start gap-2">
-					<div className="w-1 h-1 bg-gray-400 rounded-full mt-2 flex-shrink-0"></div>
-					Add relevant tags to help categorize and search for this question. At
-					least one tag is required.
-				</FormDescription>
 
 				{form.formState.errors.tags && (
 					<p className="text-sm font-medium text-destructive mt-2 flex items-center gap-2">

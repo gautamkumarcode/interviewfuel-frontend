@@ -1,7 +1,7 @@
 "use client";
 
 import AuthTabs from "@/components/screens/auth/AuthTabs";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useAuthModal } from "@/context/AuthModalContext";
 import { useTheme } from "@/context/theme.context";
 import {
@@ -74,8 +74,7 @@ const AuthModalContent = () => {
 	return (
 		<div>
 			<Dialog open={isOpen} onOpenChange={closeModal}>
-				<DialogContent className="max-w-lg w-full p-0 bg-transparent border-none shadow-none">
-					<DialogTitle>{""}</DialogTitle>
+				<DialogContent className="max-w-lg w-full p-3 bg-transparent border-none shadow-none">
 					<AuthTabs initialTab={view} onSuccess={handleSuccess} />
 				</DialogContent>
 			</Dialog>

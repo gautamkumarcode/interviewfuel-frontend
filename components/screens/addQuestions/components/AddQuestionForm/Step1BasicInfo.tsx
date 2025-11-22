@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -75,40 +74,7 @@ export function Step1BasicInfo({ onFormDataChange }: Step1BasicInfoProps) {
 									</div>
 								</div>
 							</FormControl>
-							<FormDescription className="text-xs text-gray-500">
-								Write a clear, specific title for your question
-							</FormDescription>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-			</div>
 
-			{/* Question Content */}
-			<div className="space-y-1.5 group">
-				<FormField
-					control={form.control}
-					name="content"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel className="text-sm font-medium text-gray-700">
-								Question Content <span className="text-red-500">*</span>
-							</FormLabel>
-							<FormControl>
-								<RichTextEditor
-									content={field.value || ""}
-									onChange={(value: string) => {
-										field.onChange(value);
-										onFormDataChange({ content: value });
-									}}
-									placeholder="Describe the problem in detail. Include problem statement, input/output specs, constraints, and examples..."
-									minHeight="200px"
-								/>
-							</FormControl>
-							<FormDescription className="text-xs text-gray-500">
-								Use the toolbar to format your question with code blocks, lists,
-								and more
-							</FormDescription>
 							<FormMessage />
 						</FormItem>
 					)}
@@ -132,7 +98,7 @@ export function Step1BasicInfo({ onFormDataChange }: Step1BasicInfoProps) {
 											variant="outline"
 											disabled={categoriesLoading}
 											className="h-10 text-sm w-full justify-between">
-											<span className="truncate text-left">
+											<span className="truncate text-left text-gray-700 font-normal">
 												{field.value
 													? allCategories.find((cat) => cat._id === field.value)
 															?.name || "Unknown Category"
@@ -177,10 +143,35 @@ export function Step1BasicInfo({ onFormDataChange }: Step1BasicInfoProps) {
 									)}
 								</DropdownMenuContent>
 							</DropdownMenu>
-							<FormDescription className="text-xs text-gray-500">
-								Select the most relevant category
-							</FormDescription>
+
 							<FormMessage />
+							{/* Question Content */}
+							<div className="space-y-2 group">
+								<FormField
+									control={form.control}
+									name="content"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel className="text-sm font-medium text-gray-700">
+												Question Content <span className="text-red-500">*</span>
+											</FormLabel>
+											<FormControl>
+												<RichTextEditor
+													content={field.value || ""}
+													onChange={(value: string) => {
+														field.onChange(value);
+														onFormDataChange({ content: value });
+													}}
+													placeholder="Describe the problem in detail. Include problem statement, input/output specs, constraints, and examples..."
+													minHeight="200px"
+												/>
+											</FormControl>
+
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
 						</FormItem>
 					)}
 				/>

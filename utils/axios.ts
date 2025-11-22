@@ -130,10 +130,14 @@ authenticatedInstance.interceptors.response.use(
 				originalRequest.headers.Authorization = `Bearer ${newToken}`;
 				return authenticatedInstance(originalRequest);
 			} catch (refreshError) {
-				// Clear session and redirect on refresh failure
+				// Clear session and trigger auth modal on refresh failure
 				if (typeof window !== "undefined") {
 					await signOut({ redirect: false });
-					window.location.href = "/login?error=session_expired";
+					// Trigger auth modal instead of redirect
+					const event = new CustomEvent("openAuthModal", {
+						detail: { view: "login", reason: "session_expired" },
+					});
+					window.dispatchEvent(event);
 				}
 				return Promise.reject(refreshError);
 			} finally {
@@ -173,3 +177,4 @@ async function updateSession(newTokens: {
 }
 
 export { authenticatedInstance, unauthenticatedInstance };
+

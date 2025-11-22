@@ -73,7 +73,8 @@ export async function middleware(request: NextRequest) {
   if (isAuthRoute) {
     if (isValidSession) {
       // Redirect authenticated users away from auth pages
-      const redirectUrl = request.nextUrl.searchParams.get('callbackUrl') || '/dashboard';
+      const redirectUrl =
+				request.nextUrl.searchParams.get("callbackUrl") || "/";
       return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
     return NextResponse.next();

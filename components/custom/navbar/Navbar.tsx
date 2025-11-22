@@ -66,7 +66,6 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 	const { toast } = useTheme();
 	const [pathname, setPathname] = useState<string | null>(null);
 	const isMobile = useIsMobile();
-	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 	useEffect(() => {
 		const parts = urlPaths.split("/");

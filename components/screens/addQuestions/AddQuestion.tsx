@@ -309,8 +309,8 @@ const AddQuestion = ({ questionId }: AddQuestionProps) => {
 	}
 
 	return (
-		<div className="min-h-screen p-4 md:p-6">
-			<div className="max-w-5xl mx-auto">
+		<div className="min-h-screen ">
+			<div className="mx-auto">
 				{/* Simple Header */}
 				<div className="flex items-center justify-between mb-6">
 					<Button variant="ghost" onClick={onCancel} className="gap-2">
@@ -326,7 +326,9 @@ const AddQuestion = ({ questionId }: AddQuestionProps) => {
 						disabled={isDraft}
 						className="gap-2">
 						<Save className="h-4 w-4" />
-						{isDraft ? "Saving..." : "Save Draft"}
+						<span className="hidden md:flex">
+							{isDraft ? "Saving..." : "Save Draft"}
+						</span>
 					</Button>
 				</div>
 

@@ -1,4 +1,5 @@
-import axios from "axios";
+import { apiEndPoint } from "@/constants/api";
+import { authenticatedInstance, unauthenticatedInstance } from "@/utils/axios";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 
@@ -75,8 +76,8 @@ export const contributionService = {
 		questionId: string,
 		data: SubmitContributionData
 	) => {
-		const response = await axios.post(
-			`${API_URL}/questions/${questionId}/contribute`,
+		const response = await authenticatedInstance.post(
+			`${apiEndPoint.getAllQuestions}/${questionId}/contribute`,
 			data
 		);
 		return response.data;
@@ -85,8 +86,8 @@ export const contributionService = {
 	// Get contributions for a question
 	getQuestionContributions: async (questionId: string, status?: string) => {
 		const params = status ? { status } : {};
-		const response = await axios.get(
-			`${API_URL}/questions/${questionId}/contributions`,
+		const response = await unauthenticatedInstance.get(
+			`${apiEndPoint.getAllQuestions}/${questionId}/contributions`,
 			{ params }
 		);
 		return response.data;
@@ -94,22 +95,22 @@ export const contributionService = {
 
 	// Get user's contributions
 	getMyContributions: async () => {
-		const response = await axios.get(
-			`${API_URL}/contributions/my-contributions`
+		const response = await authenticatedInstance.get(
+			`/contributions/my-contributions`
 		);
 		return response.data;
 	},
 
 	// Get pending contributions (for author/admin)
 	getPendingContributions: async () => {
-		const response = await axios.get(`${API_URL}/contributions/pending`);
+		const response = await authenticatedInstance.get(`/contributions/pending`);
 		return response.data;
 	},
 
 	// Approve a contribution
 	approveContribution: async (contributionId: string, comment?: string) => {
-		const response = await axios.patch(
-			`${API_URL}/contributions/${contributionId}/approve`,
+		const response = await authenticatedInstance.patch(
+			`/contributions/${contributionId}/approve`,
 			{ comment }
 		);
 		return response.data;
@@ -117,8 +118,8 @@ export const contributionService = {
 
 	// Reject a contribution
 	rejectContribution: async (contributionId: string, comment: string) => {
-		const response = await axios.patch(
-			`${API_URL}/contributions/${contributionId}/reject`,
+		const response = await authenticatedInstance.patch(
+			`/contributions/${contributionId}/reject`,
 			{ comment }
 		);
 		return response.data;

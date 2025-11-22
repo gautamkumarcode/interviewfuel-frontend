@@ -25,7 +25,7 @@ export function AuthTabs({ initialTab = "login", onSuccess }: AuthTabsProps) {
 				value={activeTab}
 				onValueChange={setActiveTab}
 				className="w-full">
-				<TabsList className="grid w-full grid-cols-2 mb-4">
+				<TabsList className="grid w-full grid-cols-2 mb-4 h-12">
 					<TabsTrigger value="login">Login</TabsTrigger>
 					<TabsTrigger value="signup">Sign Up</TabsTrigger>
 				</TabsList>
