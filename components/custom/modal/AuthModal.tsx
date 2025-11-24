@@ -8,6 +8,7 @@ import {
 	useAuthModalFromUrl,
 	usePostLoginRedirect,
 } from "@/hooks/useAuthModalFromUrl";
+import { DialogTitle } from "@radix-ui/react-dialog";
 import { useRouter } from "next/navigation";
 import { Suspense, useEffect, useRef } from "react";
 
@@ -75,6 +76,9 @@ const AuthModalContent = () => {
 		<div>
 			<Dialog open={isOpen} onOpenChange={closeModal}>
 				<DialogContent className="max-w-lg w-full p-3 bg-transparent border-none shadow-none">
+					<DialogTitle className="sr-only">
+						{view === "login" ? "Login" : "Sign Up"}
+					</DialogTitle>
 					<AuthTabs initialTab={view} onSuccess={handleSuccess} />
 				</DialogContent>
 			</Dialog>

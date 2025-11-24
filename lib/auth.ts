@@ -1,4 +1,4 @@
-import { loginUser } from "@/services/authservices";
+import { loginUser, oauthLogin } from "@/services/authservices";
 import { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
@@ -9,10 +9,17 @@ export const authOptions: AuthOptions = {
 		GoogleProvider({
 			clientId: process.env.GOOGLE_CLIENT_ID!,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+			authorization: {
+				params: {
+					prompt: "consent",
+					access_type: "offline",
+					response_type: "code",
+				},
+			},
 		}),
 		GitHubProvider({
-			clientId: process.env.GITHUB_CLIENT_ID!,
-			clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+			clientId: process.env.OAUTH_GITHUB_CLIENT_ID!,
+			clientSecret: process.env.OAUTH_GITHUB_CLIENT_SECRET!,
 		}),
 		CredentialsProvider({
 			id: "credentials",
@@ -72,6 +79,36 @@ export const authOptions: AuthOptions = {
 		maxAge: 24 * 60 * 60, // 24 hours for better UX
 	},
 	callbacks: {
+		async signIn({ user, account }) {
+			// Handle OAuth sign in
+			if (account?.provider === "google" || account?.provider === "github") {
+				try {
+					const oauthData = {
+						email: user.email!,
+						name: user.name!,
+						oauthProvider: account.provider,
+						oauthId: account.providerAccountId,
+						avatar: user.image || null,
+					};
+
+					const response = await oauthLogin(oauthData);
+
+					if (response?.success && response?.data) {
+						// Store tokens in user object for jwt callback
+						user.id = response.data.user.id;
+						user.role = response.data.user.role;
+						user.accessToken = response.data.token;
+						user.refreshToken = response.data.refreshToken;
+						return true;
+					}
+					return false;
+				} catch (error) {
+					console.error("OAuth sign in error:", error);
+					return false;
+				}
+			}
+			return true;
+		},
 		async jwt({ token, user, trigger, session }) {
 			// Initial sign in
 			if (user) {

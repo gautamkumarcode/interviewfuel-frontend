@@ -83,3 +83,26 @@ export const handleSignOutAPI = async () => {
 	}
 };
 
+
+export const oauthLogin = async (oauthData: {
+	email: string;
+	name: string;
+	oauthProvider: string;
+	oauthId: string;
+	avatar: string | null;
+}) => {
+	try {
+		const response = await unauthenticatedInstance.post(
+			`${API_URL}${apiEndPoint.oauth}`,
+			oauthData
+		);
+		return response.data;
+	} catch (error: any) {
+		console.error("OAuth login service error:", {
+			message: error?.message,
+			response: error?.response?.data,
+			status: error?.response?.status,
+		});
+		throw error;
+	}
+};
