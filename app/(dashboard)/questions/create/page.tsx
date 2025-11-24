@@ -1,12 +1,14 @@
-import AddQuestionHOC from '@/components/screens/addQuestions/AddQuestionsHOC'
-import React from 'react'
+"use client";
 
-const page = () => {
-  return (
-    <div>
-      <AddQuestionHOC/>
-    </div>
-  )
-}
+import { AuthGuard } from "@/components/common";
+import AddQuestionHOC from "@/components/screens/addQuestions/AddQuestionsHOC";
 
-export default page
+const CreateQuestionPage = () => {
+	return (
+		<AuthGuard redirectMessage="Sign in to contribute questions to the platform">
+			<AddQuestionHOC />
+		</AuthGuard>
+	);
+};
+
+export default CreateQuestionPage;

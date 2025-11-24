@@ -8,8 +8,11 @@ export async function getProfileData(): Promise<User | null> {
 		const session = await getServerSession(authOptions);
 
 		if (!session?.accessToken) {
+			console.error("No access token in session");
 			return null;
 		}
+
+		console.log("Fetching profile from:", `${API_URL}/auth/me`);
 
 		const response = await fetch(`${API_URL}/auth/me`, {
 			headers: {
@@ -21,11 +24,20 @@ export async function getProfileData(): Promise<User | null> {
 		});
 
 		if (!response.ok) {
-			throw new Error("Failed to fetch profile data");
+			console.error(
+				"Profile fetch failed:",
+				response.status,
+				response.statusText
+			);
+			const errorText = await response.text();
+			console.error("Error response:", errorText);
+			throw new Error(`Failed to fetch profile data: ${response.status}`);
 		}
 
 		const data = await response.json();
-		return data.data; // Assuming your API returns { data: User }
+		console.log("Profile data received:", data);
+		// API returns { success: true, data: { user: User } }
+		return data.data?.user || data.data;
 	} catch (error) {
 		console.error("Error fetching profile data:", error);
 		return null;

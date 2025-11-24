@@ -3,31 +3,14 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 // Route configuration with more granular control
+// Note: Most routes are now protected by AuthGuard components and server-side checks
+// Middleware is only used for specific routes that need server-side protection
 const routeConfig = {
-  protected: [
-    "/dashboard",
-    "/profile",
-    "/settings",
-    "/account",
-    "/billing"
-  ],
-  // Remove auth routes since you're using modals instead of dedicated pages
-  auth: [
-    "/reset-password",
-    "/forgot-password"
-  ],
-  public: [
-    "/",
-    "/about",
-    "/contact",
-    "/pricing",
-    "/blog",
-    "/blog/:path*"
-  ],
-  api: [
-    "/api/auth",
-    "/api/public"
-  ]
+	protected: [],  // Empty - using AuthGuard and server-side checks instead
+	// Remove auth routes since you're using modals instead of dedicated pages
+	auth: ["/reset-password", "/forgot-password"],
+	public: ["/", "/about", "/contact", "/pricing", "/blog", "/blog/:path*"],
+	api: ["/api/auth", "/api/public"],
 };
 
 // Enhanced middleware with better session handling

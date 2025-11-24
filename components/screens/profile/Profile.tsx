@@ -4,7 +4,6 @@ import { PageLoader } from "@/components/custom/loader/PageLoader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useClusterData } from "@/context/clusterData-context";
 import { Achievement, Activity, User } from "@/types/user";
-import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,8 +11,8 @@ import { Clock, Star, Trophy } from "lucide-react";
 import AchievementCard from "./components/AchievementsCards";
 import ActivityItem from "./components/AchivementItems";
 import PerformanceMetrics from "./components/PerformmancMetrix";
-import ProfileHeader from "./components/ProfileHeader";
-import SettingsSection from "./components/SettingsTab";
+import ProfileHeaderNew from "./components/ProfileHeaderNew";
+import SettingsSectionNew from "./components/SettingsTabNew";
 import StatsOverview from "./components/StatsOverview";
 
 export function ProfilePage() {
@@ -22,34 +21,6 @@ export function ProfilePage() {
 		userLoading: isLoading,
 		userError,
 	} = useClusterData();
-	const [isEditing, setIsEditing] = useState(false);
-	const [editedData, setEditedData] = useState<Partial<User>>(
-		profile || {
-			name: "",
-			userName: "",
-			joinDate: new Date().toISOString(),
-			stats: {
-				questionsAnswered: 0,
-				practiceHours: 0,
-				currentStreak: 0,
-				completionRate: 0,
-				averageTime: 0,
-				totalSessions: 0,
-				longestStreak: 0,
-				favoriteCategory: "",
-			},
-			achievements: [],
-			recentActivity: [],
-			preferences: {
-				emailNotifications: false,
-				pushNotifications: false,
-				weeklyDigest: false,
-				practiceReminders: false,
-				publicProfile: false,
-				showStats: false,
-			},
-		}
-	);
 
 	if (!profile && !isLoading) {
 		return <div>No user data available</div>;
@@ -70,22 +41,13 @@ export function ProfilePage() {
 
 	const currentUserData = profile;
 
-
-	const handleExportData = () => {};
-
 	return (
 		<PageLoader
 			loading={isLoading}
 			error={userError ? userError?.message || "Failed to load profile" : null}
 			loadingText="Loading your profile...">
 			<div className="max-w-6xl mx-auto space-y-6">
-				<ProfileHeader
-					user={currentUserData}
-					isEditing={isEditing}
-					setIsEditing={setIsEditing}
-					editedData={editedData}
-					setEditedData={setEditedData}
-				/>
+				<ProfileHeaderNew user={currentUserData} />
 
 				{currentUserData?.stats ? (
 					<StatsOverview stats={currentUserData.stats} />
@@ -217,10 +179,7 @@ export function ProfilePage() {
 
 					<TabsContent value="settings" className="space-y-6">
 						{currentUserData?.preferences ? (
-							<SettingsSection
-								preferences={currentUserData.preferences}
-								onExportData={handleExportData}
-							/>
+							<SettingsSectionNew preferences={currentUserData.preferences} />
 						) : (
 							<Card>
 								<CardContent className="p-6 text-center text-gray-500">
