@@ -16,9 +16,15 @@ export default function DashboardLayout({
 	const [isHydrated, setIsHydrated] = useState(false);
 	const isMobile = useIsMobile();
 
-	// Get initial state from sessionStorage if available
+	// Get initial state - on mobile always start minimized, on desktop check sessionStorage
 	const getInitialMinimized = () => {
 		if (typeof window !== "undefined") {
+			// Check if we're on mobile first
+			const isMobileDevice = window.innerWidth < 768;
+			if (isMobileDevice) {
+				return true; // Always start minimized on mobile
+			}
+			// On desktop, check sessionStorage
 			return sessionStorage.getItem("minimized") === "true";
 		}
 		return false;
@@ -29,7 +35,12 @@ export default function DashboardLayout({
 
 	useEffect(() => {
 		// Set the correct initial state after hydration
-		setIsMinimized(getInitialMinimized());
+		const initialMinimized = getInitialMinimized();
+		setIsMinimized(initialMinimized);
+		if (isMobile) {
+			// Ensure mobile always starts minimized
+			sessionStorage.setItem("minimized", "true");
+		}
 		setIsHydrated(true);
 
 		const handleTransitionStart = () => {
@@ -107,7 +118,7 @@ export default function DashboardLayout({
 
 			{isMobile && !isMinimized && (
 				<div
-					className="fixed inset-0 bg-black/50 z-30"
+					className="fixed inset-0 bg-black/50 z-[998]"
 					onClick={() => {
 						setIsMinimized(true);
 						sessionStorage.setItem("minimized", "true");
@@ -122,7 +133,7 @@ export default function DashboardLayout({
 
 			{/* Navbar - using inline styles to prevent FOUC */}
 			<div
-				className="fixed top-0 z-40 min-h-[64px] bg-white dark:bg-primaryGreyBg"
+				className="fixed top-0 z-[1000] min-h-[64px] bg-white dark:bg-primaryGreyBg"
 				style={{
 					marginLeft: isMobile ? "0px" : `${sidebarWidth}px`,
 					width: isMobile ? "100vw" : `calc(100vw - ${sidebarWidth}px)`,

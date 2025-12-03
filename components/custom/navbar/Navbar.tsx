@@ -45,6 +45,7 @@ import {
 	Play,
 	Settings2,
 	ShieldCheck,
+	Users,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -127,7 +128,10 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 				<div className="flex items-center gap-2">
 					<Image src={"/logo.png"} alt="Logo" width={45} height={45} />
 
-					<Menu className="h-6 w-6 text-gray-600" onClick={toggleSidebar} />
+					<Menu
+						className="h-6 w-6 text-gray-600 cursor-pointer"
+						onClick={toggleSidebar}
+					/>
 				</div>
 			)}
 
@@ -364,6 +368,11 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
 									<DropdownMenuItem onClick={() => router.push("/categories")}>
 										<Settings2 className="h-4 w-4 mr-2" />
 										Category Management
+									</DropdownMenuItem>
+
+									<DropdownMenuItem onClick={() => router.push("/admin-users")}>
+										<Users className="h-4 w-4 mr-2" />
+										User Management
 									</DropdownMenuItem>
 								</AdminOnly>
 

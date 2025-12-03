@@ -144,15 +144,19 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 	);
 
 	useEffect(() => {
-		const getMinimized = sessionStorage.getItem("minimized");
-		// On mobile, start with sidebar minimized (hidden)
-		// Only set minimized to true on mobile if no saved preference exists
-		if (getMinimized !== null) {
-			setMinimized(JSON.parse(getMinimized));
-		} else if (isMobile !== undefined) {
-			setMinimized(isMobile); // true on mobile, false on desktop
+		// On mobile, always start with sidebar hidden (minimized = true)
+		// On desktop, check sessionStorage for saved preference
+		if (isMobile !== undefined) {
+			if (isMobile) {
+				// Always start minimized on mobile
+				setMinimized(true);
+				sessionStorage.setItem("minimized", "true");
+			} else {
+				// On desktop, use saved preference or default to false
+				const getMinimized = sessionStorage.getItem("minimized");
+				setMinimized(getMinimized !== null ? JSON.parse(getMinimized) : false);
+			}
 		}
-		// Don't do anything if isMobile is still undefined (hydrating)
 	}, [isMobile]);
 
 	// Listen for sidebar toggle events
@@ -496,7 +500,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 				"fixed top-0 bottom-0 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 flex flex-col shadow-sm",
 				// Mobile: higher z-index and slide from left, Desktop: normal positioning
 				isMobile
-					? "z-[999] left-0 transition-transform duration-300 ease-in-out"
+					? "z-[1001] left-0 transition-transform duration-300 ease-in-out"
 					: "left-0 transition-all duration-300",
 				// Width and padding based on minimized state
 				minimized
