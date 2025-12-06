@@ -45,6 +45,8 @@ jobs:
           ls -a
           echo "CHECKING .next folder:"
           ls -a .next
+      - name: Debug project structure
+        run: ls -R .
 
       # 7) Upload files to EC2
       - name: Upload files to EC2 using SCP
