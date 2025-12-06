@@ -17,7 +17,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Create .env file
         run: |
@@ -28,21 +27,21 @@ jobs:
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
           echo "OAUTH_GITHUB_CLIENT_ID=${{ secrets.OAUTH_GITHUB_CLIENT_ID }}" >> .env
           echo "OAUTH_GITHUB_CLIENT_SECRET=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}" >> .env
-        shell: bash
 
       - name: Install dependencies
         run: npm install
 
       - name: Build Next.js
         run: npm run build
-      - name: Debug build folder
-        run: |
-          echo "Checking root folder:"
-          ls -a
-          echo "Checking .next folder:"
-          ls -a .next || echo ".next does not exist"
 
-      - name: Upload build to EC2
+      - name: Verify build output
+        run: |
+          echo "Root files:"
+          ls -a
+          echo ".next folder:"
+          ls -a .next
+
+      - name: Upload files to EC2 using SCP
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -55,8 +54,8 @@ jobs:
             package-lock.json
             next.config.ts
             .env
-          target: /home/ec2-user/frontend
-          rm: true
+          target: /home/ec2-user/interviewfuel-frontend
+          overwrite: true
           debug: true
 
       - name: Restart PM2 on EC2
