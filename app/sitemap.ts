@@ -152,29 +152,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		getQuestions(),
 	]);
 
-	// Category pages
-	const categoryPages: MetadataRoute.Sitemap = categories.map(
-		(category: any) => ({
-			url: `${baseUrl}/questions/${
-				category.slug || category.name.toLowerCase().replace(/\s+/g, "-")
-			}`,
-			lastModified: new Date(category.updatedAt || new Date()),
-			changeFrequency: "weekly",
-			priority: 0.7,
-		})
-	);
+	// Category pages - ensure categories is an array
+	const categoryPages: MetadataRoute.Sitemap = Array.isArray(categories)
+		? categories.map((category: any) => ({
+				url: `${baseUrl}/questions/${
+					category.slug ||
+					category.name?.toLowerCase().replace(/\s+/g, "-") ||
+					"category"
+				}`,
+				lastModified: new Date(category.updatedAt || new Date()),
+				changeFrequency: "weekly" as const,
+				priority: 0.7,
+		  }))
+		: [];
 
-	// Question detail pages
-	const questionPages: MetadataRoute.Sitemap = questions.map(
-		(question: any) => ({
-			url: `${baseUrl}/questions/${question.category?.slug || "general"}/${
-				question.slug || question._id
-			}`,
-			lastModified: new Date(question.updatedAt || new Date()),
-			changeFrequency: "monthly",
-			priority: 0.6,
-		})
-	);
+	// Question detail pages - ensure questions is an array
+	const questionPages: MetadataRoute.Sitemap = Array.isArray(questions)
+		? questions.map((question: any) => ({
+				url: `${baseUrl}/questions/${question.category?.slug || "general"}/${
+					question.slug || question._id
+				}`,
+				lastModified: new Date(question.updatedAt || new Date()),
+				changeFrequency: "monthly" as const,
+				priority: 0.6,
+		  }))
+		: [];
 
 	return [...staticPages, ...categoryPages, ...questionPages];
 }
