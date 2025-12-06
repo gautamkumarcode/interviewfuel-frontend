@@ -11,17 +11,60 @@ export const siteConfig = {
 		github: "https://github.com/interviewfuel",
 	},
 	keywords: [
+		// Core interview keywords
+		"interview questions",
 		"interview preparation",
+		"coding interview questions",
+		"technical interview questions",
+		"programming interview questions",
+		"software engineer interview questions",
+		"developer interview questions",
+
+		// Interview types
 		"coding interview",
 		"technical interview",
 		"mock interview",
-		"interview questions",
+		"behavioral interview questions",
+		"system design interview",
+		"system design questions",
+
+		// Practice & preparation
 		"coding practice",
-		"system design",
-		"data structures",
-		"algorithms",
-		"software engineering",
-		"job interview",
+		"interview practice",
+		"leetcode alternative",
+		"hackerrank alternative",
+		"coding challenges",
+		"practice coding problems",
+
+		// Technical topics
+		"data structures interview questions",
+		"algorithms interview questions",
+		"javascript interview questions",
+		"react interview questions",
+		"python interview questions",
+		"java interview questions",
+		"node.js interview questions",
+		"sql interview questions",
+		"database interview questions",
+		"api interview questions",
+		"frontend interview questions",
+		"backend interview questions",
+		"full stack interview questions",
+
+		// Company-specific
+		"FAANG interview questions",
+		"Google interview questions",
+		"Amazon interview questions",
+		"Microsoft interview questions",
+		"Meta interview questions",
+		"Apple interview questions",
+
+		// Career & job search
+		"software engineering interview",
+		"job interview preparation",
+		"tech interview prep",
+		"get hired as developer",
+		"crack coding interview",
 		"career development",
 	],
 };
@@ -100,7 +143,7 @@ export function generateMetadata({
 			canonical: canonical || siteConfig.url,
 		},
 		verification: {
-			google: "your-google-verification-code",
+			google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || "",
 			// yandex: "your-yandex-verification-code",
 			// yahoo: "your-yahoo-verification-code",
 		},
@@ -217,5 +260,65 @@ export function generateCourseSchema() {
 			"Algorithms",
 			"System Design",
 		],
+	};
+}
+
+export function generateArticleSchema(article: {
+	title: string;
+	description: string;
+	author?: string;
+	datePublished: string;
+	dateModified?: string;
+	image?: string;
+	category?: string;
+}) {
+	return {
+		"@context": "https://schema.org",
+		"@type": "Article",
+		headline: article.title,
+		description: article.description,
+		image: article.image || siteConfig.ogImage,
+		datePublished: article.datePublished,
+		dateModified: article.dateModified || article.datePublished,
+		author: {
+			"@type": "Person",
+			name: article.author || siteConfig.name,
+		},
+		publisher: {
+			"@type": "Organization",
+			name: siteConfig.name,
+			logo: {
+				"@type": "ImageObject",
+				url: `${siteConfig.url}/logo.png`,
+			},
+		},
+		articleSection: article.category || "Interview Questions",
+		mainEntityOfPage: {
+			"@type": "WebPage",
+			"@id": siteConfig.url,
+		},
+	};
+}
+
+export function generateItemListSchema(
+	items: {
+		name: string;
+		url: string;
+		description?: string;
+	}[]
+) {
+	return {
+		"@context": "https://schema.org",
+		"@type": "ItemList",
+		itemListElement: items.map((item, index) => ({
+			"@type": "ListItem",
+			position: index + 1,
+			item: {
+				"@type": "Thing",
+				name: item.name,
+				url: item.url,
+				description: item.description,
+			},
+		})),
 	};
 }

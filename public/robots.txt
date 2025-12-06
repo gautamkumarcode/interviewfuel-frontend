@@ -1,0 +1,16 @@
+# robots.txt for InterviewFuel
+
+User-agent: *
+Allow: /
+
+# Disallow admin and private routes
+Disallow: /admin/
+Disallow: /api/
+Disallow: /_next/
+Disallow: /private/
+
+# Allow specific API endpoints for search engines
+Allow: /api/og
+
+# Sitemap location
+Sitemap: https://interviewfuel.dev/sitemap.xml

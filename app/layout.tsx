@@ -21,6 +21,10 @@ export const metadata: Metadata = {
 		apple: logo.src,
 	},
 	manifest: "/manifest.json",
+	other: {
+		"google-site-verification":
+			process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || "",
+	},
 };
 
 export const viewport: Viewport = {

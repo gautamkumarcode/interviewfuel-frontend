@@ -11,13 +11,18 @@ import { Metadata } from "next";
 export const metadata: Metadata = generateMetadata({
 	title: "Home",
 	description:
-		"Master your technical interviews with AI-powered mock interviews, 10,000+ practice questions, and instant feedback. Trusted by 50,000+ developers worldwide.",
+		"Free coding interview questions and practice platform. 10,000+ interview questions for JavaScript, Python, Java, React, System Design. Practice for Google, Amazon, Microsoft, Meta interviews. AI-powered mock interviews with instant feedback.",
 	keywords: [
-		"technical interview preparation",
+		"free interview questions",
 		"coding interview practice",
+		"technical interview preparation",
 		"system design interview",
 		"mock interview platform",
 		"interview questions database",
+		"leetcode free alternative",
+		"FAANG interview prep",
+		"software engineer interview",
+		"programming interview practice",
 	],
 });
 
