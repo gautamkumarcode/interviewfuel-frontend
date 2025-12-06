@@ -10,48 +10,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Checkout repo
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2) Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      # 3) Create environment variables file
+      # 1) Create env file inside the nested folder
       - name: Create .env file
         run: |
-          echo "NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" >> .env
-          echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
-          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> .env
-          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
-          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
-          echo "OAUTH_GITHUB_CLIENT_ID=${{ secrets.OAUTH_GITHUB_CLIENT_ID }}" >> .env
-          echo "OAUTH_GITHUB_CLIENT_SECRET=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}" >> .env
-        working-directory: ./interviewfuel-frontend
+          echo "NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" >> interviewfuel-frontend/.env
+          echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> interviewfuel-frontend/.env
+          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" >> interviewfuel-frontend/.env
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> interviewfuel-frontend/.env
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> interviewfuel-frontend/.env
+          echo "OAUTH_GITHUB_CLIENT_ID=${{ secrets.OAUTH_GITHUB_CLIENT_ID }}" >> interviewfuel-frontend/.env
+          echo "OAUTH_GITHUB_CLIENT_SECRET=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}" >> interviewfuel-frontend/.env
 
-      # 4) Install dependencies
+      # 2) Install dependencies
       - name: Install dependencies
-        run: npm install
-        working-directory: ./interviewfuel-frontend
+        run: |
+          cd interviewfuel-frontend
+          npm install
 
-      # 5) Build Next.js project
+      # 3) Build Next.js
       - name: Build Next.js
-        run: npm run build
-        working-directory: ./interviewfuel-frontend
+        run: |
+          cd interviewfuel-frontend
+          npm run build
 
-      # 6) Check output
+      # 4) Verify output
       - name: Verify build output
         run: |
+          cd interviewfuel-frontend
           echo "Root files:"
           ls -a
           echo ".next folder:"
           ls -a .next
-        working-directory: ./interviewfuel-frontend
 
-      # 7) Upload build to EC2 using SCP
+      # 5) Upload build files to EC2
       - name: Upload files to EC2 using SCP
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -59,18 +58,17 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           source: |
-            .next
-            public
-            package.json
-            package-lock.json
-            next.config.ts
-            .env
+            interviewfuel-frontend/.next
+            interviewfuel-frontend/public
+            interviewfuel-frontend/package.json
+            interviewfuel-frontend/package-lock.json
+            interviewfuel-frontend/next.config.ts
+            interviewfuel-frontend/.env
           target: /home/ec2-user/interviewfuel-frontend
           overwrite: true
           debug: true
-        working-directory: ./interviewfuel-frontend
 
-      # 8) Restart PM2 on EC2
+      # 6) Restart PM2 on EC2
       - name: Restart PM2 on EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
