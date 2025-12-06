@@ -39,6 +39,11 @@ jobs:
         run: npm run build
 
       # 6️⃣ Upload build to EC2 (SAFE)
+      - name: Show workspace files
+        run: |
+         pwd
+         ls -R
+
       - name: Upload build files to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
