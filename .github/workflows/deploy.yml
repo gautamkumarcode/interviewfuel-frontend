@@ -10,14 +10,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1) Checkout repo
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2) Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
+      # 3) Create environment variables file
       - name: Create .env file
         run: |
           echo "NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" >> .env
@@ -27,20 +30,28 @@ jobs:
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
           echo "OAUTH_GITHUB_CLIENT_ID=${{ secrets.OAUTH_GITHUB_CLIENT_ID }}" >> .env
           echo "OAUTH_GITHUB_CLIENT_SECRET=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}" >> .env
+        working-directory: ./interviewfuel-frontend
 
+      # 4) Install dependencies
       - name: Install dependencies
         run: npm install
+        working-directory: ./interviewfuel-frontend
 
+      # 5) Build Next.js project
       - name: Build Next.js
         run: npm run build
+        working-directory: ./interviewfuel-frontend
 
+      # 6) Check output
       - name: Verify build output
         run: |
           echo "Root files:"
           ls -a
           echo ".next folder:"
           ls -a .next
+        working-directory: ./interviewfuel-frontend
 
+      # 7) Upload build to EC2 using SCP
       - name: Upload files to EC2 using SCP
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -57,7 +68,9 @@ jobs:
           target: /home/ec2-user/interviewfuel-frontend
           overwrite: true
           debug: true
+        working-directory: ./interviewfuel-frontend
 
+      # 8) Restart PM2 on EC2
       - name: Restart PM2 on EC2
         uses: appleboy/ssh-action@v0.1.7
         with:
@@ -65,7 +78,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_KEY }}
           script: |
-            cd interviewfuel-frontend
+            cd /home/ec2-user/interviewfuel-frontend
             npm install --omit=dev
             pm2 restart frontend || pm2 start "npm start" --name frontend
             pm2 save
