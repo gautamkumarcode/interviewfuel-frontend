@@ -179,7 +179,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
               {unreadNotificationsCount > 0 && (
                 <Badge
                   variant={"destructive"}
-                  className="absolute top-[-15px] left-3 bg-red-500 w-fit z-20 cursor-pointer"
+                  className="absolute top-[-15px] left-3 bg-red-500 w-fit z-10 cursor-pointer"
                 >
                   <p>{unreadNotificationsCount}</p>
                 </Badge>
@@ -233,7 +233,7 @@ const Navbar = forwardRef<HTMLDivElement>((_props, ref) => {
                       </div>
 
                       <div className="text-xs flex flex-col items-end justify-start gap-1">
-                        <div className="h-7 w-7 z-50">
+                        <div className="h-7 w-7 relative">
                           <Trash2
                             className="h-7 w-7 rounded-full p-1 bg-primaryGreyBg text-red-500  hidden group-hover:flex "
                             onClick={(e) => {
