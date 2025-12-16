@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { SafeHtml } from "@/components/ui/safe-html";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useTheme } from "@/context/theme.context";
@@ -260,9 +261,9 @@ export function QuestionReviewDetailClient({
 					{question.content && (
 						<div>
 							<h3 className="text-lg font-semibold mb-2">Question Content</h3>
-							<div
+							<SafeHtml
+								html={question.content}
 								className="prose dark:prose-invert max-w-none"
-								dangerouslySetInnerHTML={{ __html: question.content }}
 							/>
 						</div>
 					)}
@@ -271,9 +272,9 @@ export function QuestionReviewDetailClient({
 					{question.richAnswer && (
 						<div>
 							<h3 className="text-lg font-semibold mb-2">Answer</h3>
-							<div
+							<SafeHtml
+								html={question.richAnswer}
 								className="prose dark:prose-invert max-w-none"
-								dangerouslySetInnerHTML={{ __html: question.richAnswer }}
 							/>
 						</div>
 					)}

@@ -1,4 +1,5 @@
 import LandingPage from "@/components/screens/landingPage/LandingPage";
+import { JsonLd } from "@/components/ui/json-ld";
 import {
 	generateCourseSchema,
 	generateFAQSchema,
@@ -112,30 +113,10 @@ const page = async () => {
 
 	return (
 		<>
-			<script
-				type="application/ld+json"
-				dangerouslySetInnerHTML={{
-					__html: JSON.stringify(organizationSchema),
-				}}
-			/>
-			<script
-				type="application/ld+json"
-				dangerouslySetInnerHTML={{
-					__html: JSON.stringify(websiteSchema),
-				}}
-			/>
-			<script
-				type="application/ld+json"
-				dangerouslySetInnerHTML={{
-					__html: JSON.stringify(courseSchema),
-				}}
-			/>
-			<script
-				type="application/ld+json"
-				dangerouslySetInnerHTML={{
-					__html: JSON.stringify(faqSchema),
-				}}
-			/>
+			<JsonLd data={organizationSchema} />
+			<JsonLd data={websiteSchema} />
+			<JsonLd data={courseSchema} />
+			<JsonLd data={faqSchema} />
 			<LandingPage initialStats={stats} />
 		</>
 	);

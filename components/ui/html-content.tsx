@@ -1,5 +1,7 @@
 "use client";
 
+import { SafeHtml } from "./safe-html";
+
 interface HtmlContentProps {
 	content: string;
 	className?: string;
@@ -32,12 +34,9 @@ export function HtmlContent({ content, className = "" }: HtmlContentProps) {
 	const isHtml = /<[^>]+>/.test(decodedContent);
 
 	if (isHtml) {
-		// Render as HTML with rich-content class for proper styling
+		// Render as HTML with rich-content class for proper styling using SafeHtml
 		return (
-			<div
-				className={`rich-content ${className}`}
-				dangerouslySetInnerHTML={{ __html: decodedContent }}
-			/>
+			<SafeHtml html={decodedContent} className={`rich-content ${className}`} />
 		);
 	}
 
