@@ -53,7 +53,7 @@ export function PauseOverlay({ isPaused, onResume }: PauseOverlayProps) {
 	const randomTip = tips[Math.floor(Math.random() * tips.length)];
 
 	return (
-		<div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+		<div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[9999] p-4">
 			<Card className="w-full max-w-md bg-white/95 backdrop-blur-sm border-white/20 shadow-2xl">
 				<CardHeader className="text-center pb-4">
 					<div className="flex justify-center mb-4">

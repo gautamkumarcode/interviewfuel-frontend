@@ -40,7 +40,7 @@ export function MobileSearch({ isOpen, onToggle }: MobileSearchProps) {
 
 			{/* Mobile Search Overlay */}
 			{isOpen && (
-				<div className="fixed inset-0 z-50 bg-white md:hidden">
+				<div className="fixed inset-0 z-[9999] bg-white md:hidden">
 					<div className="flex items-center gap-4 p-4 border-b border-gray-200">
 						<Button
 							variant="ghost"
