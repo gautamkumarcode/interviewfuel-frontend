@@ -76,27 +76,27 @@ export const SignupForm = ({ onSuccess }: Props) => {
 	};
 
 	return (
-		<div className="relative w-full max-w-xl mx-auto">
-			<div className="relative">
+		<div className="relative w-full max-w-xl mx-auto max-h-[90vh] overflow-y-auto">
+			<div className="relative py-2">
 				<div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-blue-500/10 to-indigo-500/10 rounded-3xl blur-sm -z-10"></div>
 
 				<div className="text-center mb-2">
-					<div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl mb-4 shadow-lg">
-						<UserPlus className="w-8 h-8 text-white" />
+					<div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-2xl mb-2 shadow-lg">
+						<UserPlus className="w-6 h-6 text-white" />
 					</div>
-					<h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-emerald-800 to-green-800 bg-clip-text text-transparent mb-2">
+					<h1 className="text-xl font-bold bg-gradient-to-r from-gray-900 via-emerald-800 to-green-800 bg-clip-text text-transparent mb-1">
 						Create Account
 					</h1>
 				</div>
 
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-						{/* Full Name Field */}
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+						{/* Name Field */}
 						<FormField
 							control={form.control}
 							name="name"
 							render={({ field }) => (
-								<FormItem className="space-y-2">
+								<FormItem className="space-y-1">
 									<FormLabel className="text-sm font-semibold text-gray-700">
 										Full Name
 									</FormLabel>
@@ -123,7 +123,7 @@ export const SignupForm = ({ onSuccess }: Props) => {
 							control={form.control}
 							name="username"
 							render={({ field }) => (
-								<FormItem className="space-y-2">
+								<FormItem className="space-y-1">
 									<FormLabel className="text-sm font-semibold text-gray-700">
 										Username
 									</FormLabel>
@@ -150,7 +150,7 @@ export const SignupForm = ({ onSuccess }: Props) => {
 							control={form.control}
 							name="email"
 							render={({ field }) => (
-								<FormItem className="space-y-2">
+								<FormItem className="space-y-1">
 									<FormLabel className="text-sm font-semibold text-gray-700">
 										Email Address
 									</FormLabel>
@@ -178,7 +178,7 @@ export const SignupForm = ({ onSuccess }: Props) => {
 							name="password"
 							control={form.control}
 							render={({ field }) => (
-								<FormItem className="space-y-2">
+								<FormItem className="space-y-1">
 									<FormLabel className="text-sm font-semibold text-gray-700">
 										Password
 									</FormLabel>
@@ -212,33 +212,33 @@ export const SignupForm = ({ onSuccess }: Props) => {
 						/>
 
 						{/* Submit Button */}
-						<div className="pt-2">
+						<div className="pt-0.5">
 							<CustomButton
 								content="Create Account"
 								isLoading={isLoading}
-								className="w-full py-3 h-12 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-blue-700 text-white font-semibold rounded-md shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
+								className="w-full py-2 h-9 text-sm bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-blue-700 text-white font-semibold rounded-md shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-300"
 							/>
 						</div>
 
 						{/* Divider */}
-						<div className="relative my-6">
+						<div className="relative my-2">
 							<div className="absolute inset-0 flex items-center">
 								<div className="w-full border-t border-gray-300"></div>
 							</div>
-							<div className="relative flex justify-center text-sm">
-								<span className="px-4 bg-white text-gray-500 font-medium">
+							<div className="relative flex justify-center text-xs">
+								<span className="px-3 bg-white text-gray-500 font-medium">
 									Or sign up with
 								</span>
 							</div>
 						</div>
 
 						{/* OAuth Buttons */}
-						<div className="grid grid-cols-2 gap-4">
+						<div className="grid grid-cols-2 gap-2">
 							<button
 								type="button"
 								onClick={() => signIn("google", { callbackUrl })}
 								disabled={isLoading}
-								className="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-200 rounded-md hover:border-red-300 hover:bg-red-50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group">
+								className="flex items-center justify-center gap-1.5 px-3 py-2 bg-white border-2 border-gray-200 rounded-md hover:border-red-300 hover:bg-red-50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group">
 								<svg className="w-5 h-5" viewBox="0 0 24 24">
 									<path
 										fill="#4285F4"
@@ -263,21 +263,32 @@ export const SignupForm = ({ onSuccess }: Props) => {
 								type="button"
 								onClick={() => signIn("github", { callbackUrl })}
 								disabled={isLoading}
-								className="flex items-center justify-center gap-2 px-4 py-3 bg-white border-2 border-gray-200 rounded-md hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group">
+								className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border-2 border-gray-200 rounded-md hover:border-gray-400 hover:bg-gray-50 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed group">
 								<svg
 									className="w-5 h-5"
 									viewBox="0 0 24 24"
-									fill="currentColor">
-									<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-								</svg>
-								<span className="font-medium text-gray-700">GitHub</span>
+									fill="currentColor"
+									d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207
+									11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729
+									1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304
+									3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931
+									0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0
+									0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404
+									1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23
+									3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911
+									1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823
+									1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589
+									8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"></svg>
+								<span className="font-medium text-gray-700 text-sm">
+									GitHub
+								</span>
 							</button>
 						</div>
 					</form>
 				</Form>
 				{/* Login link */}
-				<div className="text-center mt-4">
-					<p className="text-gray-600 font-medium">
+				<div className="text-center mt-2 pb-2">
+					<p className="text-sm text-gray-600 font-medium">
 						Already have an account?{" "}
 						<button
 							type="button"

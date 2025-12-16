@@ -103,6 +103,39 @@ export default function DashboardLayout({
 		}
 	}, [sidebarWidth, navbarHeight, isHydrated]);
 
+	// Force layout recalculation when auth state might change
+	useEffect(() => {
+		const handleStorageChange = () => {
+			const currentMinimized = sessionStorage.getItem("minimized") === "true";
+			if (currentMinimized !== isMinimized) {
+				setIsMinimized(currentMinimized);
+			}
+		};
+
+		// Listen for storage changes and visibility changes
+		window.addEventListener("storage", handleStorageChange);
+		window.addEventListener("focus", handleStorageChange);
+
+		return () => {
+			window.removeEventListener("storage", handleStorageChange);
+			window.removeEventListener("focus", handleStorageChange);
+		};
+	}, [isMinimized]);
+
+	// Handle screen size changes - auto-minimize sidebar on mobile
+	useEffect(() => {
+		if (isMobile && !isMinimized) {
+			// When switching to mobile, immediately minimize sidebar
+			setIsMinimized(true);
+			sessionStorage.setItem("minimized", "true");
+			window.dispatchEvent(
+				new CustomEvent("sidebarToggle", {
+					detail: { minimized: true },
+				})
+			);
+		}
+	}, [isMobile, isMinimized]);
+
 	// Show loading state during hydration
 	if (!isHydrated) {
 		return (

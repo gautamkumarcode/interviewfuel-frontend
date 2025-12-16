@@ -19,13 +19,13 @@ export function AuthTabs({ initialTab = "login", onSuccess }: AuthTabsProps) {
 	}, [initialTab]);
 
 	return (
-		<div className="w-full max-w-lg mx-auto p-8 bg-white rounded-lg shadow-md">
+		<div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md max-h-[95vh] overflow-hidden">
 			<Tabs
 				defaultValue={initialTab}
 				value={activeTab}
 				onValueChange={setActiveTab}
 				className="w-full">
-				<TabsList className="grid w-full grid-cols-2 mb-4 h-12">
+				<TabsList className="grid w-full grid-cols-2 mb-2 h-10">
 					<TabsTrigger value="login">Login</TabsTrigger>
 					<TabsTrigger value="signup">Sign Up</TabsTrigger>
 				</TabsList>
