@@ -32,6 +32,7 @@ export default function DashboardLayout({
 
 	const [isMinimized, setIsMinimized] = useState(false); // Start with false to prevent hiding
 	const [isTransitioning, setIsTransitioning] = useState(false);
+	const [prevIsMobile, setPrevIsMobile] = useState<boolean | null>(null);
 
 	useEffect(() => {
 		// Set the correct initial state after hydration
@@ -122,19 +123,24 @@ export default function DashboardLayout({
 		};
 	}, [isMinimized]);
 
-	// Handle screen size changes - auto-minimize sidebar on mobile
+	// Handle screen size changes - auto-minimize sidebar ONLY when switching TO mobile
 	useEffect(() => {
-		if (isMobile && !isMinimized) {
-			// When switching to mobile, immediately minimize sidebar
-			setIsMinimized(true);
-			sessionStorage.setItem("minimized", "true");
-			window.dispatchEvent(
-				new CustomEvent("sidebarToggle", {
-					detail: { minimized: true },
-				})
-			);
+		// Only run if we have a previous state to compare
+		if (prevIsMobile !== null) {
+			// If we just switched from desktop to mobile and sidebar is open
+			if (isMobile && !prevIsMobile && !isMinimized) {
+				setIsMinimized(true);
+				sessionStorage.setItem("minimized", "true");
+				window.dispatchEvent(
+					new CustomEvent("sidebarToggle", {
+						detail: { minimized: true },
+					})
+				);
+			}
 		}
-	}, [isMobile, isMinimized]);
+		// Update the previous mobile state
+		setPrevIsMobile(isMobile ?? false);
+	}, [isMobile]); // Only depend on isMobile, not isMinimized
 
 	// Show loading state during hydration
 	if (!isHydrated) {
