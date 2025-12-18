@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const LandingInput = () => {
   const placeholders = [
@@ -35,7 +35,7 @@ const LandingInput = () => {
     }, typingForward ? 100 : 50);
 
     return () => clearTimeout(timeout);
-  }, [charIndex, typingForward, placeholderIndex]);
+  }, [charIndex, typingForward, placeholderIndex, placeholders]);
 
   return (
     <form>

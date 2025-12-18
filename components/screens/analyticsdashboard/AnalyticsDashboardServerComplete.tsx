@@ -6,9 +6,9 @@ import { PerformanceTrendsServer } from "@/components/custom/analytics/Performan
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-	ActivityPatterns,
-	AIInsightsData,
-	DashboardAnalytics,
+    ActivityPatterns,
+    AIInsightsData,
+    DashboardAnalytics,
 } from "@/services/analytics/analytics-services";
 import { Award, Clock, Target, TrendingUp } from "lucide-react";
 
@@ -215,7 +215,6 @@ export function AnalyticsDashboardServerComplete({
 				<TabsContent value="activity">
 					<ActivityPatternServer
 						activityData={activityData}
-						timeRange={timeRange}
 					/>
 				</TabsContent>
 

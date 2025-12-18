@@ -10,8 +10,7 @@ interface ActivityPatternServerProps {
 
 export function ActivityPatternServer({
 	activityData,
-	timeRange,
-}: ActivityPatternServerProps) {
+}: Omit<ActivityPatternServerProps, 'timeRange'>) {
 	const getIntensityColor = (level: number) => {
 		switch (level) {
 			case 0:

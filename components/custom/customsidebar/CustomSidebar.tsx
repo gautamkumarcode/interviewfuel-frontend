@@ -7,29 +7,29 @@ import { cn } from "@/lib/utils";
 import logo from "@/public/logo.png";
 import { CategoryType } from "@/services/categories/category-services";
 import {
-	BookOpen,
-	Brain,
-	ChevronDown,
-	ChevronLeft,
-	ChevronUp,
-	Code2,
-	Database,
-	Globe,
-	Search,
-	Settings,
-	Smartphone,
-	TrendingUp,
+    BookOpen,
+    Brain,
+    ChevronDown,
+    ChevronLeft,
+    ChevronUp,
+    Code2,
+    Database,
+    Globe,
+    Search,
+    Settings,
+    Smartphone,
+    TrendingUp,
 } from "lucide-react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useRouter } from "nextjs-toploader/app";
 import {
-	forwardRef,
-	useEffect,
-	useLayoutEffect,
-	useMemo,
-	useRef,
-	useState,
+    forwardRef,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState,
 } from "react";
 import { NavbarSearch } from "../navbar/NavbarSearch";
 
@@ -39,6 +39,7 @@ interface CategoryNode extends CategoryType {
 	children?: CategoryNode[];
 }
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getCategoryIcon = (categoryName: string, iconName?: string) => {
 	const classes = "h-4 w-4";
 
@@ -417,6 +418,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 							<div className="absolute left-0 top-0 bottom-0 w-px bg-gradient-to-b from-green-200 via-gray-200 to-transparent dark:from-green-800 dark:via-gray-700"></div>
 
 							<div className="space-y-1 pl-4">
+								{/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
 								{category.children!.map((child, index) => {
 									const isChildActive = activeChild === child.name;
 									// const isLastChild = index === category.children!.length - 1;

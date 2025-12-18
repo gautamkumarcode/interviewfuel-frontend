@@ -5,6 +5,7 @@ interface PerformanceTrendsServerProps {
 	performanceData?: any;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PerformanceTrendsServer({ performanceData }: PerformanceTrendsServerProps) {
 	return (
 		<div className="space-y-6">

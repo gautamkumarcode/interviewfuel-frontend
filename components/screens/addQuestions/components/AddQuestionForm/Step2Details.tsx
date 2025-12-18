@@ -2,19 +2,19 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
 import { Plus, Settings, X } from "lucide-react";
 import React, { useState } from "react";
@@ -106,7 +106,7 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 					name="difficulty"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel className="text-sm flex items-center gap-2 font-medium text-gray-700">
+							<FormLabel className="text-sm flex items-center gap-2 font-semibold text-gray-700 dark:text-gray-300">
 								Difficulty Level
 							</FormLabel>
 							<Select
@@ -118,18 +118,21 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 								}}
 								value={field.value}>
 								<FormControl>
-									<SelectTrigger className="h-14 w-full text-gray-700  bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-purple-500 transition-all duration-200 shadow-sm">
+									<SelectTrigger className="h-11 w-full text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 focus:ring-2 ring-purple-500/20 transition-all duration-200 shadow-sm rounded-xl">
 										<SelectValue placeholder="Choose difficulty level" />
 									</SelectTrigger>
 								</FormControl>
-								<SelectContent>
+								<SelectContent className="border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 rounded-xl shadow-xl">
 									{difficultyOptions.map((option) => (
-										<SelectItem key={option.value} value={option.value}>
+										<SelectItem 
+											key={option.value} 
+											value={option.value}
+											className="cursor-pointer py-3 focus:bg-purple-50 dark:focus:bg-purple-900/20 rounded-lg m-1">
 											<div className="flex items-center gap-3">
 												<div
-													className={`w-3 h-3 ${option.color} rounded-full`}></div>
+													className={`w-3 h-3 ${option.color} rounded-full ring-2 ring-white dark:ring-gray-900 shadow-sm`}></div>
 												<div>
-													<div className="font-medium">{option.label}</div>
+													<div className="font-medium text-gray-900 dark:text-gray-100">{option.label}</div>
 												</div>
 											</div>
 										</SelectItem>
@@ -148,11 +151,11 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 					name="timeLimit"
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel className="text-sm font-medium text-gray-700 flex items-center gap-2">
+							<FormLabel className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex items-center gap-2">
 								Time Limit (minutes)
 							</FormLabel>
 							<FormControl>
-								<div className="relative">
+								<div className="relative group/input">
 									<Input
 										type="number"
 										placeholder="30"
@@ -164,9 +167,9 @@ export function Step2Details({ onFormDataChange }: Step2DetailsProps) {
 											field.onChange(value);
 											onFormDataChange({ timeLimit: value });
 										}}
-										className="h-9 text-base bg-white/80 backdrop-blur-sm border-2 border-gray-200 focus:border-orange-500 transition-all duration-200 shadow-sm"
+										className="h-11 text-base bg-white dark:bg-gray-950 border-gray-200 dark:border-gray-800 focus:ring-2 ring-orange-500/20 transition-all duration-200 shadow-sm rounded-xl pr-12"
 									/>
-									<div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-400">
+									<div className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-md">
 										min
 									</div>
 								</div>

@@ -64,16 +64,17 @@ export default function DashboardLayout({
 			handleSidebarToggle as EventListener
 		);
 
-		if (sidebarRef.current) {
-			sidebarRef.current.addEventListener(
+		// Capture ref value for cleanup
+		const currentSidebar = sidebarRef.current;
+		if (currentSidebar) {
+			currentSidebar.addEventListener(
 				"transitionstart",
 				handleTransitionStart
 			);
-			sidebarRef.current.addEventListener("transitionend", handleTransitionEnd);
+			currentSidebar.addEventListener("transitionend", handleTransitionEnd);
 		}
 
 		return () => {
-			const currentSidebar = sidebarRef.current;
 			window.removeEventListener(
 				"sidebarToggle",
 				handleSidebarToggle as EventListener
@@ -89,7 +90,7 @@ export default function DashboardLayout({
 				);
 			}
 		};
-	}, []); // Calculate widths based on minimized state and mobile
+	}, [isMobile]); // Calculate widths based on minimized state and mobile
 	// On mobile, sidebar width should be 0 for layout calculations (overlay mode)
 	// On desktop, normal sidebar width logic applies
 	const sidebarWidth = isMobile ? 0 : isMinimized ? 56 : 288;
@@ -140,7 +141,7 @@ export default function DashboardLayout({
 		}
 		// Update the previous mobile state
 		setPrevIsMobile(isMobile ?? false);
-	}, [isMobile]); // Only depend on isMobile, not isMinimized
+	}, [isMobile, isMinimized, prevIsMobile]); // Dependencies for mobile transition logic
 
 	// Show loading state during hydration
 	if (!isHydrated) {

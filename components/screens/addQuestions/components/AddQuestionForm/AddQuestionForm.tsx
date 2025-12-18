@@ -1,17 +1,15 @@
 "use client";
 import { categoryService } from "@/services/categories/category-services";
 import {
-	AlertCircle,
-	Badge,
-	CheckCircle2,
-	Code,
-	FileText,
-	Lightbulb,
-	Settings,
-	Target,
+    AlertCircle,
+    Badge,
+    CheckCircle2,
+    Code,
+    FileText,
+    Lightbulb,
+    Settings,
+    Target,
 } from "lucide-react";
-import { useState } from "react";
-import { useFieldArray } from "react-hook-form";
 import { useQuery } from "react-query";
 import { z } from "zod";
 import { questionSchema } from "../validation/StepsFormSchema";
@@ -34,50 +32,13 @@ export function AddQuestionForm({
 	currentStep,
 	onFormDataChange,
 }: AddQuestionFormProps) {
-	const [tagInput, setTagInput] = useState("");
-	const [tags, setTags] = useState<string[]>([]);
-
 	// Fetch categories
-	const { data: categoriesData, isLoading: categoriesLoading } = useQuery(
+	const { data: categoriesData } = useQuery(
 		["allcategories"],
 		() => categoryService.getAllCategories()
 	);
 
-	const categories = categoriesData?.data?.results || [];
-	const allCategories = categories.flatMap((cat) => [
-		{ _id: cat._id, name: cat.name },
-		...(cat.subcategories || []).map((sub) => ({
-			_id: sub._id,
-			name: sub.name,
-		})),
-	]);
 
-	const {
-		fields: solutionFields,
-		append: appendSolution,
-		remove: removeSolution,
-	} = useFieldArray({
-		control: form.control,
-		name: "solutions",
-	});
-
-	const {
-		fields: companyFields,
-		append: appendCompany,
-		remove: removeCompany,
-	} = useFieldArray({
-		control: form.control,
-		name: "companies",
-	});
-
-	const {
-		fields: hintFields,
-		append: appendHint,
-		remove: removeHint,
-	} = useFieldArray({
-		control: form.control,
-		name: "hints",
-	});
 
 	const stepConfig = [
 		{
