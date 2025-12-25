@@ -192,35 +192,39 @@ export default function Questions() {
 	return (
 		<>
 			{/* Enhanced Header with Loading States */}
-			<div className="mb-6">
-				<div className="flex items-center gap-3 mb-2">
+			<div className="mb-4 sm:mb-6 px-2 sm:px-0">
+				<div className="flex items-center gap-2 sm:gap-3 mb-2">
 					{isInitialLoading ? (
 						<div className="space-y-2">
-							<div className="h-8 w-64 bg-gradient-to-r from-gray-200 to-gray-300 rounded animate-pulse"></div>
+							<div className="h-6 sm:h-8 w-48 sm:w-64 bg-gradient-to-r from-gray-200 to-gray-300 rounded animate-pulse"></div>
 						</div>
 					) : (
-						<h1 className="text-2xl font-bold text-gray-900">
+						<h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
 							{categoryName} Questions
 						</h1>
 					)}
 				</div>
 
 				{isInitialLoading ? (
-					<div className="h-5 w-96 bg-gradient-to-r from-gray-200 to-gray-300 rounded animate-pulse"></div>
+					<div className="h-4 sm:h-5 w-64 sm:w-96 bg-gradient-to-r from-gray-200 to-gray-300 rounded animate-pulse"></div>
 				) : (
-					<p className="text-gray-600">
+					<p className="text-sm sm:text-base text-gray-600">
 						Master {categoryName} concepts with targeted practice questions
 					</p>
 				)}
 
 				{/* Category Info */}
 				{matchedCategoryOrSubcategory && !isInitialLoading && (
-					<div className="mt-3 flex items-center gap-2">
-						<Badge variant="outline" className="text-xs">
-							{filteredQuestions.length} questions available
+					<div className="mt-2 sm:mt-3 flex flex-wrap items-center gap-1.5 sm:gap-2">
+						<Badge
+							variant="outline"
+							className="text-[10px] sm:text-xs px-2 py-0.5">
+							{filteredQuestions.length} questions
 						</Badge>
 						{matchedCategoryOrSubcategory.stats && (
-							<Badge variant="secondary" className="text-xs">
+							<Badge
+								variant="secondary"
+								className="text-[10px] sm:text-xs px-2 py-0.5">
 								{matchedCategoryOrSubcategory.stats.questionCount} total in
 								category
 							</Badge>
@@ -230,25 +234,25 @@ export default function Questions() {
 			</div>
 
 			{/* Action Buttons */}
-			<div className="flex items-center gap-4 mb-6">
+			<div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 mb-4 sm:mb-6 px-2 sm:px-0">
 				{isInitialLoading ? (
 					<>
-						<div className="h-10 w-32 bg-gradient-to-r from-gray-200 to-gray-300 rounded-md animate-pulse"></div>
-						<div className="h-10 w-28 bg-gradient-to-r from-gray-200 to-gray-300 rounded-md animate-pulse"></div>
+						<div className="h-9 sm:h-10 w-full sm:w-32 bg-gradient-to-r from-gray-200 to-gray-300 rounded-md animate-pulse"></div>
+						<div className="h-9 sm:h-10 w-full sm:w-28 bg-gradient-to-r from-gray-200 to-gray-300 rounded-md animate-pulse"></div>
 					</>
 				) : (
 					<>
 						<Button
 							onClick={() => router.push("/practice")}
-							className="gap-2 bg-green-600 hover:bg-green-700">
-							<Clock className="h-4 w-4" />
+							className="gap-2 bg-green-600 hover:bg-green-700 text-sm sm:text-base px-3 sm:px-4">
+							<Clock className="h-3 w-3 sm:h-4 sm:w-4" />
 							Practice {categoryName}
 						</Button>
 						<Button
 							variant="outline"
-							className="gap-2 bg-transparent"
+							className="gap-2 bg-transparent text-sm sm:text-base px-3 sm:px-4"
 							onClick={() => router.push("/analytics")}>
-							<TrendingUp className="h-4 w-4" />
+							<TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
 							View Progress
 						</Button>
 					</>
@@ -290,8 +294,8 @@ export default function Questions() {
 					{filteredQuestions.length > 0 ? (
 						<>
 							{/* Results Summary */}
-							<div className="flex items-center justify-between mb-4 p-4 bg-gray-50 rounded-lg">
-								<div className="text-sm text-gray-600">
+							<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3 sm:mb-4 p-3 sm:p-4 bg-gray-50 rounded-lg mx-2 sm:mx-0">
+								<div className="text-xs sm:text-sm text-gray-600">
 									Showing{" "}
 									<span className="font-semibold text-gray-900">
 										{filteredQuestions.length}
@@ -318,69 +322,72 @@ export default function Questions() {
 								<Card
 									key={question.id || index}
 									onClick={() => handleCardClick(question)}
-									className="border-gray-200 hover:shadow-lg transition-all duration-300 hover:border-gray-300 cursor-pointer group bg-white hover:bg-gray-50">
-									<CardContent className="">
-										<div className="flex items-start justify-between gap-4">
-											<div className="flex-1">
-												<div className="flex items-center gap-3 mb-3">
+									className="border-gray-200 hover:shadow-lg transition-all duration-300 hover:border-gray-300 cursor-pointer group bg-white hover:bg-gray-50 mx-2 sm:mx-0">
+									<CardContent className="p-3 sm:p-4 md:p-6">
+										<div className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-4">
+											<div className="flex-1 w-full">
+												<div className="flex flex-wrap items-center gap-1.5 sm:gap-2 md:gap-3 mb-2 sm:mb-3">
 													<Badge
 														className={`${getDifficultyColor(
 															question.difficulty
-														)} font-medium`}>
+														)} font-medium text-[10px] sm:text-xs px-2 py-0.5`}>
 														{question.difficulty}
 													</Badge>
 													<Badge
 														variant="outline"
-														className="text-xs bg-blue-50 text-blue-700 border-blue-200">
+														className="text-[10px] sm:text-xs bg-blue-50 text-blue-700 border-blue-200 px-2 py-0.5">
 														{question.category?.name || "Uncategorized"}
 													</Badge>
 													{question.timeLimit && (
 														<Badge
 															variant="secondary"
-															className="text-xs bg-gray-100 text-gray-600">
-															<Clock className="h-3 w-3 mr-1" />
+															className="text-[10px] sm:text-xs bg-gray-100 text-gray-600 px-2 py-0.5">
+															<Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3 mr-0.5 sm:mr-1" />
 															{question.timeLimit}min
 														</Badge>
 													)}
 												</div>
 
-												<h3 className="text-lg font-semibold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors leading-tight">
+												<h3 className="text-sm sm:text-base md:text-lg font-semibold text-gray-900 mb-2 sm:mb-3 group-hover:text-blue-600 transition-colors leading-tight">
 													{question.title}
 												</h3>
 
 												{question.tags && question.tags.length > 0 && (
-													<div className="flex flex-wrap gap-2 mb-4">
+													<div className="flex flex-wrap gap-1 sm:gap-1.5 md:gap-2 mb-3 sm:mb-4">
 														{question.tags.slice(0, 5).map((tag, tagIndex) => (
 															<Badge
 																key={`${tag}-${tagIndex}`}
 																variant="secondary"
-																className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+																className="text-[10px] sm:text-xs bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors px-1.5 sm:px-2 py-0.5">
 																{tag}
 															</Badge>
 														))}
 														{question.tags.length > 5 && (
 															<Badge
 																variant="secondary"
-																className="text-xs bg-gray-100 text-gray-500">
+																className="text-[10px] sm:text-xs bg-gray-100 text-gray-500 px-1.5 sm:px-2 py-0.5">
 																+{question.tags.length - 5} more
 															</Badge>
 														)}
 													</div>
 												)}
 
-												<div className="flex items-center gap-6 text-sm text-gray-500">
-													<div className="flex items-center gap-1.5">
-														<Star className="h-4 w-4 text-yellow-500" />
+												<div className="flex items-center gap-3 sm:gap-4 md:gap-6 text-xs sm:text-sm text-gray-500">
+													<div className="flex items-center gap-1 sm:gap-1.5">
+														<Star className="h-3 w-3 sm:h-4 sm:w-4 text-yellow-500" />
 														<span className="font-medium">
 															{question.stats?.likes || 0}
 														</span>
 													</div>
-													<div className="flex items-center gap-1.5">
-														<Users className="h-4 w-4 text-blue-500" />
-														<span>{question.stats?.views || 0} views</span>
+													<div className="flex items-center gap-1 sm:gap-1.5">
+														<Users className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500" />
+														<span>
+															{question.stats?.views || 0}
+															<span className="hidden sm:inline"> views</span>
+														</span>
 													</div>
-													<div className="flex items-center gap-1.5">
-														<Clock className="h-4 w-4 text-gray-400" />
+													<div className="hidden sm:flex items-center gap-1 sm:gap-1.5">
+														<Clock className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
 														<span>
 															{new Date(question.createdAt).toLocaleDateString(
 																"en-US",
@@ -395,9 +402,9 @@ export default function Questions() {
 												</div>
 											</div>
 
-											<div className="flex flex-col items-center gap-2">
-												<ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
-												<div className="text-xs text-gray-400 group-hover:text-gray-600 transition-colors">
+											<div className="hidden sm:flex flex-col items-center gap-1 sm:gap-2">
+												<ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
+												<div className="text-[10px] sm:text-xs text-gray-400 group-hover:text-gray-600 transition-colors">
 													View
 												</div>
 											</div>
@@ -407,32 +414,32 @@ export default function Questions() {
 							))}
 						</>
 					) : (
-						<Card className="border-gray-200 bg-gray-50">
-							<CardContent className="p-12 text-center">
+						<Card className="border-gray-200 bg-gray-50 mx-2 sm:mx-0">
+							<CardContent className="p-6 sm:p-8 md:p-12 text-center">
 								<div className="max-w-md mx-auto">
-									<div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-										<Users className="h-8 w-8 text-gray-400" />
+									<div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+										<Users className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400" />
 									</div>
-									<h3 className="text-xl font-semibold text-gray-900 mb-2">
+									<h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
 										No Questions Available
 									</h3>
-									<p className="text-gray-600 mb-6">
+									<p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
 										{categoryName && categoryName !== "All Questions"
 											? `We're working on adding questions for ${categoryName}. Check back soon!`
 											: "No questions are available at the moment. Please try selecting a different category."}
 									</p>
-									<div className="flex flex-col sm:flex-row gap-3 justify-center">
+									<div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center">
 										<Button
 											variant="outline"
 											onClick={() => router.push("/questions")}
-											className="gap-2">
-											<TrendingUp className="h-4 w-4" />
+											className="gap-2 text-sm sm:text-base">
+											<TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
 											Browse All Categories
 										</Button>
 										<Button
 											onClick={() => router.push("/practice")}
-											className="gap-2 bg-green-600 hover:bg-green-700">
-											<Clock className="h-4 w-4" />
+											className="gap-2 bg-green-600 hover:bg-green-700 text-sm sm:text-base">
+											<Clock className="h-3 w-3 sm:h-4 sm:w-4" />
 											Start Practice Mode
 										</Button>
 									</div>
