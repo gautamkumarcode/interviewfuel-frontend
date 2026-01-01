@@ -76,7 +76,7 @@ export const SignupForm = ({ onSuccess }: Props) => {
 	};
 
 	return (
-		<div className="relative w-full max-w-xl mx-auto max-h-[90vh] overflow-y-auto">
+		<div className="relative w-full max-w-xl mx-auto">
 			<div className="relative py-2">
 				<div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-blue-500/10 to-indigo-500/10 rounded-3xl blur-sm -z-10"></div>
 

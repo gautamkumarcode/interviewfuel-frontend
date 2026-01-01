@@ -60,7 +60,7 @@ const LoginForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 	};
 
 	return (
-		<div className="relative w-full max-w-md mx-auto max-h-[90vh] overflow-y-auto">
+		<div className="relative w-full max-w-md mx-auto">
 			<div className="relative py-3">
 				<div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-3xl blur-sm -z-10"></div>
 				<div className="text-center mb-3">

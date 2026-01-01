@@ -19,7 +19,7 @@ export function AuthTabs({ initialTab = "login", onSuccess }: AuthTabsProps) {
 	}, [initialTab]);
 
 	return (
-		<div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md max-h-[95vh] overflow-hidden">
+		<div className="w-full max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
 			<Tabs
 				defaultValue={initialTab}
 				value={activeTab}

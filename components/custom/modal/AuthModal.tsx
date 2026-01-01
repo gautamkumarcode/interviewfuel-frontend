@@ -75,7 +75,7 @@ const AuthModalContent = () => {
 	return (
 		<div>
 			<Dialog open={isOpen} onOpenChange={closeModal}>
-				<DialogContent className="max-w-lg w-full p-3 bg-transparent border-none shadow-none">
+				<DialogContent className="max-w-lg w-full p-3 bg-transparent border-none shadow-none max-h-[90vh] overflow-y-auto">
 					<DialogTitle className="sr-only">
 						{view === "login" ? "Login" : "Sign Up"}
 					</DialogTitle>
