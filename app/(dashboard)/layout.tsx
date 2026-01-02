@@ -2,6 +2,7 @@
 
 import { HashLoader } from "@/components/custom";
 import Sidebar from "@/components/custom/customsidebar/CustomSidebar";
+import { CategoryNavbar } from "@/components/custom/navbar/CategoryNavbar";
 import Navbar from "@/components/custom/navbar/Navbar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useEffect, useRef, useState } from "react";
@@ -67,10 +68,7 @@ export default function DashboardLayout({
 		// Capture ref value for cleanup
 		const currentSidebar = sidebarRef.current;
 		if (currentSidebar) {
-			currentSidebar.addEventListener(
-				"transitionstart",
-				handleTransitionStart
-			);
+			currentSidebar.addEventListener("transitionstart", handleTransitionStart);
 			currentSidebar.addEventListener("transitionend", handleTransitionEnd);
 		}
 
@@ -90,11 +88,15 @@ export default function DashboardLayout({
 				);
 			}
 		};
-	}, [isMobile]); // Calculate widths based on minimized state and mobile
+	}, [isMobile]);
+
+	// Calculate widths based on minimized state and mobile
 	// On mobile, sidebar width should be 0 for layout calculations (overlay mode)
 	// On desktop, normal sidebar width logic applies
 	const sidebarWidth = isMobile ? 0 : isMinimized ? 56 : 288;
 	const navbarHeight = 64; // Default navbar height
+	const categoryNavbarHeight = 48; // Category navbar height
+	const totalHeaderHeight = navbarHeight + categoryNavbarHeight;
 
 	// Apply CSS variables to root element
 	useEffect(() => {
@@ -173,7 +175,7 @@ export default function DashboardLayout({
 
 			{/* Navbar - using inline styles to prevent FOUC */}
 			<div
-				className="fixed top-0 z-[1000] min-h-[64px] bg-white dark:bg-primaryGreyBg"
+				className="fixed top-0 z-[1000]"
 				style={{
 					marginLeft: isMobile ? "0px" : `${sidebarWidth}px`,
 					width: isMobile ? "100vw" : `calc(100vw - ${sidebarWidth}px)`,
@@ -182,6 +184,7 @@ export default function DashboardLayout({
 						: "margin-left 300ms ease-in-out, width 300ms ease-in-out",
 				}}>
 				<Navbar ref={navbarRef} />
+				<CategoryNavbar />
 			</div>
 
 			{/* Main content - using inline styles to prevent FOUC */}
@@ -189,9 +192,9 @@ export default function DashboardLayout({
 				className="overflow-auto p-4"
 				style={{
 					marginLeft: isMobile ? "0px" : `${sidebarWidth}px`,
-					marginTop: `${navbarHeight}px`,
+					marginTop: `${totalHeaderHeight}px`,
 					width: isMobile ? "100vw" : `calc(100vw - ${sidebarWidth}px)`,
-					height: `calc(100vh - ${navbarHeight}px)`,
+					height: `calc(100vh - ${totalHeaderHeight}px)`,
 					transition: isTransitioning
 						? "none"
 						: "margin-left 300ms ease-in-out, width 300ms ease-in-out",
