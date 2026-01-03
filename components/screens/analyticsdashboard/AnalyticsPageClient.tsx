@@ -41,49 +41,55 @@ export function AnalyticsPageClient({
 
 	return (
 		<div className="min-h-screen">
-			<div className="max-w-7xl mx-auto">
-				{/* Header with controls - Fully Responsive */}
-				<div className="flex flex-col gap-4 mb-6 sm:mb-8">
-					{/* Top row: Back button and title */}
-					<div className="flex items-start gap-2 sm:gap-4">
+			<div className="mx-auto">
+				{/* Modern Header Design */}
+				<div className="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+					{/* Top Section: Back Button */}
+					<div className="mb-4">
 						<Button
 							variant="ghost"
 							onClick={handleExit}
-							className="gap-2 shrink-0 px-2 sm:px-4">
-							<ArrowLeft className="h-6 w-6" />
-							<span className="hidden sm:inline">Back</span>
+							size="sm"
+							className="gap-1.5 px-2 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 -ml-2">
+							<ArrowLeft className="h-4 w-4" />
+							<span className="text-sm font-medium">Back</span>
 						</Button>
-						<div className="flex-1 ">
-							<h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">
+					</div>
+
+					{/* Main Header Section */}
+					<div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+						{/* Title Section */}
+						<div className="flex-1 min-w-0">
+							<h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-2 tracking-tight">
 								Analytics Dashboard
 							</h1>
-							<p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
+							<p className="text-base text-gray-500 dark:text-gray-400">
 								Track your learning progress and performance
 							</p>
 						</div>
-					</div>
 
-					{/* Bottom row: Time range selector */}
-					<div className="flex items-center justify-between sm:justify-end gap-3">
-						<Select
-							value={timeRange}
-							onValueChange={handleTimeRangeChange}
-							disabled={isPending}>
-							<SelectTrigger className="w-full sm:w-40">
-								<SelectValue />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="7">Last 7 days</SelectItem>
-								<SelectItem value="30">Last 30 days</SelectItem>
-								<SelectItem value="90">Last 3 months</SelectItem>
-								<SelectItem value="365">Last year</SelectItem>
-							</SelectContent>
-						</Select>
-						{isPending && (
-							<div className="text-xs sm:text-sm text-gray-500 whitespace-nowrap">
-								Loading...
-							</div>
-						)}
+						{/* Time Range Selector */}
+						<div className="flex items-center gap-3 sm:shrink-0">
+							<Select
+								value={timeRange}
+								onValueChange={handleTimeRangeChange}
+								disabled={isPending}>
+								<SelectTrigger className="w-[160px] bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 h-10 font-medium">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="7">Last 7 days</SelectItem>
+									<SelectItem value="30">Last 30 days</SelectItem>
+									<SelectItem value="90">Last 3 months</SelectItem>
+									<SelectItem value="365">Last year</SelectItem>
+								</SelectContent>
+							</Select>
+							{isPending && (
+								<div className="text-sm text-gray-400 dark:text-gray-500 whitespace-nowrap animate-pulse">
+									Updating...
+								</div>
+							)}
+						</div>
 					</div>
 				</div>
 

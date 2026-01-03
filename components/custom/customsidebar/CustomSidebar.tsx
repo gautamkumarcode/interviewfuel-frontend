@@ -7,21 +7,21 @@ import { cn } from "@/lib/utils";
 import logo from "@/public/logo.png";
 import { CategoryType } from "@/services/categories/category-services";
 import {
-    BookOpen,
-    Brain,
-    ChevronDown,
-    ChevronLeft,
-    ChevronUp,
-    Code2,
-    Database,
-    Globe,
-    Search,
-    Settings,
-    Smartphone,
-    TrendingUp,
+	BookOpen,
+	Brain,
+	ChevronDown,
+	ChevronLeft,
+	ChevronUp,
+	Code2,
+	Database,
+	Globe,
+	Search,
+	Settings,
+	Smartphone,
+	TrendingUp,
 } from "lucide-react";
 import Image from "next/image";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useRouter } from "nextjs-toploader/app";
 import {
 	forwardRef,
@@ -112,10 +112,8 @@ const buildCategoryTree = (categories: CategoryType[]): CategoryNode[] => {
 
 const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 	const param = useParams();
-	const searchParams = useSearchParams();
 	const router = useRouter();
 	const params = param?.category || "";
-	const categoryParam = searchParams.get("category");
 	const isMobile = useIsMobile();
 
 	const headerRef = useRef<HTMLDivElement>(null);
@@ -125,9 +123,6 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 	const [activeParent, setActiveParent] = useState<string | null>(null);
 	const [activeChild, setActiveChild] = useState<string | null>(null);
 	const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-	const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
-		null
-	);
 	const { categoryData, categoryLoading } = useClusterData();
 
 	// On mobile, "minimized" means hidden, but we still want to show full content when open
@@ -208,7 +203,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 		// Check if we're on /questions route with category query parameter
 		const currentPath = window.location.pathname;
 		const urlParams = new URLSearchParams(window.location.search);
-		const categoryParamFromUrl = urlParams.get("category");
+		const categoryParam = urlParams.get("category");
 
 		// Reset active states first
 		setActiveParent(null);
@@ -250,17 +245,15 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 			return null;
 		};
 
-		if (currentPath === "/questions" && categoryParamFromUrl) {
+		if (currentPath === "/questions" && categoryParam) {
 			// Handle /questions?category=some-category
-			const decodedParam =
-				decodeURIComponent(categoryParamFromUrl).toLowerCase();
+			const decodedParam = decodeURIComponent(categoryParam).toLowerCase();
 
 			const foundCategory = findCategoryInTree(categoryTree, decodedParam);
 			if (foundCategory) {
 				if (!foundCategory.parentCategory) {
 					// It's a parent category
 					setActiveParent(foundCategory.name);
-					setSelectedCategoryId(foundCategory._id);
 					// Expand this category
 					setExpandedItems((prev) => new Set(prev).add(foundCategory._id));
 				} else {
@@ -269,7 +262,6 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 					if (parent) {
 						setActiveParent(parent.name);
 						setActiveChild(foundCategory.name);
-						setSelectedCategoryId(parent._id);
 						// Expand the parent category
 						setExpandedItems((prev) => new Set(prev).add(parent._id));
 					}
@@ -284,23 +276,18 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 				// Check if it's a parent category or a child category
 				if (!foundCategory.parentCategory) {
 					setActiveParent(foundCategory.name);
-					setSelectedCategoryId(foundCategory._id);
 					setExpandedItems((prev) => new Set(prev).add(foundCategory._id));
 				} else {
 					const parent = findParent(categoryTree, foundCategory._id);
 					if (parent) {
 						setActiveParent(parent.name);
 						setActiveChild(foundCategory.name);
-						setSelectedCategoryId(parent._id);
 						setExpandedItems((prev) => new Set(prev).add(parent._id));
 					}
 				}
 			}
-		} else {
-			// No category selected, reset
-			setSelectedCategoryId(null);
 		}
-	}, [categoryTree, params, categoryParam]);
+	}, [categoryTree, params]);
 
 	const handleResize = () => {
 		const newVal = !minimized;
@@ -590,13 +577,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 										<div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded"></div>
 									</div>
 							  ))
-							: renderCategoryTree(
-									selectedCategoryId
-										? categoryTree.filter(
-												(cat) => cat._id === selectedCategoryId
-										  )
-										: categoryTree
-							  )}
+							: renderCategoryTree(categoryTree)}
 					</div>
 				) : (
 					<div className="flex flex-col gap-2 items-center py-2">
@@ -606,10 +587,7 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 										key={index}
 										className="h-8 w-8 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-md animate-pulse shadow-sm"></div>
 							  ))
-							: (selectedCategoryId
-									? categoryTree.filter((cat) => cat._id === selectedCategoryId)
-									: categoryTree
-							  ).map((item) => {
+							: categoryTree.map((item) => {
 									const isActive = activeParent === item.name;
 									return (
 										<div

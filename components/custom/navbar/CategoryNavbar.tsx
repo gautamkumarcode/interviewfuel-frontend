@@ -9,6 +9,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import HashLoader from "../loader/Loader";
 
 interface CategoryWithChildren extends CategoryType {
 	subcategories?: CategoryType[];
@@ -85,7 +86,9 @@ export function CategoryNavbar() {
 
 	if (loading) {
 		return (
-			<div className="w-full h-12 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 animate-pulse" />
+			<div className="w-full h-12 border-b border-gray-200 dark:border-gray-800 flex items-center justify-center">
+				<HashLoader size={24} color="#19c862" />
+			</div>
 		);
 	}
 
