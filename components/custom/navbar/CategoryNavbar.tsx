@@ -10,8 +10,12 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+interface CategoryWithChildren extends CategoryType {
+	subcategories?: CategoryType[];
+}
+
 export function CategoryNavbar() {
-	const [categories, setCategories] = useState<CategoryType[]>([]);
+	const [categories, setCategories] = useState<CategoryWithChildren[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [showLeftArrow, setShowLeftArrow] = useState(false);
 	const [showRightArrow, setShowRightArrow] = useState(false);
@@ -25,11 +29,23 @@ export function CategoryNavbar() {
 			try {
 				const response = await categoryService.getAllCategories();
 				if (response.success && response.data?.results) {
-					// Filter only active parent categories (no parentCategory)
-					const activeCategories = response.data.results
+					const allCategories = response.data.results;
+
+					// Build parent categories with their subcategories
+					const parentCategories = allCategories
 						.filter((cat) => cat.isActive && !cat.parentCategory)
-						.sort((a, b) => a.order - b.order);
-					setCategories(activeCategories);
+						.sort((a, b) => a.order - b.order)
+						.map((parent) => ({
+							...parent,
+							subcategories: allCategories
+								.filter(
+									(child) =>
+										child.isActive && child.parentCategory === parent._id
+								)
+								.sort((a, b) => a.order - b.order),
+						}));
+
+					setCategories(parentCategories);
 				}
 			} catch (error) {
 				console.error("Failed to fetch categories:", error);
@@ -105,20 +121,50 @@ export function CategoryNavbar() {
 					All
 				</Link>
 				{categories.map((category) => {
-					const isActive =
+					const isParentActive =
 						activeCategorySlug?.toLowerCase() === category.slug.toLowerCase();
+
 					return (
-						<Link
-							key={category._id}
-							href={`/questions?category=${category.slug}`}
-							className={cn(
-								"flex-shrink-0 px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap",
-								isActive
-									? "text-primary font-semibold"
-									: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
-							)}>
-							{category.name}
-						</Link>
+						<div key={category._id} className="flex items-center gap-1">
+							{/* Parent Category */}
+							<Link
+								href={`/questions?category=${category.slug}`}
+								className={cn(
+									"flex-shrink-0 px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap",
+									isParentActive
+										? "text-primary font-semibold"
+										: "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
+								)}>
+								{category.name}
+							</Link>
+
+							{/* Subcategories */}
+							{category.subcategories && category.subcategories.length > 0 && (
+								<>
+									<span className="text-gray-400 dark:text-gray-600 text-xs">
+										•
+									</span>
+									{category.subcategories.map((subcat) => {
+										const isSubActive =
+											activeCategorySlug?.toLowerCase() ===
+											subcat.slug.toLowerCase();
+										return (
+											<Link
+												key={subcat._id}
+												href={`/questions?category=${subcat.slug}`}
+												className={cn(
+													"flex-shrink-0 px-2 py-1 rounded-full text-xs font-normal transition-all whitespace-nowrap",
+													isSubActive
+														? "text-primary font-semibold"
+														: "text-gray-500 dark:text-gray-500 hover:text-gray-800 dark:hover:text-gray-300"
+												)}>
+												{subcat.name}
+											</Link>
+										);
+									})}
+								</>
+							)}
+						</div>
 					);
 				})}
 			</div>
