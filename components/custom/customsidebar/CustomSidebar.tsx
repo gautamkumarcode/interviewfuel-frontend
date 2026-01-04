@@ -21,7 +21,7 @@ import {
 	TrendingUp,
 } from "lucide-react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useRouter } from "nextjs-toploader/app";
 import {
 	forwardRef,
@@ -113,7 +113,9 @@ const buildCategoryTree = (categories: CategoryType[]): CategoryNode[] => {
 const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 	const param = useParams();
 	const router = useRouter();
+	const searchParams = useSearchParams();
 	const params = param?.category || "";
+	const categoryQueryParam = searchParams.get("category");
 	const isMobile = useIsMobile();
 
 	const headerRef = useRef<HTMLDivElement>(null);
@@ -202,8 +204,6 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 
 		// Check if we're on /questions route with category query parameter
 		const currentPath = window.location.pathname;
-		const urlParams = new URLSearchParams(window.location.search);
-		const categoryParam = urlParams.get("category");
 
 		// Reset active states first
 		setActiveParent(null);
@@ -245,25 +245,34 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 			return null;
 		};
 
-		if (currentPath === "/questions" && categoryParam) {
+		if (currentPath === "/questions" && categoryQueryParam) {
 			// Handle /questions?category=some-category
-			const decodedParam = decodeURIComponent(categoryParam).toLowerCase();
+			const decodedParam = decodeURIComponent(categoryQueryParam).toLowerCase();
 
 			const foundCategory = findCategoryInTree(categoryTree, decodedParam);
 			if (foundCategory) {
 				if (!foundCategory.parentCategory) {
-					// It's a parent category
+					// It's a parent category - set it active and expand to show children
 					setActiveParent(foundCategory.name);
-					// Expand this category
-					setExpandedItems((prev) => new Set(prev).add(foundCategory._id));
+					setActiveChild(null); // Clear child selection
+					// Always expand parent to show its children
+					setExpandedItems((prev) => {
+						const newSet = new Set(prev);
+						newSet.add(foundCategory._id);
+						return newSet;
+					});
 				} else {
-					// It's a child category
+					// It's a child category - set parent active and this child active
 					const parent = findParent(categoryTree, foundCategory._id);
 					if (parent) {
 						setActiveParent(parent.name);
 						setActiveChild(foundCategory.name);
-						// Expand the parent category
-						setExpandedItems((prev) => new Set(prev).add(parent._id));
+						// Expand the parent category to show children
+						setExpandedItems((prev) => {
+							const newSet = new Set(prev);
+							newSet.add(parent._id);
+							return newSet;
+						});
 					}
 				}
 			}
@@ -276,18 +285,29 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 				// Check if it's a parent category or a child category
 				if (!foundCategory.parentCategory) {
 					setActiveParent(foundCategory.name);
-					setExpandedItems((prev) => new Set(prev).add(foundCategory._id));
+					setActiveChild(null);
+					// Always expand parent to show its children
+					setExpandedItems((prev) => {
+						const newSet = new Set(prev);
+						newSet.add(foundCategory._id);
+						return newSet;
+					});
 				} else {
 					const parent = findParent(categoryTree, foundCategory._id);
 					if (parent) {
 						setActiveParent(parent.name);
 						setActiveChild(foundCategory.name);
-						setExpandedItems((prev) => new Set(prev).add(parent._id));
+						// Expand the parent category to show children
+						setExpandedItems((prev) => {
+							const newSet = new Set(prev);
+							newSet.add(parent._id);
+							return newSet;
+						});
 					}
 				}
 			}
 		}
-	}, [categoryTree, params]);
+	}, [categoryTree, params, categoryQueryParam]);
 
 	const handleResize = () => {
 		const newVal = !minimized;

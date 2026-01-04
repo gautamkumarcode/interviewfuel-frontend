@@ -184,8 +184,10 @@ export default function DashboardLayout({
 						: "margin-left 300ms ease-in-out, width 300ms ease-in-out",
 				}}>
 				<Navbar ref={navbarRef} />
-				<CategoryNavbar />
 			</div>
+
+			{/* Category Navbar - fixed positioning handled within component */}
+			<CategoryNavbar />
 
 			{/* Main content - using inline styles to prevent FOUC */}
 			<main

@@ -178,27 +178,30 @@ export const QuestionDetailView = ({
 					</div>
 				</div>
 			) : (
-				<div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-					{/* Header */}
-					<div className="bg-white border-b shadow-sm sticky -top-4 z-[999]">
-						<div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
-							<div className="flex items-center justify-between py-2 sm:py-4 gap-2">
+				<div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+					{/* Modern Sticky Header */}
+					<div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky -top-[20px] z-40 shadow-sm">
+						<div className=" mx-auto px-4 sm:px-6 lg:px-8">
+							<div className="flex items-center justify-between py-3 sm:py-4">
+								{/* Left: Back Button */}
 								<Button
 									variant="ghost"
 									size="sm"
 									onClick={onBack}
-									className="gap-1 sm:gap-2 hover:bg-gray-100 px-2 sm:px-3">
+									className="gap-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 -ml-2">
 									<ChevronLeft className="h-4 w-4" />
-									<span className="hidden md:inline">Back</span>
+									<span className="font-medium">Back</span>
 								</Button>
-								<div className="flex items-center gap-1 sm:gap-2 md:gap-3 flex-wrap">
+
+								{/* Right: Action Buttons */}
+								<div className="flex items-center gap-2">
 									{canEditQuestion() && (
 										<Button
 											variant="outline"
 											size="sm"
 											onClick={handleEditQuestion}
-											className="gap-1 sm:gap-2 bg-green-50 border-green-200 text-green-700 hover:bg-green-100 px-2 sm:px-3">
-											<Edit className="h-3 w-3 sm:h-4 sm:w-4" />
+											className="gap-1.5">
+											<Edit className="h-4 w-4" />
 											<span className="hidden sm:inline">Edit</span>
 										</Button>
 									)}
@@ -206,118 +209,107 @@ export const QuestionDetailView = ({
 										variant="outline"
 										size="sm"
 										onClick={() => setContributionModalOpen(true)}
-										className="gap-1 sm:gap-2 bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100 px-2 sm:px-3">
-										<GitPullRequest className="h-3 w-3 sm:h-4 sm:w-4" />
-										<span className="hidden md:inline">Contribute</span>
+										className="gap-1.5">
+										<GitPullRequest className="h-4 w-4" />
+										<span className="hidden sm:inline">Contribute</span>
 									</Button>
 									<Button
 										variant={checkIsLiked() ? "default" : "outline"}
 										size="sm"
 										onClick={handleLikes}
-										className="gap-1 sm:gap-2 px-2 sm:px-3">
-										<ThumbsUp className="h-3 w-3 sm:h-4 sm:w-4" />
-										<span className="hidden sm:inline">
-											{question.stats?.likes || 0}
-										</span>
+										className="gap-1.5">
+										<ThumbsUp className="h-4 w-4" />
+										<span>{question.stats?.likes || 0}</span>
 									</Button>
 									<Button
 										variant={isBookmarked ? "default" : "outline"}
 										size="sm"
 										onClick={handleBookmarks}
-										className="gap-1 sm:gap-2 px-2 sm:px-3">
-										<Bookmark className="h-3 w-3 sm:h-4 sm:w-4" />
-										<span className="hidden md:inline">Save</span>
+										className="gap-1.5">
+										<Bookmark className="h-4 w-4" />
 									</Button>
-									<Button
-										variant="outline"
-										size="sm"
-										className="gap-1 sm:gap-2 px-2 sm:px-3">
-										<Share2 className="h-3 w-3 sm:h-4 sm:w-4" />
-										<span className="hidden md:inline">Share</span>
+									<Button variant="outline" size="sm" className="gap-1.5">
+										<Share2 className="h-4 w-4" />
 									</Button>
 								</div>
 							</div>
 						</div>
 					</div>
 
-					<div className="mx-auto py-4 sm:py-6 md:py-8 px-2 sm:px-4">
-						{/* Question Header */}
-						<Card className="mb-4 sm:mb-6 overflow-hidden border-0 shadow-lg p-0">
-							<div className="bg-gradient-to-r from-green-100 to-purple-100 p-4 sm:p-6">
-								<div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+					{/* Main Content */}
+					<div className=" mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+						{/* Question Header Card */}
+						<Card className="mb-6 border-0 shadow-sm overflow-hidden p-0">
+							{/* Gradient Header */}
+							<div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-700 px-6 py-8 sm:px-8 sm:py-10">
+								{/* Badges */}
+								<div className="flex flex-wrap items-center gap-2 mb-4">
 									<Badge
 										className={`${getDifficultyColor(
 											question.difficulty
-										)} font-semibold px-2 sm:px-3 py-1 text-xs sm:text-sm`}>
+										)} font-semibold px-3 py-1`}>
 										{question.difficulty}
 									</Badge>
 									<Badge
 										variant="secondary"
-										className="bg-white/20 border-0 text-xs sm:text-sm px-2 sm:px-3">
+										className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm">
 										{question.category?.name || question.subcategory}
 									</Badge>
 									{question.timeLimit && (
 										<Badge
 											variant="secondary"
-											className="bg-white/20 border-0 gap-1 text-xs sm:text-sm px-2 sm:px-3">
+											className="bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm gap-1">
 											<Clock className="h-3 w-3" />
 											{question.timeLimit} min
 										</Badge>
 									)}
 								</div>
-								<h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight">
+
+								{/* Title */}
+								<h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white leading-tight mb-6">
 									{question.title}
 								</h1>
-							</div>
 
-							<div className="p-4 sm:p-6">
-								{/* Stats */}
-								<div className="flex flex-wrap items-center gap-3 sm:gap-4 md:gap-6 text-xs sm:text-sm text-gray-600 mb-4 sm:mb-6 pb-4 sm:pb-6 border-b">
-									<div className="flex items-center gap-1.5 sm:gap-2">
-										<Eye className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
-										<span>
-											{question.stats?.views || 0}
-											<span className="hidden sm:inline"> views</span>
-										</span>
+								{/* Stats Bar */}
+								<div className="flex flex-wrap items-center gap-4 sm:gap-6 text-sm text-gray-600 dark:text-gray-300">
+									<div className="flex items-center gap-2">
+										<Eye className="h-4 w-4" />
+										<span>{question.stats?.views || 0} views</span>
 									</div>
-									<div className="flex items-center gap-1.5 sm:gap-2">
-										<ThumbsUp className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
-										<span>
-											{question.stats?.likes || 0}
-											<span className="hidden sm:inline"> likes</span>
-										</span>
+									<div className="flex items-center gap-2">
+										<MessageSquare className="h-4 w-4" />
 									</div>
-									<div className="flex items-center gap-1.5 sm:gap-2">
-										<Bookmark className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
-										<span>
-											{question.stats?.bookmarks || 0}
-											<span className="hidden sm:inline"> saved</span>
-										</span>
+									<div className="flex items-center gap-2">
+										<Bookmark className="h-4 w-4" />
+										<span>{question.stats?.bookmarks || 0} saved</span>
 									</div>
-									<div className="flex items-center gap-1.5 sm:gap-2">
-										<Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-gray-400" />
-										<span className="hidden xs:inline">
+									<div className="flex items-center gap-2">
+										<Calendar className="h-4 w-4" />
+										<span>
 											{new Date(question.createdAt).toLocaleDateString()}
 										</span>
 									</div>
 								</div>
+							</div>
 
+							{/* Content Body */}
+							<div className="px-6 py-6 sm:px-8 sm:py-8">
 								{/* Tags */}
 								{question.tags && question.tags.length > 0 && (
-									<div className="flex flex-wrap gap-1.5 sm:gap-2 mb-4 sm:mb-6">
+									<div className="flex flex-wrap gap-2 mb-6 pb-6 border-b border-gray-100 dark:border-gray-700">
 										{question.tags.map((tag) => (
 											<Badge
 												key={tag}
 												variant="outline"
-												className="text-[10px] sm:text-xs px-2 sm:px-3 py-0.5 sm:py-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
+												className="px-3 py-1 bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-colors">
 												#{tag}
 											</Badge>
 										))}
 									</div>
 								)}
 
-								{/* Question Content */}
-								<div className="prose-custom text-sm sm:text-base">
+								{/* Question Description */}
+								<div className="prose prose-gray dark:prose-invert max-w-none">
 									<HtmlContent content={question.content} />
 								</div>
 							</div>
@@ -368,44 +360,43 @@ export const QuestionDetailView = ({
 							questionId={question._id}
 						/>
 
-						{/* Tabs */}
-						<Card className="border-0 shadow-lg">
+						{/* Tabs Section */}
+						<Card className="border-0 shadow-sm overflow-hidden">
 							<Tabs defaultValue="solution" className="w-full">
-								<div className="border-b bg-gray-50">
-									<TabsList className="grid w-full grid-cols-3 h-auto bg-transparent p-0 rounded-none">
+								{/* Modern Tab Navigation */}
+								<div className="border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+									<TabsList className="w-full h-auto bg-transparent p-0 rounded-none grid grid-cols-3">
 										<TabsTrigger
 											value="solution"
-											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:text-green-600 rounded-sm py-2 sm:py-3 md:py-4 px-2 sm:px-4 md:px-6 font-medium text-xs sm:text-sm md:text-base">
-											<Code2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-											<span className="hidden md:inline">Solution</span>
+											className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 rounded-none py-4 px-6 font-medium transition-colors">
+											<Code2 className="h-4 w-4 mr-2" />
+											<span className="hidden sm:inline">Solution</span>
 										</TabsTrigger>
 										<TabsTrigger
 											value="discussion"
-											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:text-green-600 rounded-sm py-2 sm:py-3 md:py-4 px-2 sm:px-4 md:px-6 font-medium text-xs sm:text-sm md:text-base">
-											<MessageSquare className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-											<span className="hidden md:inline">Discussion</span>
+											className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 rounded-none py-4 px-6 font-medium transition-colors">
+											<MessageSquare className="h-4 w-4 mr-2" />
+											<span className="hidden sm:inline">Discussion</span>
 										</TabsTrigger>
 										<TabsTrigger
 											value="related"
-											className="data-[state=active]:bg-white data-[state=active]:border-b-2 data-[state=active]:border-green-600 data-[state=active]:text-green-600 rounded-sm py-2 sm:py-3 md:py-4 px-2 sm:px-4 md:px-6 font-medium text-xs sm:text-sm md:text-base">
-											<Star className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-											<span className="hidden md:inline">Related</span>
+											className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-blue-600 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 rounded-none py-4 px-6 font-medium transition-colors">
+											<Star className="h-4 w-4 mr-2" />
+											<span className="hidden sm:inline">Related</span>
 										</TabsTrigger>
 									</TabsList>
 								</div>
 
-								<TabsContent
-									value="solution"
-									className="px-2 sm:px-4 md:px-6 py-4 space-y-4 sm:space-y-6 md:space-y-8 shadow-none">
+								{/* Tab Content */}
+								<TabsContent value="solution" className="p-6 sm:p-8 space-y-8">
 									{/* Rich Answer */}
 									{question.richAnswer && (
-										<div className="space-y-3 sm:space-y-4">
-											<div className="flex items-center gap-2">
-												<h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">
-													Explanation
-												</h3>
-											</div>
-											<div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg sm:rounded-xl p-4 sm:p-6 border border-yellow-100">
+										<div className="space-y-4">
+											<h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+												<div className="w-1 h-6 bg-blue-600 rounded-full"></div>
+												Explanation
+											</h3>
+											<div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-xl p-6 border border-blue-100 dark:border-gray-600">
 												<HtmlContent content={question.richAnswer} />
 											</div>
 										</div>
@@ -413,35 +404,40 @@ export const QuestionDetailView = ({
 
 									{/* Solutions */}
 									{question.solutions && question.solutions.length > 0 && (
-										<div className="space-y-4 sm:space-y-6">
-											<div className="flex items-center gap-2">
-												<Code2 className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
-												<h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">
-													Code Solutions
-												</h3>
-											</div>
+										<div className="space-y-6">
+											<h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+												<div className="w-1 h-6 bg-green-600 rounded-full"></div>
+												Code Solutions
+											</h3>
 											{question.solutions.map((solution, index) => (
 												<Card
 													key={index}
-													className="overflow-hidden border-2 border-gray-200 hover:border-green-300 transition-colors">
-													<div className="bg-gradient-to-r from-gray-50 to-gray-100 px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b">
-														<div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+													className="overflow-hidden border border-gray-200 dark:border-gray-700">
+													{/* Solution Header */}
+													<div className="bg-gray-50 dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+														<div className="flex items-start justify-between gap-4">
 															<div className="flex-1">
-																<h4 className="text-sm sm:text-base md:text-lg font-semibold text-gray-900">
+																<h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
 																	{solution.title || `Solution ${index + 1}`}
 																</h4>
 																{(solution.timeComplexity ||
 																	solution.spaceComplexity) && (
-																	<div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-1.5 sm:mt-2 text-xs sm:text-sm">
+																	<div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
 																		{solution.timeComplexity && (
-																			<span className="text-gray-600">
-																				⏱️ Time: {solution.timeComplexity}
-																			</span>
+																			<div className="flex items-center gap-1.5">
+																				<Clock className="h-4 w-4" />
+																				<span>
+																					Time: {solution.timeComplexity}
+																				</span>
+																			</div>
 																		)}
 																		{solution.spaceComplexity && (
-																			<span className="text-gray-600">
-																				💾 Space: {solution.spaceComplexity}
-																			</span>
+																			<div className="flex items-center gap-1.5">
+																				<Zap className="h-4 w-4" />
+																				<span>
+																					Space: {solution.spaceComplexity}
+																				</span>
+																			</div>
 																		)}
 																	</div>
 																)}
@@ -455,43 +451,41 @@ export const QuestionDetailView = ({
 																		solution.title || `Solution ${index + 1}`
 																	)
 																}
-																className="gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 w-full sm:w-auto">
+																className="gap-2 shrink-0">
 																{copiedCode ===
 																(solution.title || `Solution ${index + 1}`) ? (
 																	<>
-																		<Check className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
-																		<span className="hidden xs:inline">
-																			Copied!
-																		</span>
+																		<Check className="h-4 w-4 text-green-600" />
+																		<span>Copied!</span>
 																	</>
 																) : (
 																	<>
-																		<Copy className="h-3 w-3 sm:h-4 sm:w-4" />
-																		<span className="hidden xs:inline">
-																			Copy
-																		</span>
+																		<Copy className="h-4 w-4" />
+																		<span>Copy</span>
 																	</>
 																)}
 															</Button>
 														</div>
 													</div>
-													<div className="space-y-3 sm:space-y-4 px-2 sm:px-3 md:px-4">
+
+													{/* Code Block */}
+													<div className="p-0">
 														{solution.code && (
 															<div className="relative group">
-																<div className="absolute top-2 sm:top-3 right-2 sm:right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-																	<Badge className="bg-gray-800 text-white text-[10px] sm:text-xs px-1.5 sm:px-2">
+																<div className="absolute top-4 right-4 z-10">
+																	<Badge className="bg-gray-800 text-white px-3 py-1">
 																		{solution.language}
 																	</Badge>
 																</div>
-																<div className="bg-gray-900 rounded-lg p-2 sm:p-3 md:p-4 overflow-x-auto">
-																	<pre className="text-xs sm:text-sm text-gray-100 font-mono">
+																<div className="bg-gray-900 dark:bg-black p-6 overflow-x-auto">
+																	<pre className="text-sm text-gray-100 font-mono leading-relaxed">
 																		<code>{solution.code}</code>
 																	</pre>
 																</div>
 															</div>
 														)}
 														{solution.explanation && (
-															<div className="bg-green-50 rounded-lg p-3 sm:p-4 border border-green-100">
+															<div className="p-6 bg-green-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
 																<HtmlContent content={solution.explanation} />
 															</div>
 														)}
@@ -503,22 +497,20 @@ export const QuestionDetailView = ({
 
 									{/* Hints */}
 									{question.hints && question.hints.length > 0 && (
-										<div className="space-y-3 sm:space-y-4">
-											<div className="flex items-center gap-2">
-												<Zap className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
-												<h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">
-													Hints
-												</h3>
-											</div>
-											<div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg sm:rounded-xl p-4 sm:p-6 border border-purple-100 space-y-2 sm:space-y-3">
+										<div className="space-y-4">
+											<h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+												<div className="w-1 h-6 bg-purple-600 rounded-full"></div>
+												Hints
+											</h3>
+											<div className="space-y-3">
 												{question.hints.map((hint, index) => (
 													<div
 														key={index}
-														className="flex items-start gap-2 sm:gap-3">
-														<div className="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-purple-600 text-white text-xs sm:text-sm font-bold flex items-center justify-center">
+														className="flex items-start gap-4 p-4 bg-purple-50 dark:bg-gray-800 rounded-lg border border-purple-100 dark:border-gray-700">
+														<div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-600 text-white font-bold flex items-center justify-center">
 															{hint.order || index + 1}
 														</div>
-														<p className="text-xs sm:text-sm md:text-base text-gray-700 leading-relaxed pt-0.5">
+														<p className="text-gray-700 dark:text-gray-300 leading-relaxed pt-1">
 															{hint.content}
 														</p>
 													</div>
@@ -530,20 +522,18 @@ export const QuestionDetailView = ({
 									{/* Best Practices */}
 									{question.bestPractices &&
 										question.bestPractices.length > 0 && (
-											<div className="space-y-3 sm:space-y-4">
-												<div className="flex items-center gap-2">
-													<Star className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
-													<h3 className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">
-														Best Practices
-													</h3>
-												</div>
-												<div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg sm:rounded-xl p-4 sm:p-6 border border-green-100 space-y-2 sm:space-y-3">
+											<div className="space-y-4">
+												<h3 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+													<div className="w-1 h-6 bg-green-600 rounded-full"></div>
+													Best Practices
+												</h3>
+												<div className="space-y-3">
 													{question.bestPractices.map((practice, index) => (
 														<div
 															key={index}
-															className="flex items-start gap-2 sm:gap-3">
-															<div className="flex-shrink-0 w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-green-500 mt-1.5 sm:mt-2" />
-															<p className="text-xs sm:text-sm md:text-base text-gray-700 leading-relaxed">
+															className="flex items-start gap-3 p-4 bg-green-50 dark:bg-gray-800 rounded-lg border border-green-100 dark:border-gray-700">
+															<Check className="h-5 w-5 text-green-600 flex-shrink-0 mt-0.5" />
+															<p className="text-gray-700 dark:text-gray-300 leading-relaxed">
 																{practice}
 															</p>
 														</div>
@@ -553,11 +543,11 @@ export const QuestionDetailView = ({
 										)}
 								</TabsContent>
 
-								<TabsContent value="discussion" className="">
+								<TabsContent value="discussion" className="p-6 sm:p-8">
 									<CommentSection questionId={question._id} />
 								</TabsContent>
 
-								<TabsContent value="related" className="p-3 sm:p-4 md:p-6">
+								<TabsContent value="related" className="p-6 sm:p-8">
 									<RelatedQuestions
 										questionId={question._id}
 										onQuestionClick={(slug: string) => {
