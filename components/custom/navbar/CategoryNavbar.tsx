@@ -77,14 +77,29 @@ export function CategoryNavbar() {
 			if (currentScrollY < 100) {
 				setIsMinimized(false);
 				lastScrollY.current = currentScrollY;
+				// Update CSS variable for category navbar height
+				document.documentElement.style.setProperty(
+					"--category-navbar-height",
+					"48px"
+				);
 				return;
 			}
 
 			// Minimize on scroll down, maximize on scroll up
 			if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
 				setIsMinimized(true);
+				// Update CSS variable for minimized height
+				document.documentElement.style.setProperty(
+					"--category-navbar-height",
+					"32px"
+				);
 			} else if (currentScrollY < lastScrollY.current) {
 				setIsMinimized(false);
+				// Update CSS variable for full height
+				document.documentElement.style.setProperty(
+					"--category-navbar-height",
+					"48px"
+				);
 			}
 
 			lastScrollY.current = currentScrollY;

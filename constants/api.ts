@@ -1,5 +1,18 @@
 export const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+export const API_ENDPOINTS = {
+	BLOGS: `${API_URL}/blogs`,
+	QUESTIONS: `${API_URL}/questions`,
+	CATEGORIES: `${API_URL}/categories`,
+	AUTH: `${API_URL}/auth`,
+	PRACTICE: `${API_URL}/practice`,
+	USERS: `${API_URL}/users`,
+	STATS: `${API_URL}/stats`,
+	SEARCH: `${API_URL}/search`,
+	ANALYTICS: `${API_URL}/analytics`,
+	CONTRIBUTIONS: `${API_URL}/contributions`,
+};
+
 export const apiEndPoint = {
 	login: "/auth/login",
 	signup: "/auth/register",

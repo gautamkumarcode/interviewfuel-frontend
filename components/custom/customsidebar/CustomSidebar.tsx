@@ -14,6 +14,7 @@ import {
 	ChevronUp,
 	Code2,
 	Database,
+	FileText,
 	Globe,
 	Search,
 	Settings,
@@ -145,6 +146,63 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 				: [],
 		[categoryData]
 	);
+
+	// Filter category tree to show only active category and its children
+	const filteredCategoryTree = useMemo(() => {
+		if (categoryTree.length === 0) {
+			return categoryTree;
+		}
+
+		// Helper function to find category anywhere in tree by name
+		const findCategoryByName = (
+			nodes: CategoryNode[],
+			name: string
+		): CategoryNode | null => {
+			for (const node of nodes) {
+				if (node.name === name) {
+					return node;
+				}
+				if (node.children && node.children.length > 0) {
+					const found = findCategoryByName(node.children, name);
+					if (found) return found;
+				}
+			}
+			return null;
+		};
+
+		// If a child is active, show only that child and its children (as root)
+		if (activeChild) {
+			// Search for the child in the entire tree
+			const allNodes = categoryTree.flatMap((parent) => [
+				parent,
+				...(parent.children || []),
+			]);
+			const child = allNodes.find((node) => node.name === activeChild);
+
+			if (child) {
+				// If child has no children, show all categories instead
+				if (!child.children || child.children.length === 0) {
+					return categoryTree;
+				}
+				return [child]; // Show the child as root with its children
+			}
+		}
+
+		// If only parent is active, show that parent and all its children
+		if (activeParent) {
+			const parent = categoryTree.find((cat) => cat.name === activeParent);
+			if (parent) {
+				// If parent has no children, show all categories instead
+				if (!parent.children || parent.children.length === 0) {
+					return categoryTree;
+				}
+				return [parent];
+			}
+		}
+
+		// No filter, show all
+		return categoryTree;
+	}, [categoryTree, activeParent, activeChild]);
 
 	useEffect(() => {
 		// On mobile, always start with sidebar hidden (minimized = true)
@@ -324,7 +382,8 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 	};
 
 	const handleNavigate = (link: string) => {
-		if (window.location.pathname !== link) {
+		const currentUrl = window.location.pathname + window.location.search;
+		if (currentUrl !== link) {
 			router.push(link);
 		}
 	};
@@ -353,15 +412,14 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 						)}
 						onClick={(e) => {
 							e.stopPropagation();
+							// Always navigate and set the active states
+							handleNavigate(`/questions?category=${category.slug}`);
+							setActiveParent(category.name);
+							setActiveChild(null);
+
+							// Toggle expansion only if it has children
 							if (hasChildren) {
 								toggleExpandedItem(category._id);
-								handleNavigate(`/questions?category=${category.slug}`);
-								setActiveParent(category.name);
-								setActiveChild(null);
-							} else {
-								handleNavigate(`/questions?category=${category.slug}`);
-								setActiveParent(category.name);
-								setActiveChild(null);
 							}
 						}}>
 						{/* Expand/Collapse Icon */}
@@ -588,6 +646,29 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 				style={{ maxHeight: bodyMaxHeight }}>
 				{!isContentCollapsed ? (
 					<div className="space-y-1">
+						{/* Blogs Navigation */}
+						<div
+							className={cn(
+								"group flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 relative overflow-hidden mb-2",
+								"hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 dark:hover:from-blue-900/50 dark:hover:to-indigo-900/30",
+								"shadow-sm hover:shadow-md",
+								"border border-transparent hover:border-blue-200 dark:hover:border-blue-700"
+							)}
+							onClick={() => handleNavigate("/blogs")}>
+							<div className="flex items-center justify-center w-6 h-6 md:h-8 md:w-8 rounded-lg transition-all duration-200 bg-blue-50 group-hover:bg-white dark:bg-blue-900/50 dark:group-hover:bg-blue-800">
+								<FileText className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+							</div>
+							<div className="flex-1 min-w-0">
+								<span className="text-sm font-medium transition-colors duration-200 block truncate text-gray-700 dark:text-gray-300 group-hover:text-blue-700 dark:group-hover:text-blue-400">
+									Blog Posts
+								</span>
+								<span className="text-xs text-gray-500 dark:text-gray-400">
+									Tech articles & tutorials
+								</span>
+							</div>
+						</div>
+
+						{/* Categories */}
 						{categoryLoading
 							? Array.from({ length: 5 }).map((_, index) => (
 									<div
@@ -597,10 +678,27 @@ const Sidebar = forwardRef<HTMLDivElement>((_props, ref) => {
 										<div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded"></div>
 									</div>
 							  ))
-							: renderCategoryTree(categoryTree)}
+							: renderCategoryTree(filteredCategoryTree)}
 					</div>
 				) : (
 					<div className="flex flex-col gap-2 items-center py-2">
+						{/* Blogs Icon when collapsed */}
+						<div
+							className="flex items-center justify-center w-8 h-8 rounded-md cursor-pointer transition-all duration-200 shadow-sm hover:shadow-md mb-2 bg-gradient-to-br from-blue-50 to-indigo-100 text-blue-700 hover:from-blue-100 hover:to-indigo-200 dark:from-blue-900/50 dark:to-indigo-900/30 dark:text-blue-300 dark:hover:from-blue-800 dark:hover:to-indigo-800 border border-blue-200 dark:border-blue-700"
+							onClick={() => {
+								handleNavigate("/blogs");
+								window.dispatchEvent(
+									new CustomEvent("sidebarToggle", {
+										detail: { minimized: false, width: 288 },
+									})
+								);
+								setMinimized(false);
+								sessionStorage.setItem("minimized", JSON.stringify(false));
+							}}
+							title="Blog Posts">
+							<FileText className="h-4 w-4" />
+						</div>
+
 						{categoryLoading
 							? Array.from({ length: 5 }).map((_, index) => (
 									<div

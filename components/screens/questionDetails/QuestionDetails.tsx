@@ -178,9 +178,9 @@ export const QuestionDetailView = ({
 					</div>
 				</div>
 			) : (
-				<div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+				<div className="min-h-screen bg-gray-50 dark:bg-gray-900 -m-4 pt-0">
 					{/* Modern Sticky Header */}
-					<div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky -top-[20px] z-40 shadow-sm">
+					<div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky -top-4 z-40 shadow-sm">
 						<div className=" mx-auto px-4 sm:px-6 lg:px-8">
 							<div className="flex items-center justify-between py-3 sm:py-4">
 								{/* Left: Back Button */}
@@ -237,7 +237,7 @@ export const QuestionDetailView = ({
 					</div>
 
 					{/* Main Content */}
-					<div className=" mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+					<div className=" mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-8">
 						{/* Question Header Card */}
 						<Card className="mb-6 border-0 shadow-sm overflow-hidden p-0">
 							{/* Gradient Header */}
