@@ -6,23 +6,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
 } from "@/components/ui/select";
 import blogService, { type BlogPost } from "@/services/blog-services";
-import { categoryService, CategoryType } from "@/services/categories/category-services";
 import {
-    Calendar,
-    Clock,
-    Eye,
-    Heart,
-    MessageSquare,
-    PenSquare,
-    Search,
-    TrendingUp,
+	categoryService,
+	CategoryType,
+} from "@/services/categories/category-services";
+import {
+	Calendar,
+	Clock,
+	Eye,
+	Heart,
+	MessageSquare,
+	PenSquare,
+	Search,
+	TrendingUp,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -130,8 +133,7 @@ export default function BlogsScreen() {
 						</div>
 						<Button
 							onClick={() => router.push("/blogs/create")}
-							className="bg-white text-blue-600 hover:bg-blue-50 self-start md:self-center shadow-lg hover:shadow-xl transition-all"
-						>
+							className="bg-white text-blue-600 hover:bg-blue-50 self-start md:self-center shadow-lg hover:shadow-xl transition-all">
 							<PenSquare className="w-4 h-4 mr-2" />
 							Write Article
 						</Button>
@@ -168,8 +170,7 @@ export default function BlogsScreen() {
 								<Link
 									key={blog._id}
 									href={`/blogs/${blog.slug}`}
-									className="group transform hover:-translate-y-1 transition-all duration-300"
-								>
+									className="group transform hover:-translate-y-1 transition-all duration-300">
 									<Card className="overflow-hidden border-gray-200 bg-white hover:shadow-xl transition-all duration-300 h-full">
 										{blog.coverImage && (
 											<div className="relative h-48 overflow-hidden">
@@ -189,8 +190,7 @@ export default function BlogsScreen() {
 												{blog.category && (
 													<Badge
 														variant="secondary"
-														className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-100"
-													>
+														className="bg-blue-50 text-blue-700 hover:bg-blue-100 border-blue-100">
 														{blog.category.name}
 													</Badge>
 												)}
@@ -237,8 +237,7 @@ export default function BlogsScreen() {
 						value={filterCategory || "all"}
 						onValueChange={(value) =>
 							setFilterCategory(value === "all" ? "" : value)
-						}
-					>
+						}>
 						<SelectTrigger className="w-[180px] border-gray-200">
 							<SelectValue placeholder="Category" />
 						</SelectTrigger>
@@ -256,8 +255,7 @@ export default function BlogsScreen() {
 						value={filterTag || "all"}
 						onValueChange={(value) =>
 							setFilterTag(value === "all" ? "" : value)
-						}
-					>
+						}>
 						<SelectTrigger className="w-[180px] border-gray-200">
 							<SelectValue placeholder="Tag" />
 						</SelectTrigger>
@@ -285,8 +283,7 @@ export default function BlogsScreen() {
 								<BlogSkeleton key={i} />
 							))}
 						</div>
-					)}
-				>
+					)}>
 					{blogs.length === 0 ? (
 						<div className="text-center py-20 bg-white rounded-2xl border border-gray-100 shadow-sm">
 							<div className="bg-gray-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -296,8 +293,8 @@ export default function BlogsScreen() {
 								No articles found
 							</h3>
 							<p className="text-gray-500 max-w-sm mx-auto mb-6">
-								We couldn't find any blog posts matching your current filters.
-								Try adjusting your search criteria.
+								We couldn&apos;t find any blog posts matching your current
+								filters. Try adjusting your search criteria.
 							</p>
 							<Button
 								variant="outline"
@@ -305,8 +302,7 @@ export default function BlogsScreen() {
 									setFilterCategory("");
 									setFilterTag("");
 									setSearchQuery("");
-								}}
-							>
+								}}>
 								Clear All Filters
 							</Button>
 						</div>
@@ -317,8 +313,7 @@ export default function BlogsScreen() {
 									<Link
 										key={blog._id}
 										href={`/blogs/${blog.slug}`}
-										className="group"
-									>
+										className="group">
 										<Card className="overflow-hidden border-gray-200 bg-white hover:shadow-lg hover:border-blue-100 transition-all duration-300 h-full flex flex-col group-hover:-translate-y-1">
 											{blog.coverImage && (
 												<div className="relative h-48 overflow-hidden">
@@ -331,8 +326,7 @@ export default function BlogsScreen() {
 													{blog.category && (
 														<Badge
 															variant="secondary"
-															className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-gray-900 hover:bg-white shadow-sm"
-														>
+															className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-gray-900 hover:bg-white shadow-sm">
 															{blog.category.name}
 														</Badge>
 													)}
@@ -387,8 +381,7 @@ export default function BlogsScreen() {
 										variant="outline"
 										disabled={currentPage === 1}
 										onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-										className="border-gray-200"
-									>
+										className="border-gray-200">
 										Previous
 									</Button>
 									<div className="flex items-center gap-2">
@@ -400,8 +393,7 @@ export default function BlogsScreen() {
 													onClick={() => setCurrentPage(page)}
 													className={`w-10 ${
 														currentPage !== page ? "border-gray-200" : ""
-													}`}
-												>
+													}`}>
 													{page}
 												</Button>
 											)
@@ -413,8 +405,7 @@ export default function BlogsScreen() {
 										onClick={() =>
 											setCurrentPage((p) => Math.min(totalPages, p + 1))
 										}
-										className="border-gray-200"
-									>
+										className="border-gray-200">
 										Next
 									</Button>
 								</div>
