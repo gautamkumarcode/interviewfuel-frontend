@@ -6,17 +6,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useTheme } from "@/context/theme.context";
 import blogService from "@/services/blog-services";
-import { categoryService, CategoryType } from "@/services/categories/category-services";
+import {
+	categoryService,
+	CategoryType,
+} from "@/services/categories/category-services";
 import { ArrowLeft, ImagePlus, Loader2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -54,7 +57,7 @@ export default function CreateBlogScreen() {
 		excerpt: "",
 		content: "",
 		coverImage: "",
-		category: "", 
+		category: "",
 		tags: "",
 		status: "draft" as "draft" | "published",
 		featured: false,
@@ -141,7 +144,9 @@ export default function CreateBlogScreen() {
 			}
 		} catch (error: any) {
 			console.error("Error creating blog:", error);
-			const errorMessage = error?.response?.data?.message || "Failed to create blog post. Please try again.";
+			const errorMessage =
+				error?.response?.data?.message ||
+				"Failed to create blog post. Please try again.";
 			toast.error(errorMessage);
 		} finally {
 			setLoading(false);
@@ -183,8 +188,7 @@ export default function CreateBlogScreen() {
 							variant="ghost"
 							size="icon"
 							onClick={() => router.back()}
-							className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
-						>
+							className="rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
 							<ArrowLeft className="h-5 w-5" />
 							<span className="sr-only">Back</span>
 						</Button>
@@ -204,15 +208,12 @@ export default function CreateBlogScreen() {
 								size="sm"
 								variant={formData.status === "draft" ? "secondary" : "ghost"}
 								onClick={() => setFormData({ ...formData, status: "draft" })}
-								className="rounded-full px-4 h-8 text-xs font-medium"
-							>
+								className="rounded-full px-4 h-8 text-xs font-medium">
 								Draft
 							</Button>
 							<Button
 								size="sm"
-								variant={
-									formData.status === "published" ? "default" : "ghost"
-								}
+								variant={formData.status === "published" ? "default" : "ghost"}
 								onClick={() =>
 									setFormData({ ...formData, status: "published" })
 								}
@@ -220,8 +221,7 @@ export default function CreateBlogScreen() {
 									formData.status === "published"
 										? "bg-green-600 hover:bg-green-700 text-white"
 										: ""
-								}`}
-							>
+								}`}>
 								Publish
 							</Button>
 						</div>
@@ -233,8 +233,7 @@ export default function CreateBlogScreen() {
 								formData.status === "published"
 									? "bg-green-600 hover:bg-green-700"
 									: ""
-							}`}
-						>
+							}`}>
 							{loading ? (
 								<>
 									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -268,7 +267,7 @@ export default function CreateBlogScreen() {
 											}
 										}}
 										placeholder="Enter your article title..."
-										className={`border-0 border-b-2 border-gray-100 rounded-none px-0 py-4 text-3xl font-bold placeholder:text-gray-300 focus-visible:ring-0 focus-visible:border-blue-500 lg:text-4xl ${
+										className={`border-0 border-b-2 border-gray-100 rounded-none px-0 py-4 text-3xl font-bold placeholder:text-gray-300 focus-visible:ring-0 focus-visible:border-blue-500 lg:text-2xl ${
 											errors.title ? "border-red-500" : ""
 										}`}
 									/>
@@ -283,8 +282,7 @@ export default function CreateBlogScreen() {
 											errors.content
 												? "border-red-300 ring-2 ring-red-100"
 												: "border-gray-200"
-										}`}
-									>
+										}`}>
 										<RichTextEditor
 											content={formData.content}
 											onChange={(html) => {
@@ -398,11 +396,9 @@ export default function CreateBlogScreen() {
 												if (isValidating) {
 													setErrors({ ...errors, category: undefined });
 												}
-											}}
-										>
+											}}>
 											<SelectTrigger
-												className={errors.category ? "border-red-500" : ""}
-											>
+												className={errors.category ? "border-red-500" : ""}>
 												<SelectValue placeholder="Select Category" />
 											</SelectTrigger>
 											<SelectContent>
@@ -499,8 +495,7 @@ export default function CreateBlogScreen() {
 														variant="destructive"
 														size="icon"
 														onClick={removeImage}
-														className="rounded-full"
-													>
+														className="rounded-full">
 														<X className="h-4 w-4" />
 													</Button>
 												</div>

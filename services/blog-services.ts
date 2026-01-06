@@ -14,7 +14,7 @@ export interface BlogPost {
 	author: {
 		_id: string;
 		username: string;
-		fullName: string;
+		name: string;
 		profilePicture?: string;
 		bio?: string;
 	};
@@ -176,9 +176,9 @@ class BlogService {
 	// Like/Unlike a blog
 	public likeBlog = async (
 		id: string
-	): Promise<AxiosResponseTypeWithoutPagination<{ liked: boolean }>> => {
+	): Promise<AxiosResponseTypeWithoutPagination<{ isLiked: boolean }>> => {
 		const { data } = await authenticatedInstance.post<
-			AxiosResponseTypeWithoutPagination<{ liked: boolean }>
+			AxiosResponseTypeWithoutPagination<{ isLiked: boolean }>
 		>(`${API_ENDPOINTS.BLOGS}/${id}/like`);
 		return data;
 	};
@@ -186,9 +186,9 @@ class BlogService {
 	// Bookmark/Unbookmark a blog
 	public bookmarkBlog = async (
 		id: string
-	): Promise<AxiosResponseTypeWithoutPagination<{ bookmarked: boolean }>> => {
+	): Promise<AxiosResponseTypeWithoutPagination<{ isBookmarked: boolean }>> => {
 		const { data } = await authenticatedInstance.post<
-			AxiosResponseTypeWithoutPagination<{ bookmarked: boolean }>
+			AxiosResponseTypeWithoutPagination<{ isBookmarked: boolean }>
 		>(`${API_ENDPOINTS.BLOGS}/${id}/bookmark`);
 		return data;
 	};

@@ -6,13 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import blogService, { type BlogPost } from "@/services/blog-services";
-import {
-    Bookmark,
-    Clock,
-    Heart,
-    MessageSquare,
-    Share2
-} from "lucide-react";
+import { Bookmark, Clock, Heart, MessageSquare, Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -55,12 +49,12 @@ export default function BlogDetailsScreen() {
 		try {
 			const response = await blogService.likeBlog(blog._id);
 			if (response.success) {
-				setIsLiked(response.data.liked);
+				setIsLiked(response.data.isLiked);
 				setBlog({
 					...blog,
 					stats: {
 						...blog.stats,
-						likes: response.data.liked
+						likes: response.data.isLiked
 							? blog.stats.likes + 1
 							: blog.stats.likes - 1,
 					},
@@ -76,12 +70,12 @@ export default function BlogDetailsScreen() {
 		try {
 			const response = await blogService.bookmarkBlog(blog._id);
 			if (response.success) {
-				setIsBookmarked(response.data.bookmarked);
+				setIsBookmarked(response.data.isBookmarked);
 				setBlog({
 					...blog,
 					stats: {
 						...blog.stats,
-						bookmarks: response.data.bookmarked
+						bookmarks: response.data.isBookmarked
 							? blog.stats.bookmarks + 1
 							: blog.stats.bookmarks - 1,
 					},
@@ -122,8 +116,7 @@ export default function BlogDetailsScreen() {
 			<ApiStateLoader
 				isLoading={loading}
 				isFetching={false}
-				renderSkeleton={() => <BlogDetailSkeleton />}
-			>
+				renderSkeleton={() => <BlogDetailSkeleton />}>
 				{!blog ? (
 					<div className="min-h-screen flex items-center justify-center">
 						<div className="text-center">
@@ -138,7 +131,7 @@ export default function BlogDetailsScreen() {
 				) : (
 					<>
 						{/* Hero Section */}
-						<div className="relative h-[400px] lg:h-[500px] w-full bg-gray-900">
+						<div className="relative h-[400px] lg:h-[500px] w-full ">
 							{blog.coverImage && (
 								<>
 									<Image
@@ -152,7 +145,10 @@ export default function BlogDetailsScreen() {
 								</>
 							)}
 							<div className="absolute bottom-0 left-0 right-0 p-8">
-								<div className="max-w-4xl mx-auto">
+								<div className=" mx-auto">
+									<h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
+										{blog.title}
+									</h1>
 									<div className="flex items-center gap-3 mb-4">
 										{blog.category && (
 											<Badge className="bg-blue-600 hover:bg-blue-700 border-none text-white">
@@ -164,15 +160,13 @@ export default function BlogDetailsScreen() {
 											{blog.readTime} min read
 										</span>
 									</div>
-									<h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
-										{blog.title}
-									</h1>
+
 									<div className="flex items-center gap-6 text-gray-200">
 										<div className="flex items-center gap-3">
 											<Avatar className="h-12 w-12 border-2 border-white/20">
 												<AvatarImage src={blog.author.profilePicture} />
 												<AvatarFallback className="bg-blue-600 text-white">
-													{blog.author.username?.charAt(0).toUpperCase()}
+													{blog.author.name?.charAt(0).toUpperCase()}
 												</AvatarFallback>
 											</Avatar>
 											<div>
@@ -204,8 +198,7 @@ export default function BlogDetailsScreen() {
 										variant="ghost"
 										size="sm"
 										onClick={() => router.back()}
-										className="hover:bg-gray-200 text-gray-600"
-									>
+										className="hover:bg-gray-200 text-gray-600">
 										← Back
 									</Button>
 								</div>
@@ -216,8 +209,7 @@ export default function BlogDetailsScreen() {
 										onClick={handleLike}
 										className={`gap-2 ${
 											isLiked ? "bg-red-500 hover:bg-red-600 text-white" : ""
-										}`}
-									>
+										}`}>
 										<Heart
 											className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`}
 										/>
@@ -231,8 +223,7 @@ export default function BlogDetailsScreen() {
 											isBookmarked
 												? "bg-blue-600 text-white hover:bg-blue-700"
 												: ""
-										}
-									>
+										}>
 										<Bookmark
 											className={`w-4 h-4 ${
 												isBookmarked ? "fill-current" : ""
@@ -266,8 +257,7 @@ export default function BlogDetailsScreen() {
 										<Link key={tag} href={`/blogs?tag=${tag}`}>
 											<Badge
 												variant="secondary"
-												className="hover:bg-blue-100 hover:text-blue-700 transition-colors cursor-pointer"
-											>
+												className="hover:bg-blue-100 hover:text-blue-700 transition-colors cursor-pointer">
 												#{tag}
 											</Badge>
 										</Link>
@@ -286,8 +276,7 @@ export default function BlogDetailsScreen() {
 											<Link
 												key={question._id}
 												href={`/questions/${question._id}`}
-												className="group"
-											>
+												className="group">
 												<Card className="hover:shadow-md transition-all border-gray-200 hover:border-blue-200">
 													<CardContent className="p-4">
 														<h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 line-clamp-2">
@@ -302,8 +291,7 @@ export default function BlogDetailsScreen() {
 																		: question.difficulty === "Medium"
 																		? "bg-yellow-50 text-yellow-700 border-yellow-200"
 																		: "bg-red-50 text-red-700 border-red-200"
-																}`}
-															>
+																}`}>
 																{question.difficulty}
 															</Badge>
 															{question.category && (
