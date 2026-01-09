@@ -120,14 +120,14 @@ export default function BlogsScreen() {
 	);
 
 	return (
-		<div className="min-h-screen bg-gray-50 dark:bg-gray-900 -m-4 pt-0">
+		<div className="min-h-screen bg-gray-50 dark:bg-gray-900  pt-0">
 			{/* Header */}
-			<div className="bg-gradient-to-br from-blue-200 via-indigo-300 to-purple-200 text-white">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+			<div className="">
+				<div className="mx-auto">
 					<div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
 						<div>
 							<h1 className="text-3xl md:text-4xl font-bold mb-2">Tech Blog</h1>
-							<p className="text-blue-100 text-lg">
+							<p className=" text-lg">
 								Insights, tutorials, and stories from the tech world
 							</p>
 						</div>
@@ -141,19 +141,19 @@ export default function BlogsScreen() {
 
 					{/* Search Bar */}
 					<form onSubmit={handleSearch} className="relative max-w-2xl">
-						<Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+						<Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-black" />
 						<Input
 							type="text"
 							placeholder="Search articles..."
 							value={searchQuery}
 							onChange={(e) => setSearchQuery(e.target.value)}
-							className="pl-12 pr-4 py-6 bg-white/10 border-white/20 text-white placeholder:text-white/60 backdrop-blur-sm focus-visible:ring-offset-0 focus-visible:ring-white/30"
+							className="pl-12 pr-4 py-6  backdrop-blur-sm focus-visible:ring-offset-0 focus-visible:ring-white/30"
 						/>
 					</form>
 				</div>
 			</div>
 
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+			<div className=" mx-auto mt-4">
 				{/* Featured Blogs */}
 				{featuredBlogs.length > 0 && !loading && (
 					<div className="mb-12">
@@ -278,7 +278,7 @@ export default function BlogsScreen() {
 					isLoading={loading}
 					isFetching={false}
 					renderSkeleton={() => (
-						<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+						<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
 							{Array.from({ length: 9 }).map((_, i) => (
 								<BlogSkeleton key={i} />
 							))}
