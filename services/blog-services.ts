@@ -1,7 +1,5 @@
 import { API_ENDPOINTS } from "@/constants/api";
-import {
-	AxiosResponseTypeWithoutPagination
-} from "@/types/axios-response";
+import { AxiosResponseTypeWithoutPagination } from "@/types/axios-response";
 import { authenticatedInstance, unauthenticatedInstance } from "@/utils/axios";
 
 export interface BlogPost {
@@ -48,6 +46,9 @@ export interface BlogPost {
 	isPinned: boolean;
 	createdAt: string;
 	updatedAt: string;
+	// User interaction status
+	isLiked?: boolean;
+	isBookmarked?: boolean;
 }
 
 export interface BlogListResponse {
@@ -95,30 +96,40 @@ export interface CreateBlogData {
 class BlogService {
 	// Get all blogs with filters
 	public getAllBlogs = async (
-		filters: BlogFilters = {}
+		filters: BlogFilters = {},
 	): Promise<BlogListResponse> => {
 		const { data } = await unauthenticatedInstance.get<BlogListResponse>(
 			API_ENDPOINTS.BLOGS,
 			{
 				params: filters,
-			}
+			},
 		);
 		return data;
 	};
 
 	// Get a single blog by slug
 	public getBlogBySlug = async (
-		slug: string
-	): Promise<AxiosResponseTypeWithoutPagination<{ blog: BlogPost }>> => {
-		const { data } = await unauthenticatedInstance.get<
-			AxiosResponseTypeWithoutPagination<{ blog: BlogPost }>
+		slug: string,
+	): Promise<
+		AxiosResponseTypeWithoutPagination<{
+			blog: BlogPost;
+			isLiked: boolean;
+			isBookmarked: boolean;
+		}>
+	> => {
+		const { data } = await authenticatedInstance.get<
+			AxiosResponseTypeWithoutPagination<{
+				blog: BlogPost;
+				isLiked: boolean;
+				isBookmarked: boolean;
+			}>
 		>(`${API_ENDPOINTS.BLOGS}/slug/${slug}`);
 		return data;
 	};
 
 	// Get featured blogs
 	public getFeaturedBlogs = async (
-		limit: number = 5
+		limit: number = 5,
 	): Promise<AxiosResponseTypeWithoutPagination<BlogPost[]>> => {
 		const { data } = await unauthenticatedInstance.get<
 			AxiosResponseTypeWithoutPagination<BlogPost[]>
@@ -131,20 +142,20 @@ class BlogService {
 	// Get user's blogs
 	public getUserBlogs = async (
 		userId: string,
-		filters: BlogFilters = {}
+		filters: BlogFilters = {},
 	): Promise<BlogListResponse> => {
 		const { data } = await unauthenticatedInstance.get<BlogListResponse>(
 			`${API_ENDPOINTS.BLOGS}/user/${userId}`,
 			{
 				params: filters,
-			}
+			},
 		);
 		return data;
 	};
 
 	// Create a new blog
 	public createBlog = async (
-		payload: CreateBlogData
+		payload: CreateBlogData,
 	): Promise<AxiosResponseTypeWithoutPagination<BlogPost>> => {
 		const { data } = await authenticatedInstance.post<
 			AxiosResponseTypeWithoutPagination<BlogPost>
@@ -155,7 +166,7 @@ class BlogService {
 	// Update a blog
 	public updateBlog = async (
 		id: string,
-		payload: Partial<CreateBlogData>
+		payload: Partial<CreateBlogData>,
 	): Promise<AxiosResponseTypeWithoutPagination<BlogPost>> => {
 		const { data } = await authenticatedInstance.put<
 			AxiosResponseTypeWithoutPagination<BlogPost>
@@ -165,7 +176,7 @@ class BlogService {
 
 	// Delete a blog
 	public deleteBlog = async (
-		id: string
+		id: string,
 	): Promise<AxiosResponseTypeWithoutPagination<null>> => {
 		const { data } = await authenticatedInstance.delete<
 			AxiosResponseTypeWithoutPagination<null>
@@ -175,7 +186,7 @@ class BlogService {
 
 	// Like/Unlike a blog
 	public likeBlog = async (
-		id: string
+		id: string,
 	): Promise<AxiosResponseTypeWithoutPagination<{ isLiked: boolean }>> => {
 		const { data } = await authenticatedInstance.post<
 			AxiosResponseTypeWithoutPagination<{ isLiked: boolean }>
@@ -185,7 +196,7 @@ class BlogService {
 
 	// Bookmark/Unbookmark a blog
 	public bookmarkBlog = async (
-		id: string
+		id: string,
 	): Promise<AxiosResponseTypeWithoutPagination<{ isBookmarked: boolean }>> => {
 		const { data } = await authenticatedInstance.post<
 			AxiosResponseTypeWithoutPagination<{ isBookmarked: boolean }>

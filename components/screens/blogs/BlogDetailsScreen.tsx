@@ -7,84 +7,135 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { HtmlContent } from "@/components/ui/html-content";
 import blogService, { type BlogPost } from "@/services/blog-services";
+import {
+	AxiosErrorResponseType,
+	AxiosResponseTypeWithoutPagination,
+} from "@/types/axios-response";
+import { AxiosError } from "axios";
 import { Bookmark, Clock, Heart, MessageSquare, Share2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+
+// Response type for getBlogBySlug
+interface BlogDetailResponse {
+	blog: BlogPost;
+	isLiked: boolean;
+	isBookmarked: boolean;
+}
 
 export default function BlogDetailsScreen() {
 	const params = useParams();
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const slug = params.slug as string;
 
-	const [blog, setBlog] = useState<BlogPost | null>(null);
-	const [loading, setLoading] = useState(true);
-	const [isLiked, setIsLiked] = useState(false);
-	const [isBookmarked, setIsBookmarked] = useState(false);
+	// Fetch blog data using React Query
+	const {
+		data: blogData,
+		isLoading,
+		isFetching,
+	} = useQuery<
+		AxiosResponseTypeWithoutPagination<BlogDetailResponse>,
+		AxiosError<AxiosErrorResponseType>
+	>(["blog", slug], () => blogService.getBlogBySlug(slug), {
+		enabled: !!slug,
+		staleTime: 1000 * 60 * 5, // 5 minutes
+		cacheTime: 1000 * 60 * 10, // 10 minutes
+		select: (response) => ({
+			...response,
+			data: {
+				...response.data,
+				blog: {
+					...response.data.blog,
+					isLiked: response.data.isLiked ?? false,
+					isBookmarked: response.data.isBookmarked ?? false,
+				},
+			},
+		}),
+	});
 
-	useEffect(() => {
-		if (slug) {
-			fetchBlog();
-		}
-	}, [slug]);
+	const blog = blogData?.data?.blog;
 
-	const fetchBlog = async () => {
-		try {
-			setLoading(true);
-			const response = await blogService.getBlogBySlug(slug);
-
-			if (response.success) {
-				setBlog(response.data.blog);
-				// Check if user has liked/bookmarked (would need auth context)
-			}
-		} catch (error) {
-			console.error("Error fetching blog:", error);
-		} finally {
-			setLoading(false);
-		}
-	};
-
-	const handleLike = async () => {
-		if (!blog) return;
-		try {
-			const response = await blogService.likeBlog(blog._id);
-			if (response.success) {
-				setIsLiked(response.data.isLiked);
-				setBlog({
-					...blog,
-					stats: {
-						...blog.stats,
-						likes: response.data.isLiked
-							? blog.stats.likes + 1
-							: blog.stats.likes - 1,
+	// Like mutation
+	const { mutate: likeMutate } = useMutation<
+		AxiosResponseTypeWithoutPagination<{ isLiked: boolean }>,
+		AxiosError<AxiosErrorResponseType>
+	>(() => blogService.likeBlog(blog?._id as string), {
+		onSuccess: (response) => {
+			// Optimistically update the cache
+			queryClient.setQueryData<
+				AxiosResponseTypeWithoutPagination<BlogDetailResponse> | undefined
+			>(["blog", slug], (oldData) => {
+				if (!oldData) return oldData;
+				return {
+					...oldData,
+					data: {
+						...oldData.data,
+						isLiked: response.data.isLiked,
+						blog: {
+							...oldData.data.blog,
+							isLiked: response.data.isLiked,
+							stats: {
+								...oldData.data.blog.stats,
+								likes: response.data.isLiked
+									? oldData.data.blog.stats.likes + 1
+									: oldData.data.blog.stats.likes - 1,
+							},
+						},
 					},
-				});
-			}
-		} catch (error) {
+				};
+			});
+		},
+		onError: (error) => {
 			console.error("Error liking blog:", error);
-		}
+		},
+	});
+
+	// Bookmark mutation
+	const { mutate: bookmarkMutate } = useMutation<
+		AxiosResponseTypeWithoutPagination<{ isBookmarked: boolean }>,
+		AxiosError<AxiosErrorResponseType>
+	>(() => blogService.bookmarkBlog(blog?._id as string), {
+		onSuccess: (response) => {
+			// Optimistically update the cache
+			queryClient.setQueryData<
+				AxiosResponseTypeWithoutPagination<BlogDetailResponse> | undefined
+			>(["blog", slug], (oldData) => {
+				if (!oldData) return oldData;
+				return {
+					...oldData,
+					data: {
+						...oldData.data,
+						isBookmarked: response.data.isBookmarked,
+						blog: {
+							...oldData.data.blog,
+							isBookmarked: response.data.isBookmarked,
+							stats: {
+								...oldData.data.blog.stats,
+								bookmarks: response.data.isBookmarked
+									? oldData.data.blog.stats.bookmarks + 1
+									: oldData.data.blog.stats.bookmarks - 1,
+							},
+						},
+					},
+				};
+			});
+		},
+		onError: (error) => {
+			console.error("Error bookmarking blog:", error);
+		},
+	});
+
+	const handleLike = () => {
+		if (!blog) return;
+		likeMutate();
 	};
 
-	const handleBookmark = async () => {
+	const handleBookmark = () => {
 		if (!blog) return;
-		try {
-			const response = await blogService.bookmarkBlog(blog._id);
-			if (response.success) {
-				setIsBookmarked(response.data.isBookmarked);
-				setBlog({
-					...blog,
-					stats: {
-						...blog.stats,
-						bookmarks: response.data.isBookmarked
-							? blog.stats.bookmarks + 1
-							: blog.stats.bookmarks - 1,
-					},
-				});
-			}
-		} catch (error) {
-			console.error("Error bookmarking blog:", error);
-		}
+		bookmarkMutate();
 	};
 
 	const handleShare = async () => {
@@ -115,8 +166,8 @@ export default function BlogDetailsScreen() {
 	return (
 		<div className="min-h-screen bg-gray-50 dark:bg-gray-900 -m-4 pt-0">
 			<ApiStateLoader
-				isLoading={loading}
-				isFetching={false}
+				isLoading={isLoading}
+				isFetching={isFetching}
 				renderSkeleton={() => <BlogDetailSkeleton />}>
 				{!blog ? (
 					<div className="min-h-screen flex items-center justify-center">
@@ -205,29 +256,31 @@ export default function BlogDetailsScreen() {
 								</div>
 								<div className="flex items-center gap-3">
 									<Button
-										variant={isLiked ? "default" : "outline"}
+										variant={blog.isLiked ? "default" : "outline"}
 										size="sm"
 										onClick={handleLike}
 										className={`gap-2 ${
-											isLiked ? "bg-red-500 hover:bg-red-600 text-white" : ""
+											blog.isLiked
+												? "bg-red-500 hover:bg-red-600 text-white"
+												: ""
 										}`}>
 										<Heart
-											className={`w-4 h-4 ${isLiked ? "fill-current" : ""}`}
+											className={`w-4 h-4 ${blog.isLiked ? "fill-current" : ""}`}
 										/>
 										{blog.stats.likes}
 									</Button>
 									<Button
-										variant={isBookmarked ? "default" : "outline"}
+										variant={blog.isBookmarked ? "default" : "outline"}
 										size="sm"
 										onClick={handleBookmark}
 										className={
-											isBookmarked
+											blog.isBookmarked
 												? "bg-blue-600 text-white hover:bg-blue-700"
 												: ""
 										}>
 										<Bookmark
 											className={`w-4 h-4 ${
-												isBookmarked ? "fill-current" : ""
+												blog.isBookmarked ? "fill-current" : ""
 											}`}
 										/>
 									</Button>
