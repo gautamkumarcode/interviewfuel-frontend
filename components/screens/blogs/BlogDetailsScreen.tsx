@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { HtmlContent } from "@/components/ui/html-content";
 import blogService, { type BlogPost } from "@/services/blog-services";
 import { Bookmark, Clock, Heart, MessageSquare, Share2 } from "lucide-react";
 import Image from "next/image";
@@ -180,7 +181,7 @@ export default function BlogDetailsScreen() {
 															month: "long",
 															day: "numeric",
 															year: "numeric",
-														}
+														},
 													)}
 												</p>
 											</div>
@@ -241,10 +242,7 @@ export default function BlogDetailsScreen() {
 								<p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed font-medium mb-8 border-l-4 border-blue-500 pl-4 py-1">
 									{blog.excerpt}
 								</p>
-								<div
-									dangerouslySetInnerHTML={{ __html: blog.content }}
-									className="blog-content"
-								/>
+								<HtmlContent content={blog.content} />
 							</article>
 
 							{/* Tags */}
@@ -289,8 +287,8 @@ export default function BlogDetailsScreen() {
 																	question.difficulty === "Easy"
 																		? "bg-green-50 text-green-700 border-green-200"
 																		: question.difficulty === "Medium"
-																		? "bg-yellow-50 text-yellow-700 border-yellow-200"
-																		: "bg-red-50 text-red-700 border-red-200"
+																			? "bg-yellow-50 text-yellow-700 border-yellow-200"
+																			: "bg-red-50 text-red-700 border-red-200"
 																}`}>
 																{question.difficulty}
 															</Badge>
